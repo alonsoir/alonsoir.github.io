@@ -1,0 +1,53 @@
+Que necesita una arquitectura de microservicios?
+
+descubrimiento, registro, comprobacion de salud, almacenamiento de configuracion clave-valor en servicios distribuidos
+
+	Spring-cloud-consul, Eureka
+
+	https://www.paradigmadigital.com/dev/spring-cloud-consul-1-2-descubrimiento-microservicios/
+
+balanceado
+
+	Ribbon
+
+monitorizacion
+
+	spring-boot-actuator provee los endpoints necesarios que dan informacion de la salud del ms
+
+	spring-boot-admin
+		https://www.paradigmadigital.com/dev/monitorizar-microservicios-spring-boot-admin/
+
+	zuul
+
+enrutado dinamico, monitorizacion, resiliencia, seguridad
+
+	zuul
+
+	Authentication and Security - identifying authentication requirements for each resource and rejecting requests that do not satisfy them.
+
+	Insights and Monitoring - tracking meaningful data and statistics at the edge in order to give us an accurate view of production.
+
+	Dynamic Routing - dynamically routing requests to different backend clusters as needed.
+
+	Stress Testing - gradually increasing the traffic to a cluster in order to gauge performance.
+
+	Load Shedding - allocating capacity for each type of request and dropping requests that go over the limit.
+
+	Static Response handling - building some responses directly at the edge instead of forwarding them to an internal cluster
+
+	Multiregion Resiliency - routing requests across AWS regions in order to diversify our ELB usage and move our edge closer to our members
+
+
+Logging
+
+	jolokia, con logback
+
+alta disponibilidad
+
+	todo corriendo en Mesos
+
+
+Algo más?
+
+En Stratio, cuando diseñabamos los distintos microservicios, teníamos que añadir en el pom.xml las distintas dependencias
+que describen los clientes para todos esos servicios necesarios para una arquitectura de microservicios.
