@@ -2,6 +2,14 @@
 
 # Things to study
 
+	Amazon Web service
+
+		https://www.youtube.com/channel/UCdU8fEJqQtB8e-iOpZcxKQQ
+
+	Google Cloud Platform
+
+	Azure
+
 	https://java-design-patterns.com/patterns/
 
 	https://www.weave.works/technologies/gitops/
@@ -28,9 +36,10 @@
 
 	ley de Andahl
 
-	Teorema CAP
+	Teorema CAP --> Repasarlo
 
 	https://nasa.github.io/openmct/
 
-	https://devopsdays.org/events/2020-caceres/welcome/
+	https://devopsdays.org/events/2020-caceres/welcome/ --> Apuntarse antes del 15 de Febrero.
+
 
