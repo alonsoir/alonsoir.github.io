@@ -2,6 +2,10 @@
 
 # Things to study
 
+	nifi
+
+		https://nifi.apache.org
+
 	jlink
 
 		https://dzone.com/articles/jdk9-howto-create-a-java-run-time-image-with-maven
@@ -49,5 +53,7 @@
 	https://nasa.github.io/openmct/
 
 	https://devopsdays.org/events/2020-caceres/welcome/ --> Apuntarse antes del 15 de Febrero.
+
+	https://bubble.io/welcome
 
 
