@@ -18,7 +18,11 @@
 
 		https://www.youtube.com/channel/UCdU8fEJqQtB8e-iOpZcxKQQ
 
+		https://learning.oreilly.com/live-training/courses/aws-certified-sysops-administrator-associate-crash-course/0636920268017/#what-youll-learn
+
 	Google Cloud Platform
+
+		https://learning.oreilly.com/live-training/courses/introduction-to-google-cloud-platform/0636920268963/#what-youll-learn
 
 	Azure
 
