@@ -56,7 +56,7 @@
 
 	https://nasa.github.io/openmct/
 
-	https://devopsdays.org/events/2020-caceres/welcome/ --> Apuntarse antes del 15 de Febrero.
+	https://devopsdays.org/events/2020-caceres/welcome/ --> Apuntarse antes del 2 de Febrero.
 
 	https://bubble.io/welcome
 
