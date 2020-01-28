@@ -36,6 +36,10 @@
 
 	more about Scala...
 
+	CNN training models...
+	
+		https://www.pyimagesearch.com/2018/04/16/keras-and-convolutional-neural-networks-cnns/
+
 	https://java-design-patterns.com/patterns/
 
 	https://www.weave.works/technologies/gitops/
