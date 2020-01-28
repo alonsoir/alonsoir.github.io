@@ -2,6 +2,14 @@
 
 # Things to study
 
+	more java...
+
+		http://tutorials.jenkov.com/java/index.html
+
+	httpie
+
+		https://www.atareao.es/software/utilidades/httpie-un-cliente-http-para-la-linea-de-comandos/
+
 	nifi
 
 		https://nifi.apache.org
@@ -25,6 +33,8 @@
 		https://learning.oreilly.com/live-training/courses/introduction-to-google-cloud-platform/0636920268963/#what-youll-learn
 
 	Azure
+
+	more about Scala...
 
 	https://java-design-patterns.com/patterns/
 
