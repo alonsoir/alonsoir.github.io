@@ -2,9 +2,13 @@
 
 # Things to study
 
+	https://dev.to/notifications
+
 	more java...
 
 		http://tutorials.jenkov.com/java/index.html
+
+		https://blogs.oracle.com/javamagazine/quiz-2
 
 	httpie
 
@@ -13,6 +17,14 @@
 	nifi
 
 		https://nifi.apache.org
+
+		Ya puedo instalar la última version. 1.11.0 a dia de hoy.
+
+		nifi start
+
+		http://localhost:8080/nifi/
+
+		https://nifi.apache.org/docs/nifi-docs/html/getting-started.html#for-linux-mac-os-x-users
 
 	jlink
 
@@ -75,5 +87,7 @@
 	https://bubble.io/welcome
 
 	https://trello.com/b/j5zulU4g/javalonmillionbaby
+
+	https://www.atareao.es/software/utilidades/httpie-un-cliente-http-para-la-linea-de-comandos/
 
 
