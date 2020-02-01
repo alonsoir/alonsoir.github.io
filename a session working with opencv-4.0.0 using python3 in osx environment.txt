@@ -353,3 +353,302 @@ Done
 /Users/aironman/Downloads/opencv-4.2.0/samples/python
 (cv) aironman@MacBook-Pro-de-Alonso python % 
 ...
+
+
+Another session working with opencv
+
+aironman@MacBook-Pro-de-Alonso ~/D/document-scanner> bash
+
+The default interactive shell is now zsh.
+To update your account to use zsh, please run `chsh -s /bin/zsh`.
+For more details, please visit https://support.apple.com/kb/HT208050.
+bash-3.2$ workon
+bash: workon: command not found
+bash-3.2$ export WORKON_HOME=$HOME/.virtualenvs
+bash-3.2$ export VIRTUALENVWRAPPER_PYTHON=/usr/local/bin/python3
+bash-3.2$ source /usr/local/bin/virtualenvwrapper.sh
+bash-3.2$ workon cv
+(cv) bash-3.2$ python
+Python 3.7.6 (default, Dec 30 2019, 19:38:26) 
+[Clang 11.0.0 (clang-1100.0.33.16)] on darwin
+Type "help", "copyright", "credits" or "license" for more information.
+>>> import cv2
+>>> cv2.__version__
+'4.0.0'
+>>> exit()
+(cv) bash-3.2$ cd document-scanner
+bash: cd: document-scanner: No such file or directory
+(cv) bash-3.2$ pwd
+/Users/aironman/Downloads/document-scanner
+(cv) bash-3.2$ tree
+bash: tree: command not found
+(cv) bash-3.2$ exit
+exit
+aironman@MacBook-Pro-de-Alonso ~/D/document-scanner> cd ..
+aironman@MacBook-Pro-de-Alonso ~/Downloads> workon cv
+fish: Unknown command workon
+aironman@MacBook-Pro-de-Alonso ~/Downloads> bash
+
+The default interactive shell is now zsh.
+To update your account to use zsh, please run `chsh -s /bin/zsh`.
+For more details, please visit https://support.apple.com/kb/HT208050.
+bash-3.2$ workon cv
+bash: workon: command not found
+bash-3.2$ export WORKON_HOME=$HOME/.virtualenvs
+bash-3.2$ export VIRTUALENVWRAPPER_PYTHON=/usr/local/bin/python3
+bash-3.2$ sh /usr/local/bin/virtualenvwrapper.sh
+bash-3.2$ workon cv
+bash: workon: command not found
+bash-3.2$ source /usr/local/bin/virtualenvwrapper.sh 
+bash-3.2$ workon cv
+
+(cv) bash-3.2$ cd document-scanner/
+(cv) bash-3.2$ ls
+images		pyimagesearch	scan.py
+(cv) bash-3.2$ pip install scikit-image imutils
+Collecting scikit-image
+  Downloading https://files.pythonhosted.org/packages/f7/c5/d2625858ffcc0b5a86557200224be9f1f22a71e5234563d218b6153fb635/scikit_image-0.16.2-cp37-cp37m-macosx_10_6_intel.whl (30.3MB)
+     |████████████████████████████████| 30.3MB 584kB/s 
+Requirement already satisfied: imutils in /Users/aironman/.virtualenvs/cv/lib/python3.7/site-packages (0.5.3)
+Collecting matplotlib!=3.0.0,>=2.0.0
+  Downloading https://files.pythonhosted.org/packages/a0/76/68bc3374ffa2d8d3dfd440fe94158fa8aa2628670fa38bdaf186c9af0d94/matplotlib-3.1.2-cp37-cp37m-macosx_10_9_x86_64.whl (13.2MB)
+     |████████████████████████████████| 13.2MB 717kB/s 
+Collecting pillow>=4.3.0
+  Downloading https://files.pythonhosted.org/packages/0c/43/b52847e473ac6cbd10a749b63018b2bb08b55c6e1a1923872361443906de/Pillow-7.0.0-cp37-cp37m-macosx_10_6_intel.whl (3.9MB)
+     |████████████████████████████████| 3.9MB 839kB/s 
+Collecting networkx>=2.0
+  Downloading https://files.pythonhosted.org/packages/41/8f/dd6a8e85946def36e4f2c69c84219af0fa5e832b018c970e92f2ad337e45/networkx-2.4-py3-none-any.whl (1.6MB)
+     |████████████████████████████████| 1.6MB 11.5MB/s 
+Collecting scipy>=0.19.0
+  Downloading https://files.pythonhosted.org/packages/85/7a/ae480be23b768910a9327c33517ced4623ba88dc035f9ce0206657c353a9/scipy-1.4.1-cp37-cp37m-macosx_10_6_intel.whl (28.4MB)
+     |████████████████████████████████| 28.4MB 413kB/s 
+Collecting PyWavelets>=0.4.0
+  Downloading https://files.pythonhosted.org/packages/61/e7/b35d14bf5416e771764dd6e35b522cb2c02de02cdac493e509751b0be18f/PyWavelets-1.1.1-cp37-cp37m-macosx_10_9_x86_64.whl (4.3MB)
+     |████████████████████████████████| 4.3MB 1.9MB/s 
+Collecting imageio>=2.3.0
+  Downloading https://files.pythonhosted.org/packages/1a/de/f7f985018f462ceeffada7f6e609919fbcc934acd9301929cba14bc2c24a/imageio-2.6.1-py3-none-any.whl (3.3MB)
+     |████████████████████████████████| 3.3MB 8.7MB/s 
+Collecting kiwisolver>=1.0.1
+  Downloading https://files.pythonhosted.org/packages/df/93/8bc9b52a8846be2b9572aa0a7c881930939b06e4abe1162da6a0430b794f/kiwisolver-1.1.0-cp37-cp37m-macosx_10_6_intel.macosx_10_9_intel.macosx_10_9_x86_64.macosx_10_10_intel.macosx_10_10_x86_64.whl (113kB)
+     |████████████████████████████████| 122kB 1.9MB/s 
+Collecting python-dateutil>=2.1
+  Downloading https://files.pythonhosted.org/packages/d4/70/d60450c3dd48ef87586924207ae8907090de0b306af2bce5d134d78615cb/python_dateutil-2.8.1-py2.py3-none-any.whl (227kB)
+     |████████████████████████████████| 235kB 7.1MB/s 
+Requirement already satisfied: numpy>=1.11 in /Users/aironman/.virtualenvs/cv/lib/python3.7/site-packages (from matplotlib!=3.0.0,>=2.0.0->scikit-image) (1.18.1)
+Collecting cycler>=0.10
+  Downloading https://files.pythonhosted.org/packages/f7/d2/e07d3ebb2bd7af696440ce7e754c59dd546ffe1bbe732c8ab68b9c834e61/cycler-0.10.0-py2.py3-none-any.whl
+Collecting pyparsing!=2.0.4,!=2.1.2,!=2.1.6,>=2.0.1
+  Downloading https://files.pythonhosted.org/packages/5d/bc/1e58593167fade7b544bfe9502a26dc860940a79ab306e651e7f13be68c2/pyparsing-2.4.6-py2.py3-none-any.whl (67kB)
+     |████████████████████████████████| 71kB 13.6MB/s 
+Collecting decorator>=4.3.0
+  Using cached https://files.pythonhosted.org/packages/8f/b7/f329cfdc75f3d28d12c65980e4469e2fa373f1953f5df6e370e84ea2e875/decorator-4.4.1-py2.py3-none-any.whl
+Requirement already satisfied: setuptools in /Users/aironman/.virtualenvs/cv/lib/python3.7/site-packages (from kiwisolver>=1.0.1->matplotlib!=3.0.0,>=2.0.0->scikit-image) (44.0.0)
+Collecting six>=1.5
+  Using cached https://files.pythonhosted.org/packages/65/26/32b8464df2a97e6dd1b656ed26b2c194606c16fe163c695a992b36c11cdf/six-1.13.0-py2.py3-none-any.whl
+Installing collected packages: kiwisolver, six, python-dateutil, cycler, pyparsing, matplotlib, pillow, decorator, networkx, scipy, PyWavelets, imageio, scikit-image
+Successfully installed PyWavelets-1.1.1 cycler-0.10.0 decorator-4.4.1 imageio-2.6.1 kiwisolver-1.1.0 matplotlib-3.1.2 networkx-2.4 pillow-7.0.0 pyparsing-2.4.6 python-dateutil-2.8.1 scikit-image-0.16.2 scipy-1.4.1 six-1.13.0
+(cv) bash-3.2$ pip install tree
+Collecting tree
+  Downloading https://files.pythonhosted.org/packages/29/3f/63cbed2909786f0e5ac30a4ae5791ad597c6b5fec7167e161c55bba511ce/Tree-0.2.4.tar.gz
+Requirement already satisfied: Pillow in /Users/aironman/.virtualenvs/cv/lib/python3.7/site-packages (from tree) (7.0.0)
+Collecting svgwrite
+  Downloading https://files.pythonhosted.org/packages/4f/2e/f36cfec1da6162055b884e6366074cff18475a9538559ceae0c0bc58e186/svgwrite-1.3.1-py2.py3-none-any.whl (67kB)
+     |████████████████████████████████| 71kB 2.9MB/s 
+Requirement already satisfied: setuptools in /Users/aironman/.virtualenvs/cv/lib/python3.7/site-packages (from tree) (44.0.0)
+Collecting click
+  Using cached https://files.pythonhosted.org/packages/fa/37/45185cb5abbc30d7257104c434fe0b07e5a195a6847506c074527aa599ec/Click-7.0-py2.py3-none-any.whl
+Requirement already satisfied: pyparsing>=2.0.1 in /Users/aironman/.virtualenvs/cv/lib/python3.7/site-packages (from svgwrite->tree) (2.4.6)
+Building wheels for collected packages: tree
+  Building wheel for tree (setup.py) ... done
+  Created wheel for tree: filename=Tree-0.2.4-cp37-none-any.whl size=7879 sha256=6be33694eb4a910eaa8d2e360842698524ad9b21f4d92c23301ed00eb0135f60
+  Stored in directory: /Users/aironman/Library/Caches/pip/wheels/c7/08/aa/42261411808c634cd1d0e9fe6cde5e78bf47c2c8028f3930af
+Successfully built tree
+Installing collected packages: svgwrite, click, tree
+Successfully installed click-7.0 svgwrite-1.3.1 tree-0.2.4
+(cv) bash-3.2$ tree
+bash: tree: command not found
+(cv) bash-3.2$ python scan.py --image images/receipt.jpg
+STEP 1: Edge Detection
+
+ STEP 2: Find contours of paper
+STEP 3: Apply perspective transform
+(cv) bash-3.2$ 
+(cv) bash-3.2$ python scan.py --image images/
+page.jpg     receipt.jpg  
+(cv) bash-3.2$ python scan.py --image images/page.jpg 
+STEP 1: Edge Detection
+STEP 2: Find contours of paper
+STEP 3: Apply perspective transform
+(cv) bash-3.2$ pwd
+/Users/aironman/Downloads/document-scanner
+(cv) bash-3.2$ pwd
+/Users/aironman/Downloads/document-scanner
+(cv) bash-3.2$ cd ..
+(cv) bash-3.2$ cd 
+.DS_Store                                                                        TDD - Yes we can.key
+.localized                                                                       TDD - Yes we can.pdf
+81979757_525890651352521_5153718450325028864_o.jpg                               TelegramMac.dmg
+Alonso Roman 2015002_010215.pdf                                                  UTM003_1.6.0_20191002_prod.dmg
+Alonso Roman _010115.pdf                                                         Unigine_Heaven-4.0.dmg
+Aloso Roman 2014004_011214.pdf                                                   Unigine_Heaven_Benchmark_4.0_20191104_1448.html
+Archivo comprimido/                                                              [limetorrents.info]SEAL.Team.S03E02.HDTV.x264-KILLERS[ettv].torrent
+BE Skill Quiz.xlsx                                                               _hd_115314.jpg
+Babylon 5/                                                                       ajax.html
+BridgePattern/                                                                   cita-2.pdf
+CV-MrAlonsoIsidoroRoman-updated-Oct-7-2019-EN.pdf                                cita-3.pdf
+Captura de pantalla 2020-01-07 a las 20.39.13.png                                cita-4.pdf
+Certif Ing y Retenc Netscout 2015 Isidoro.pdf                                    cita-5.pdf
+CinebenchR20.dmg                                                                 cita.pdf
+CorreosImpresoAdmision.pdf                                                       confluent-5.3.1/
+Docker.dmg                                                                       document-scanner/
+Documento.pdf                                                                    eclipse-inst-mac64.dmg
+FA7C0CA7BAE35C1CFBDE690EE076DE08.pdf                                             esercizio BE.pdf
+FILENET_SRS003626544000_191125080008_28809_8588_W4_OL.PDF                        facturas emitidas/
+Geekbench 5.app/                                                                 facturas emitidas-2/
+Install Spotify.app/                                                             files-WhatsApp.dmg
+JUNE 2015 INVOICE ALONSO ROMAN.pdf                                               ideaIC-2019.2.2.dmg
+KeePassX-2.0.3.dmg                                                               justificante.pdf
+Liquidacion Alonso Isidoro Roman-firmado.pdf                                     mi-microservices-architecture-design-whitepaper-inc0336100lw-201602-a4-es.pdf
+Liquidacion Alonso Isidoro Roman.pdf                                             myActualKee-MidSept2019.kdbx
+MISTRAL JosÇ Almazan and Maria del Carmen Gallego Spain/                         opencv-4.0.0-0.jar
+MacGameStore.dmg                                                                 opencv-4.2.0/
+Modelo de facturaSept2014.xls                                                    opencv-tutorial/
+OnyX-2.dmg                                                                       org.jboss.forge.plugin.idea/
+OnyX.dmg                                                                         output.txt
+PinClipart.com_iron-man-logo-clipart_615853.png                                  pizza_el-horno-de-crisol.jpeg
+Python Crash Course - A Hands-On, Project-Based Introduction to Programming.pdf  pycharm-community-2019.2.4.dmg
+Roman Alonso's details up to Sept 30 2015_Tektronix.pdf                          recordatorioCita.pdf
+SEAL.Team.S03E02.HDTV.x264-KILLERS[ettv]/                                        russia-mission-on-mccain-funding-req.doc
+SEAL.Team.S03E04.HDTV.x264-KILLERS[rarbg]/                                       steam.dmg
+SEAL.Team.S03E05.WEB.h264-TBS[rarbg]/                                            ta.dms
+Skype-8.55.0.141.dmg                                                             temperatura_co2.jpg
+StarCraft-II-Setup.app/                                                          test rumbo.pdf
+Stremio+4.4.77.dmg                                                               tutorial-drools/
+Sublime Text Build 3211.dmg                                                      w_java33.pdf
+TDD - Yes we can-2.key                                                           
+(cv) bash-3.2$ cd opencv-tutorial/
+(cv) bash-3.2$ ls
+jp.png			opencv_tutorial_01.py	opencv_tutorial_02.py	tetris_blocks.png
+(cv) bash-3.2$ cat opencv_tutorial_01.py 
+# USAGE
+# python opencv_tutorial_01.py
+
+# import the necessary packages
+import imutils
+import cv2
+
+# load the input image and show its dimensions, keeping in mind that
+# images are represented as a multi-dimensional NumPy array with
+# shape no. rows (height) x no. columns (width) x no. channels (depth)
+image = cv2.imread("jp.png")
+(h, w, d) = image.shape
+print("width={}, height={}, depth={}".format(w, h, d))
+
+# display the image to our screen -- we will need to click the window
+# open by OpenCV and press a key on our keyboard to continue execution
+cv2.imshow("Image", image)
+cv2.waitKey(0)
+
+# access the RGB pixel located at x=50, y=100, keepind in mind that
+# OpenCV stores images in BGR order rather than RGB
+(B, G, R) = image[100, 50]
+print("R={}, G={}, B={}".format(R, G, B))
+
+# extract a 100x100 pixel square ROI (Region of Interest) from the
+# input image starting at x=320,y=60 at ending at x=420,y=160
+roi = image[60:160, 320:420]
+cv2.imshow("ROI", roi)
+cv2.waitKey(0)
+
+# resize the image to 200x200px, ignoring aspect ratio
+resized = cv2.resize(image, (200, 200))
+cv2.imshow("Fixed Resizing", resized)
+cv2.waitKey(0)
+
+# fixed resizing and distort aspect ratio so let's resize the width
+# to be 300px but compute the new height based on the aspect ratio
+r = 300.0 / w
+dim = (300, int(h * r))
+resized = cv2.resize(image, dim)
+cv2.imshow("Aspect Ratio Resize", resized)
+cv2.waitKey(0)
+
+# manually computing the aspect ratio can be a pain so let's use the
+# imutils library instead
+resized = imutils.resize(image, width=300)
+cv2.imshow("Imutils Resize", resized)
+cv2.waitKey(0)
+
+# let's rotate an image 45 degrees clockwise using OpenCV by first
+# computing the image center, then constructing the rotation matrix,
+# and then finally applying the affine warp
+center = (w // 2, h // 2)
+M = cv2.getRotationMatrix2D(center, -45, 1.0)
+rotated = cv2.warpAffine(image, M, (w, h))
+cv2.imshow("OpenCV Rotation", rotated)
+cv2.waitKey(0)
+
+# rotation can also be easily accomplished via imutils with less code
+rotated = imutils.rotate(image, -45)
+cv2.imshow("Imutils Rotation", rotated)
+cv2.waitKey(0)
+
+# OpenCV doesn't "care" if our rotated image is clipped after rotation
+# so we can instead use another imutils convenience function to help
+# us out
+rotated = imutils.rotate_bound(image, 45)
+cv2.imshow("Imutils Bound Rotation", rotated)
+cv2.waitKey(0)
+
+# apply a Gaussian blur with a 11x11 kernel to the image to smooth it,
+# useful when reducing high frequency noise
+blurred = cv2.GaussianBlur(image, (11, 11), 0)
+cv2.imshow("Blurred", blurred)
+cv2.waitKey(0)
+
+# draw a 2px thick red rectangle surrounding the face
+output = image.copy()
+cv2.rectangle(output, (320, 60), (420, 160), (0, 0, 255), 2)
+cv2.imshow("Rectangle", output)
+cv2.waitKey(0)
+
+# draw a blue 20px (filled in) circle on the image centered at
+# x=300,y=150
+output = image.copy()
+cv2.circle(output, (300, 150), 20, (255, 0, 0), -1)
+cv2.imshow("Circle", output)
+cv2.waitKey(0)
+
+# draw a 5px thick red line from x=60,y=20 to x=400,y=200
+output = image.copy()
+cv2.line(output, (60, 20), (400, 200), (0, 0, 255), 5)
+cv2.imshow("Line", output)
+cv2.waitKey(0)
+
+# draw green text on the image
+output = image.copy()
+cv2.putText(output, "OpenCV + Jurassic Park!!!", (10, 25), 
+	cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 0), 2)
+cv2.imshow("Text", output)
+cv2.waitKey(0)(cv) bash-3.2$ 
+(cv) bash-3.2$ python opencv_tutorial_01.py 
+width=600, height=322, depth=3
+R=41, G=49, B=37
+(cv) bash-3.2$ python opencv_tutorial_02.py 
+usage: opencv_tutorial_02.py [-h] -i IMAGE
+opencv_tutorial_02.py: error: the following arguments are required: -i/--image
+(cv) bash-3.2$ python opencv_tutorial_02.py -i 
+jp.png                 opencv_tutorial_01.py  opencv_tutorial_02.py  tetris_blocks.png      
+(cv) bash-3.2$ python opencv_tutorial_02.py -i jp.png 
+(cv) bash-3.2$ python opencv_tutorial_02.py -i tetris_blocks.png 
+(cv) bash-3.2$ pwd
+/Users/aironman/Downloads/opencv-tutorial
+(cv) bash-3.2$ ls
+jp.png			opencv_tutorial_01.py	opencv_tutorial_02.py	tetris_blocks.png
+(cv) bash-3.2$ pwd
+/Users/aironman/Downloads/opencv-tutorial
+(cv) bash-3.2$ pwd
+/Users/aironman/Downloads/opencv-tutorial
+(cv) bash-3.2$ 
+...
+
