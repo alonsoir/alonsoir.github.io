@@ -90,4 +90,8 @@
 
 	https://www.atareao.es/software/utilidades/httpie-un-cliente-http-para-la-linea-de-comandos/
 
+	Create a cool cv.
+	
+		https://resumedone.io/?origin=fb&fbclid=IwAR1XZr0DQCzyhPWZfVk6ZNOMPJGGLBU6Zr19A1JCxo5--CWAO5fxRuQVlGc
+
 
