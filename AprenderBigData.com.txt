@@ -1,0 +1,101 @@
+AprenderBigData.com
+Recopilación de preguntas BIG DATA para entrevistas técnicas
+ ¡Sácale todo el partido!
+La lista a continuación presenta las preguntas más frecuentes en entrevistas técnicas para puestos relacionados con el Big Data, en concreto para ingenieros de datos.
+Es fundamental que se tenga claridad en los conceptos básicos. Para ello es muy aconsejable responder previamente y pensar en todas estas preguntas, con la finalidad de estar más preparado.
+Esta lista también es útil como referencia para la realización de entrevistas técnicas y búsqueda de estos perfiles, así como para extraer ideas en función de las necesidades.
+Para ​contactar​ y más información: ​aprenderbigdata.com
+    1
+  
+aprenderbigdata.com​ - Recopilación de preguntas BIG DATA para entrevistas técnicas - v1.0
+ Hadoop 3 Apache Spark 3 Apache Kafka 4 SQL 4 NoSQL 4 ETL 5 Cloud 5 Desarrollo 5
+  2
+  
+aprenderbigdata.com​ - Recopilación de preguntas BIG DATA para entrevistas técnicas - v1.0
+ Hadoop
+- ¿Hay algún beneficio en aprender ​MapReduce​?
+- ¿Cómo se comunican los reducers en ​MapReduce​?
+- ¿Qué componentes tiene ​Hadoop?​ ¿Qué es ​HDFS​ y ​Yarn?​
+- ¿Qué diferencias existen entre ​HDFS​ y una base de datos relacional?
+- ¿Qué diferencias existen entre ​HDFS​ y N​ AS​?
+- ¿Qué es un ​namenode​? ¿Qué es un n​ amenode​ pasivo?
+- ¿Qué es un bloque en ​HDFS​?
+- ¿Qué problemática existe en ​HDFS​ con los ficheros pequeños?
+- ¿Cómo es tolerante a fallos ​HDFS​?
+- ¿Qué ocurre cuando dos clientes intentan acceder al mismo fichero en ​HDFS​?
+- ¿Qué es ​Parquet?​
+- ¿Conoces algún mecanismo para añadir datos de forma concurrente a un fichero en
+HDFS​?
+- ¿Qué es ​Cloudera​? ¿Cuáles de sus componentes o tecnologías conoces?
+Apache Spark
+- Compara ​MapReduce​ y S​ park
+- ¿Qué es ​Apache Spark​?
+- Qué son las transformaciones y las acciones en ​Spark
+- ¿Qué es un ​RDD​?
+- ¿Qué es una partición? ¿Qué tipos existen?
+- ¿Qué operaciones soportan los ​RDDs​?
+- ¿Cuáles son las funciones del ​Spark Core​?
+- ¿Qué es el linaje de los ​RDD​?
+- ¿Qué es el ​Spark Driver​?
+- ¿Qué es ​Hive​ en ​Spark​?
+- ¿Qué es ​Spark Streaming?​
+- ¿Qué es ​Spark SQL?​
+- ¿Qué sistemas de ficheros soporta ​Spark?​
+- ¿Qué es un ejecutor?
+- ¿Que tipos de cluster ​managers​ soporta ​Spark​?
+  3
+  
+aprenderbigdata.com​ - Recopilación de preguntas BIG DATA para entrevistas técnicas - v1.0
+ - ¿Es necesario instalar ​Spark​ en todos los nodos cuando se ejecuta en un cluster de Yarn?​
+- ¿Qué es el ​shuffling?​
+- Escribe un código para crear un ​RDD​ en ​Spark
+Apache Kafka
+- ¿Qué diferencias existen entre ​Apache Kafka​ y ​Apache Flume​?
+- ¿Qué componentes tiene ​Kafka​?
+- ¿Qué es ​Zookeeper​ y qué aporta a ​Kafka?​
+- ¿Qué es una p​artitioning key​ (clave de particionado)?
+- ¿Qué es un ​consumer group​ (grupo de consumidores)?
+SQL
+- ¿Qué es una ​primary key ​(clave primaria)? ¿Qué es una ​foreign key ​(clave foránea)?
+- Diferencia entre ​primary key​ y ​unique key ​(clave única)
+- ¿En qué consiste la normalización en una base de datos?
+- ¿Qué es una vista en ​SQL​?
+- ¿Qué es un índice?
+- ¿En qué consiste un ​JOIN​? ¿Qué tipos hay?
+- ¿Qué es un ​trigger​?
+- ¿Qué es un ​constraint?​
+- ¿En qué consisten las propiedades ​ACID​ en una base de datos?
+- Escribe una consulta ​SQL​ para encontrar los empleados que empiecen con ‘E’
+- Escribe una consulta ​SQL​ para encontrar el tercer salario máximo de un empleado
+NoSQL
+- ¿Qué es una base de datos ​NoSQL​? ¿Cuáles son las diferencias con un ​RDBMS​?
+- ¿Qué tipos de bases de datos ​NoSQL​ conoces? ¿Cuáles son sus diferencias?
+  4
+  
+aprenderbigdata.com​ - Recopilación de preguntas BIG DATA para entrevistas técnicas - v1.0
+ - ¿En qué consiste el teorema ​CAP?​ ¿Cómo se aplica a las bases de datos ​NoSQL​?
+- ¿Qué es la consistencia eventual?
+- ¿Cómo se asocian las bases de datos ​NoSQL​ al big data?
+- ¿Cuál es la diferencia entre replicación y ​sharding​?
+ETL
+- ¿Qué es un proceso ​ETL​? ¿Cuáles son sus fases?
+- ¿Tienes experiencia con modelado de datos?
+- ¿Qué herramientas ​ETL​ has usado y con cuál te sientes más cómodo?
+- ¿Cómo realizarías los tests de una ​ETL​?
+- ¿Cuál es el significado de ​OLAP​ y su diferencia con ​ETL?​
+- ¿En qué consiste el purgado de datos?
+- Compara ​ETL​ y ​ELT
+- ¿Qué es un ​Data Warehouse​?
+- ¿En qué consiste una carga incremental?
+- ¿Qué es un ​snapshot​?
+Cloud
+- ¿Qué beneficios aporta el ​cloud​?
+- ¿Qué diferencias existen entre ​PaaS​, ​IaaS​ y ​SaaS​?
+- ¿Qué consideraciones habría que evaluar para realizar una migración a ​cloud​?
+- ¿Qué es una ​cloud​ híbrida?
+Desarrollo
+- ¿Qué es la inmutabilidad en ​Scala?​
+- ¿Qué es ​Git​? ¿Qué ventajas tiene?
+- ¿En qué consiste la programación funcional? ¿Cuál es su relación con el ​big data​?
+  5
+  

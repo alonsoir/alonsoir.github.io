@@ -40,6 +40,8 @@
 
 		https://learning.oreilly.com/live-training/courses/aws-certified-sysops-administrator-associate-crash-course/0636920268017/#what-youll-learn
 
+		https://aws.amazon.com/es/whitepapers/?whitepapers-main.sort-by=item.additionalFields.sortDate&whitepapers-main.sort-order=desc
+
 	Google Cloud Platform
 
 		https://learning.oreilly.com/live-training/courses/introduction-to-google-cloud-platform/0636920268963/#what-youll-learn
@@ -93,5 +95,7 @@
 	Create a cool cv.
 	
 		https://resumedone.io/?origin=fb&fbclid=IwAR1XZr0DQCzyhPWZfVk6ZNOMPJGGLBU6Zr19A1JCxo5--CWAO5fxRuQVlGc
+
+	https://www.crickettek.com/?m=1
 
 
