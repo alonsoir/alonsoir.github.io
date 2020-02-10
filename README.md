@@ -2,6 +2,10 @@
 
 # Things to study
 
+	Apúntate a esta escuela del CERN antes del 27 de febrero
+
+		https://indico.cern.ch/event/861566/registrations/54683/
+
 	https://dev.to/notifications
 
 	more java...
