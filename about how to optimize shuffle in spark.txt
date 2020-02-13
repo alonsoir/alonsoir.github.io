@@ -1,0 +1,12 @@
+https://www.google.com/search?client=safari&rls=en&q=how+can+i+minimize+shuffle+operations+spark&ie=UTF-8&oe=UTF-8
+
+https://community.cloudera.com/t5/Support-Questions/How-to-reduce-Spark-shuffling-caused-by-join-with-data/td-p/205787
+
+https://stackoverflow.com/questions/30797724/how-to-optimize-shuffle-spill-in-apache-spark-application
+
+http://hydronitrogen.com/apache-spark-shuffles-explained-in-depth.html
+
+https://dzone.com/articles/apache-spark-performance-tuning-straggler-tasks
+
+https://www.coursera.org/lecture/scala-spark-big-data/optimizing-with-partitioners-LQT67
+
