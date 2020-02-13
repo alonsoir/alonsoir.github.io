@@ -2,6 +2,12 @@
 
 # Things to study
 
+	Apache Spark
+
+		https://learning.oreilly.com/live-training/courses/stream-processing-with-apache-spark/0636920360490/
+
+		https://learning.oreilly.com/videos/apache-spark-with/9781787129849/9781787129849-video3_3?autoplay=false
+
 	Apúntate a esta escuela del CERN antes del 27 de febrero
 
 		https://indico.cern.ch/event/861566/registrations/54683/
@@ -101,5 +107,11 @@
 		https://resumedone.io/?origin=fb&fbclid=IwAR1XZr0DQCzyhPWZfVk6ZNOMPJGGLBU6Zr19A1JCxo5--CWAO5fxRuQVlGc
 
 	https://www.crickettek.com/?m=1
+
+	https://scispark.jpl.nasa.gov/tutorials.html
+
+	https://es.slideshare.net/SparkSummit/spark-at-nasajplchris-mattmann
+
+
 
 
