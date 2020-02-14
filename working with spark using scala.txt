@@ -1,6 +1,16 @@
 # links
 	
 	https://github.com/PacktPublishing?utf8=✓&q=&type=&language=java
+
+	https://learning.oreilly.com/live-training/courses/stream-processing-with-apache-spark/0636920360490/
+
+	https://training.databricks.com/visualapi.pdf => pure gold!
+
+	https://spark.apache.org/docs/latest/sql-programming-guide.html
+
+	https://spark.apache.org/docs/latest/rdd-programming-guide.html
+
+	https://es.wikipedia.org/wiki/Evaluación_perezosa
 	
 Install apache spark. 
 	
@@ -84,6 +94,47 @@ RatingsCounter.scala
 	  }
 	}
 
+#id, name, age, num-friends
+1,Alonso,42,15
+2,Jose, 38, 150
+3,Angel,42,2
+4,Maria,38,1
+5,Antonio, 39,0
+...
 
+def parseLine(line:String) = {
+	val fields = line.split(",")
+	val age = fields(2).toInt
+	val num-friends = fields(3).toInt
+	(age,num-friends)
+}
+
+val lines = sc.textFile("fakeFriends.csv")
+
+val rdd = lines.map(parseLine)
+
+42,15
+38,150
+42,2
+38,1
+39,0
+...
+
+val totalByAges = rdd.mapValues(x=>(x,1)).reduceByKey((x,y) => (x._1 + y._1,x._2 +y._2))
+	
+#rdd.mapValues(x=>(x,1))
+(42,(15,1))
+(38,(150,1))
+(42,(2,1))
+(38,(1,1))
+(39,(0,1))
+
+#=>reduceByKey applies to two values. (15,1),(150,1),(2,1),(1,1),(0,1) donde x._1 es el 15 , y._1 es el 2, x._2 es 1 y y._2 es 1 en las tuplas que tienen el mismo key
+# en este caso, 42. (42,(15,1)) (42,(2,1))
+
+#reduceByKey((x,y) => (x._1 + y._1,x._2 +y._2)) 
+(42,(17,2))
+(38,(151,2))
+(39,(0,1)) # => se tiene de amigo a si mismo
 
 
