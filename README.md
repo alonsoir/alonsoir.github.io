@@ -80,6 +80,8 @@
 
 	more about Scala...
 
+		https://docs.scala-lang.org/es/tour/implicit-parameters.html
+
 	CNN training models...
 	
 		https://www.pyimagesearch.com/2018/04/16/keras-and-convolutional-neural-networks-cnns/
