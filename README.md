@@ -2,6 +2,26 @@
 
 # Things to study
 
+	Istio
+
+		https://www.linkedin.com/pulse/why-you-might-need-istio-rick-hightower/
+
+		https://www.linkedin.com/pulse/service-mesh-compared-aop-servlet-filters-rick-hightower/
+
+		https://www.google.com/search?client=safari&rls=en&q=Istio&ie=UTF-8&oe=UTF-8
+
+		https://www.paradigmadigital.com/dev/jugando-con-istio-the-next-big-thing-en-microservicios-1-2/
+
+		https://istio.io
+
+		https://openwebinars.net/blog/que-es-istio/
+
+		https://github.com/istio/istio
+
+	SOLID principles. Esto es algo que siempre debes estar refrescando. Sería ideal encontrar un plugin que haga un análisis sobre como de SOLID es el código que has escrito.
+
+		https://howtodoinjava.com/best-practices/5-class-design-principles-solid-in-java/
+
 	Apache Spark
 
 		https://learning.oreilly.com/live-training/courses/stream-processing-with-apache-spark/0636920360490/
@@ -111,6 +131,8 @@
 	https://scispark.jpl.nasa.gov/tutorials.html
 
 	https://es.slideshare.net/SparkSummit/spark-at-nasajplchris-mattmann
+
+	https://www.esaspaceshop.com/eu/
 
 
 

@@ -11,7 +11,7 @@
 	https://spark.apache.org/docs/latest/rdd-programming-guide.html
 
 	https://es.wikipedia.org/wiki/Evaluación_perezosa
-	
+
 Install apache spark. 
 	
 	brew install apache-spark
@@ -138,3 +138,183 @@ val totalByAges = rdd.mapValues(x=>(x,1)).reduceByKey((x,y) => (x._1 + y._1,x._2
 (39,(0,1)) # => se tiene de amigo a si mismo
 
 
+import org.apache.spark._
+import org.apache.spark.SparkContext._
+import org.apache.log4j._
+
+/** Compute the average number of friends by age in a social network. */
+object FriendsByAge {
+  
+  /** A function that splits a line of input into (age, numFriends) tuples. */
+  def parseLine(line: String) = {
+      // Split by commas
+      val fields = line.split(",")
+      // Extract the age and numFriends fields, and convert to integers
+      val age = fields(2).toInt
+      val numFriends = fields(3).toInt
+      // Create a tuple that is our result.
+      (age, numFriends)
+  }
+  
+  /** Our main function where the action happens */
+  def main(args: Array[String]) {
+   
+    // Set the log level to only print errors
+    Logger.getLogger("org").setLevel(Level.ERROR)
+        
+    // Create a SparkContext using every core of the local machine
+    val sc = new SparkContext("local[*]", "FriendsByAge")
+  
+    // Load each line of the source data into an RDD
+    val lines = sc.textFile("/Users/aironman/Downloads/SparkScala/fakefriends.csv")
+    
+    // Use our parseLines function to convert to (age, numFriends) tuples
+    val rdd = lines.map(parseLine)
+    
+    // Lots going on here...
+    // We are starting with an RDD of form (age, numFriends) where age is the KEY and numFriends is the VALUE
+    // We use mapValues to convert each numFriends value to a tuple of (numFriends, 1)
+    // Then we use reduceByKey to sum up the total numFriends and total instances for each age, by
+    // adding together all the numFriends values and 1's respectively.
+    val totalsByAge = rdd.mapValues(x => (x, 1)).reduceByKey( (x,y) => (x._1 + y._1, x._2 + y._2))
+    
+    /*
+	scala> rdd.mapValues(x=>(x,1)).takeSample(false,100).foreach(println)
+	(45,(455,1))
+	(38,(380,1))
+	(56,(371,1))
+	(65,(208,1))
+	(18,(418,1))
+	(58,(348,1))
+	(28,(311,1))
+	(40,(220,1))
+	(44,(353,1))
+	(59,(284,1))
+    ...
+    (55,(284,1))
+	(66,(383,1))
+	(39,(106,1))
+	(40,(254,1))
+	(38,(203,1))
+	(68,(293,1))
+	(29,(173,1))
+	(29,(128,1))
+	(19,(272,1))
+	(60,(246,1))
+	(67,(153,1))
+	(45,(340,1))
+	(59,(284,1))
+	(54,(72,1))
+	(58,(174,1))
+	(45,(147,1))
+	(30,(184,1))
+	(57,(229,1))
+	(38,(2,1))
+	(24,(492,1))
+	(52,(77,1))
+	(33,(294,1))
+	(67,(149,1))
+	(56,(313,1))
+	(31,(340,1))
+	(43,(428,1))
+	(31,(172,1))
+	(28,(34,1))
+	(18,(326,1))
+	(28,(304,1))
+	(18,(24,1))
+	...
+
+	ala> rdd.mapValues(x=>(x,1)).reduceByKey((x,y) => (x._1 + y._1,x._2 + y._2)).takeSample(true,10).foreach(println)
+	(60,(1419,7))
+	(48,(2814,10))
+	(40,(4264,17))
+	(58,(1282,11))
+	(52,(3747,11))
+	(47,(2099,9))
+	(34,(1473,6))
+	(56,(1840,6))
+	(46,(2908,13))
+	(52,(3747,11))
+	...
+
+	Esto significa lo siguiente, los usuarios que tienen 60 años, son 7 y entre todos suman 1419 amigos, por ejemplo.
+    */
+
+    // So now we have tuples of (age, (totalFriends, totalInstances))
+    // To compute the average we divide totalFriends / totalInstances for each age.
+    val averagesByAge = totalsByAge.mapValues(x => x._1 / x._2)
+    
+    // Collect the results from the RDD (This kicks off computing the DAG and actually executes the job)
+    val results = averagesByAge.collect()
+    
+    // Sort and print the final results.
+    results.sorted.foreach(println)
+  }
+    
+}
+
+fakeFriends.csv
+
+0,Will,33,385
+1,Jean-Luc,26,2
+2,Hugh,55,221
+3,Deanna,40,465
+4,Quark,68,21
+5,Weyoun,59,318
+6,Gowron,37,220
+7,Will,54,307
+...
+
+
+scala> results.sorted.foreach(println)
+(18,343)
+(19,213)
+(20,165)
+(21,350)
+(22,206)
+(23,246)
+(24,233)
+(25,197)
+(26,242)
+(27,228)
+(28,209)
+(29,215)
+(30,235)
+(31,267)
+(32,207)
+(33,325)
+(34,245)
+(35,211)
+(36,246)
+(37,249)
+(38,193)
+(39,169)
+(40,250)
+(41,268)
+(42,303)
+(43,230)
+(44,282)
+(45,309)
+(46,223)
+(47,233)
+(48,281)
+(49,184)
+(50,254)
+(51,302)
+(52,340)
+(53,222)
+(54,278)
+(55,295)
+(56,306)
+(57,258)
+(58,116)
+(59,220)
+(60,202)
+(61,256)
+(62,220)
+(63,384)
+(64,281)
+(65,298)
+(66,276)
+(67,214)
+(68,269)
