@@ -28,6 +28,14 @@
 
 		https://learning.oreilly.com/videos/apache-spark-with/9781787129849/9781787129849-video3_3?autoplay=false
 
+		https://www.google.com/search?client=safari&rls=en&q=avoid+collect+spark&ie=UTF-8&oe=UTF-8
+
+		https://luminousmen.com/post/spark-tips-dont-collect-data-on-driver
+
+		https://es.slideshare.net/cloudera/top-5-mistakes-to-avoid-when-writing-apache-spark-applications
+
+		https://spark.apache.org/docs/latest/tuning.html
+
 	Apúntate a esta escuela del CERN antes del 27 de febrero
 
 		https://indico.cern.ch/event/861566/registrations/54683/

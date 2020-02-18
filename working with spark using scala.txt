@@ -243,6 +243,10 @@ object FriendsByAge {
     // So now we have tuples of (age, (totalFriends, totalInstances))
     // To compute the average we divide totalFriends / totalInstances for each age.
     val averagesByAge = totalsByAge.mapValues(x => x._1 / x._2)
+
+    /*
+	Por lo que, tenemos que los usuarios de 60 años, la media por edad es 1419/7
+    */
     
     // Collect the results from the RDD (This kicks off computing the DAG and actually executes the job)
     val results = averagesByAge.collect()
@@ -318,3 +322,147 @@ scala> results.sorted.foreach(println)
 (66,276)
 (67,214)
 (68,269)
+
+
+Let say that i have this (python) code:
+
+	df_source = spark_session.read.format('jdbc').....
+	df_reference = sql_context.read.parquet('/path/to/reference.parquet')
+
+	df_source_hashed = df_source.withColumn('hashkey', md5(concat_ws('', *df_source.columns))) \
+	            .cache()
+
+	df_inserts = df_source_hashed.join(df_reference, pk_list, how='left_anti') \
+	                    .select(lit('Insert').alias('_action'), *df_source_hashed) \
+	                    .dropDuplicates() \
+	                    .cache()
+	inserts_count = df_inserts.count()
+
+	df_updates = df_source_hashed.alias('a').join(df_reference.alias('b'), pk_list, how="inner") \
+	                        .select(lit('Update').alias('_action'), *df_source_hashed) \
+	                        .where(col('a.hashkey') != col('b.hashkey')) \
+	                        .dropDuplicates() \
+	                        .cache()
+	updates_count = df_updates.count()
+
+	df_output = df_inserts.union(df_updates)
+
+	df_output.repartition(1).write.format('parquet').mode('overwrite').save('/path/to/output.parquet')
+
+¿How can i improve performance?
+
+	1. Avoid unnecesary counts, if you can.
+	2. Do
+
+		df_output = df_inserts.union(df_updates).cache()
+
+	then if you have to, do counts
+	3. the repartition(1) should be replaced by coalesce(1). The former will shuffle all data, while the latter will read in the existing partitions and not shuffle them again.
+	3. Repartitioning to a single partition is discouraged, unless you can guarantee the data fit into one worker's memory.
+	4. You can compute Insert and Update in one go, so that you don't have to join with df_reference twice.
+
+		df_actions = df_source_hashed.alias('a').join(df_reference.alias('b'), pk_list, how="left") \
+		                             .withColumn('_action', when(col('b.hashkey').isNull, 'Insert').otherwise(col('a.hashkey') != col('b.hashkey'), 'Update')) \
+		                             .select(col('_action'), *df_source_hashed) \
+		                             .dropDuplicates() \
+		                             .cache()
+
+		Since df_actions is cached, you can count inserts and updates quickly with only that one join in df_actions:
+
+			inserts_count = df_actions.where(col('_action') === 'Insert').count()
+			updates_count = df_actions.where(col('_action') === 'Update').count()
+		
+		And you can get rid of the union:
+			
+			df_output = df_actions.where(col('_action').isNotNull)
+		
+		If you have to write that output to parquet anyway, then you can get the count quickly from the parquet file if it is partitioned by the _action column 
+		(Spark then only looks into parquet's metadata to get the count, it does not read any row):
+			
+			df_output.coalesce(1).write.partitionBy('_action').format('parquet').mode('overwrite').save('/path/to/output.parquet')
+			df_output = sql_context.read.parquet('/path/to/output.parquet')
+			inserts_count = df_output.where(col('_action') === 'Insert').count()
+			updates_count = df_output.where(col('_action') === 'Update').count()
+
+
+Lets say i have a file (1800.csv) like this:
+
+ITE00100554,18000101,TMAX,-75,,,E,
+ITE00100554,18000101,TMIN,-148,,,E,
+GM000010962,18000101,PRCP,0,,,E,
+EZE00100082,18000101,TMAX,-86,,,E,
+EZE00100082,18000101,TMIN,-135,,,E,
+ITE00100554,18000102,TMAX,-60,,I,E,
+ITE00100554,18000102,TMIN,-125,,,E,
+...
+
+def parseLine(line:String) ={
+	val fields = line.split(",")
+	val stationId = fields(0)
+	val entryType = fields(2)
+	val temperature = fields(3).toFloat * 0.1f *(9.0f / 5.0f) + 32f
+	(stationId,entryType,temperature)
+}
+
+val lines = sc.textFile("/Users/aironman/gitProjects/alonsoir.github.io/SparkScala/1800.csv")
+
+val parsedLines = lines.map(parseLine)
+
+parsedLines.foreach(println)
+...
+(GM000010962,PRCP,37.76)
+(EZE00100082,TMAX,64.399994)
+(EZE00100082,TMIN,55.04)
+(ITE00100554,TMAX,75.380005)
+(ITE00100554,TMIN,65.3)
+(GM000010962,PRCP,32.0)
+(EZE00100082,TMAX,66.740005)
+...
+
+
+# parsedLines are tuples with stationId,entryType,temperature
+
+val minTemps = parsedLines.filter(x=> x._2 == "TMIN")
+
+minTemps.foreach(println)
+...
+(ITE00100554,TMIN,36.5)
+(EZE00100082,TMIN,33.26)
+(ITE00100554,TMIN,34.88)
+(EZE00100082,TMIN,31.46)
+(ITE00100554,TMIN,37.58)
+(EZE00100082,TMIN,34.52)
+(ITE00100554,TMIN,36.5)
+(EZE00100082,TMIN,31.28)
+
+val stationTemps = minTemps.map(x=>(x._1,x._3.toFloat))
+
+stationTemps.foreach(printl)
+...
+(EZE00100082,56.66)
+(ITE00100554,69.619995)
+(EZE00100082,59.9)
+(ITE00100554,70.34)
+(EZE00100082,55.04)
+(ITE00100554,65.3)
+
+val minTempByStation = stationTemps.reduceByKey((x,y)=>min(x,y))
+
+# here i have an error. scala> val minTempByStation = stationTemps.reduceByKey((x,y)=>min(x,y))
+# <console>:25: error: overloaded method value min with alternatives:
+#   (columnName: String)org.apache.spark.sql.Column <and>
+#   (e: org.apache.spark.sql.Column)org.apache.spark.sql.Column
+#  cannot be applied to (Float, Float)
+#        val minTempByStation = stationTemps.reduceByKey((x,y)=>min(x,y))
+                                                              ^
+val results = minTempByStation.collect
+
+for (result => results.sorted){
+	val stationId = result._1
+	val temp = result._2
+	val formatedTemp = f"$temp%.2f F"
+	printl("$stationId minTemp: $formatedTemp")
+}
+
+
+https://learning.oreilly.com/videos/apache-spark-with/9781787129849/9781787129849-video3_8
