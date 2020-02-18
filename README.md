@@ -2,6 +2,10 @@
 
 # Things to study
 
+	More Scala
+
+		https://users.scala-lang.org/t/overloaded-method-value-with-alternatives/3156
+
 	Istio
 
 		https://www.linkedin.com/pulse/why-you-might-need-istio-rick-hightower/
