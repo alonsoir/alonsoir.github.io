@@ -148,6 +148,8 @@
 
 	https://www.esaspaceshop.com/eu/
 
+	http://highscalability.com/blog/2013/7/8/the-architecture-twitter-uses-to-deal-with-150m-active-users.html
+
 
 
 

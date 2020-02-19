@@ -454,15 +454,35 @@ val minTempByStation = stationTemps.reduceByKey((x,y)=>min(x,y))
 #   (e: org.apache.spark.sql.Column)org.apache.spark.sql.Column
 #  cannot be applied to (Float, Float)
 #        val minTempByStation = stationTemps.reduceByKey((x,y)=>min(x,y))
-                                                              ^
+
+#SOLVED, i had to import exact dependency. Personally i hate this kind of scala errors because it is not clear. It could tell me, maybe wrong dependency...
+import scala.math.min
+                                   ^
 val results = minTempByStation.collect
 
-for (result => results.sorted){
+for (result <- results.sorted) {
+       val station = result._1
+       val temp = result._2
+       val formattedTemp = f"$temp%.2f F"
+       println(s"$station minimum temperature: $formattedTemp") 
+}
+
+EZE00100082 minimum temperature: 16,52 F
+ITE00100554 minimum temperature: 18,50 F
+
+
+
+val maxTempByStation = stationTemps.reduceByKey((x,y)=>max(x,y))
+
+val results = maxTempByStation.collect
+
+for (result <- results.sorted){
 	val stationId = result._1
 	val temp = result._2
 	val formatedTemp = f"$temp%.2f F"
-	printl("$stationId minTemp: $formatedTemp")
+	println(s"$station maximum temperature: $formattedTemp") 
 }
 
+EZE00100082 max temperature: 90,14 F
+ITE00100554 max temperature: 90,14 F
 
-https://learning.oreilly.com/videos/apache-spark-with/9781787129849/9781787129849-video3_8
