@@ -486,3 +486,74 @@ for (result <- results.sorted){
 EZE00100082 max temperature: 90,14 F
 ITE00100554 max temperature: 90,14 F
 
+#Having this file:
+aironman@MacBook-Pro-de-Alonso ~> cat testSpark.txt
+this is a text file
+
+# counting lines from file...
+scala> sc.textFile("/Users/aironman/testSpark.txt").map(line=>(line,1)).reduceByKey(_+_).foreach(println)
+(this is a text file,1)
+
+# typical word count sample
+sc.textFile("/Users/aironman/testSpark.txt").flatMap(x=>x.split(" ")).map(line=>(line,1)).reduceByKey(_+_).foreach(println)
+(a,1)
+(this,1)
+(is,1)
+(text,1)
+(file,1)
+
+
+sc.textFile("/Users/aironman/testSpark.txt").flatMap(x=>x.split(" ")).map(line=>(line,1)).reduceByKey(_+_).collect.sorted.foreach(println)
+(a,1)
+(file,1)
+(is,1)
+(text,1)
+(this,1
+
+scala> sc.textFile("/Users/aironman/testSpark.txt").flatMap(x=>x.split(" ")).map(line=>(line,1)).reduceByKey(_+_).toDF.registerTempTable("TEMP")
+
+# spark is spark_session
+
+scala> spark.table("TEMP").show
+20/02/24 16:51:18 WARN ObjectStore: Version information not found in metastore. hive.metastore.schema.verification is not enabled so recording the schema version 1.2.0
+20/02/24 16:51:18 WARN ObjectStore: Failed to get database default, returning NoSuchObjectException
+20/02/24 16:51:18 WARN ObjectStore: Failed to get database global_temp, returning NoSuchObjectException
++----+---+
+|  _1| _2|
++----+---+
+|this|  1|
+|  is|  1|
+|file|  1|
+|   a|  1|
+|text|  1|
++----+---+
+
+# counting words from a book
+val book = sc.textFile("/Users/aironman/Downloads/SparkScala/book.txt")
+book: org.apache.spark.rdd.RDD[String] = /Users/aironman/Downloads/SparkScala/book.txt MapPartitionsRDD[118] at textFile at <console>:26
+
+book.flatMap(word=>word.split(" ")).map(l=>(l,1)).reduceByKey(_+_).foreach(println)
+(convince,2)
+(raises,2)
+(Let,1)
+("Flexibility,1)
+(salesperson.,1)
+...
+
+or
+
+
+scala> book.flatMap(word=>word.split(" ")).countByValue.foreach(println)
+(convince,2)
+(raises,2)
+(Let,1)
+("Flexibility,1)
+(salesperson.,1)
+...
+
+countByValue happens in every worker, reduceByKey happens in driver
+
+https://stackoverflow.com/questions/52915466/when-to-use-countbyvalue-and-when-to-use-map-reducebykey/52915892
+
+
+
