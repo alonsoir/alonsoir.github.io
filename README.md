@@ -6,6 +6,10 @@
 
 		https://spring.io/blog/2020/01/27/creating-docker-images-with-spring-boot-2-3-0-m1
 
+	Time series databases...
+
+		https://www.google.com/search?client=safari&rls=en&sxsrf=ALeKk00RxJnQf3zHAJ2JtRMD8xCJ4E0VLg%3A1582713434059&ei=WkpWXtySA8nggwfYlrrYBA&q=time+series+database&oq=timeseries+&gs_l=psy-ab.1.1.0i10l3j0i10i203j0i203j0i10i203l5.2739.2739..5157...0.2..0.293.293.2-1......0....1..gws-wiz.......0i71.Edjx2tgOBlw
+
 	More Scala
 
 		https://users.scala-lang.org/t/overloaded-method-value-with-alternatives/3156
