@@ -647,3 +647,127 @@ object PopularMoviesNicer {
 }
 
 
+import org.apache.spark.sql.expressions.Window
+import org.apache.spark.sql.functions._
+import spark.implicits._
+
+    val simpleData = Seq(("James","Sales",3000),
+      ("Michael","Sales",4600),
+      ("Robert","Sales",4100),
+      ("Maria","Finance",3000),
+      ("Raman","Finance",3000),
+      ("Scott","Finance",3300),
+      ("Jen","Finance",3900),
+      ("Jeff","Marketing",3000),
+      ("Kumar","Marketing",2000)
+    )
+val df = simpleData.toDF("employee_name","department","salary")
+df.show()
+
+//Get the first row from a group.
+val w2 = Window.partitionBy("department").orderBy(col("salary"))
+df.withColumn("row",row_number.over(w2)).where($"row" === 1).drop("row").show()
+
+//Retrieve Highest salary
+val w3 = Window.partitionBy("department").orderBy(col("salary").desc)
+df.withColumn("row",row_number.over(w3)).where($"row" === 1).drop("row").show()
+
+//Maximum, Minimum, Average, total salary for each window group
+val w4 = Window.partitionBy("department")
+val aggDF = df.withColumn("row",row_number.over(w3)).withColumn("avg", avg(col("salary")).over(w4)).withColumn("sum", sum(col("salary")).over(w4)).withColumn("min", min(col("salary")).over(w4)).withColumn("max", max(col("salary")).over(w4)).where(col("row")===1).select("department","avg","sum","min","max").show()
+
+//Retrieve Lowest salary
+val w5 = Window.partitionBy("department").orderBy(col("salary").asc)
+df.withColumn("row",row_number.over(w5)).where($"row" === 1).drop("row").show()
+
+# Using broadcast...
+
+import org.apache.spark._
+import org.apache.spark.SparkContext._
+import org.apache.log4j._
+import scala.io.Source
+import java.nio.charset.CodingErrorAction
+import scala.io.Codec
+import org.apache.spark.sql.types.{DoubleType, StringType, StructField, StructType}
+
+
+/** Find the movies with the most ratings. */
+object PopularMoviesNicer {
+  
+  /** Load up a Map of movie IDs to movie names. */
+  def loadMovieNames() : Map[Int, String] = {
+    
+    // Handle character encoding issues:
+    implicit val codec = Codec("UTF-8")
+    codec.onMalformedInput(CodingErrorAction.REPLACE)
+    codec.onUnmappableCharacter(CodingErrorAction.REPLACE)
+
+    // Create a Map of Ints to Strings, and populate it from u.item.
+    var movieNames:Map[Int, String] = Map()
+    
+     val lines = Source.fromFile("../ml-100k/u.item").getLines()
+     for (line <- lines) {
+       var fields = line.split('|')
+       if (fields.length > 1) {
+        movieNames += (fields(0).toInt -> fields(1))
+       }
+     }
+    
+     return movieNames
+  }
+ 
+  /** Our main function where the action happens */
+  def main(args: Array[String]) {
+   
+    // Set the log level to only print errors
+    Logger.getLogger("org").setLevel(Level.ERROR)
+    
+     // Create a SparkContext using every core of the local machine
+    val sc = new SparkContext("local[*]", "PopularMoviesNicer")  
+    
+    // Create a broadcast variable of our ID -> movie name map
+    var nameDict = sc.broadcast(loadMovieNames)
+    
+    // Read in each rating line
+    val lines = sc.textFile("../ml-100k/u.data")
+    
+    // Map to (movieID, 1) tuples
+    val movies = lines.map(x => (x.split("\t")(1).toInt, 1))
+    
+    // Count up all the 1's for each movie
+    val movieCounts = movies.reduceByKey( (x, y) => x + y )
+    
+    // Flip (movieID, count) to (count, movieID)
+    val flipped = movieCounts.map( x => (x._2, x._1) )
+    
+    // Sort
+    val sortedMovies = flipped.sortByKey()
+    
+    // Fold in the movie names from the broadcast variable
+    val sortedMoviesWithNames = sortedMovies.map( x  => (nameDict.value(x._2), x._1) )
+
+	// scala> sortedMoviesWithNames
+	// res13: org.apache.spark.rdd.RDD[(String, Int)] = MapPartitionsRDD[54] at map at <console>:46
+	// i want to save RDD to FS, first thing is to create a Dataframe from it, then i can save it in parquet format.
+	val sortedMoviesWithNamesDF = spark.createDataFrame(sortedMoviesWithNames)
+
+	val sortedMoviesWithNamesDFWithSchema = spark.createDataFrame(sortedMoviesWithNames).toDF("name", "count")
+
+	// i can work with one or another, i select first one...
+	sortedMoviesWithNamesDF.createTempView("MOVIES")
+
+	spark.sql("SELECT * FROM MOVIES").show(false)
+
+	sortedMoviesWithNamesDF.write.parquet("movies.parquet")
+
+
+    // Collect and print results
+    val results = sortedMoviesWithNames.collect()
+    
+    results.foreach(println)
+  }
+  
+}
+
+https://sparkbyexamples.com/spark/spark-read-write-dataframe-parquet-example/
+
