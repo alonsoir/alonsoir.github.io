@@ -1,0 +1,61 @@
+Problem:
+
+I have an hdfs directory with thousands of files. It seems that some of them - and I don't know which ones - 
+have a problem with their schema and it's causing my Spark application to fail with this error:
+
+	Caused by: org.apache.spark.sql.execution.QueryExecutionException: 
+	Parquet column cannot be converted in file hdfs://my-ip.blaah.com:8020/user/hadoop/PATH-TO-part-*.parquet.
+	Column: [price], Expected: double, Found: FIXED_LEN_BYTE_ARRAY
+
+The problem is not only that it's causing the application to fail, but every time if does fail, I have to 
+copy that file out of the directory and start the app again.
+
+I thought of trying to use try-except, but I can't seem to get that to work.
+
+hypothesis:
+
+	Looks like the schema of some files is unexpected.
+
+possible solution:
+
+You could either run parquet-tools on each of the files and extract the schema to find the problematic 
+files:
+
+	hdfs -stat "%n" hdfs://my-ip.blaah.com:8020/user/hadoop/PATH-TO-part-*.parquet | while read file
+	do
+	   echo -n "$file: "
+	   hadoop jar parquet-tools-1.9.0.jar schema $file
+	done
+
+
+Or you can use Spark to investigate the parquet files in parallel:
+
+	spark.sparkContext
+	  .binaryFiles("hdfs://my-ip.blaah.com:8020/user/hadoop/PATH-TO-part-*.parquet")
+	  .map { case (path, _) =>
+	    import collection.JavaConverters._
+	    val file = HadoopInputFile.fromPath(new Path(path), new Configuration())
+	    val reader = ParquetFileReader.open(file)
+	    try {
+	      val schema = reader.getFileMetaData().getSchema
+	      (
+	        schema.getName,
+	        schema.getFields.asScala.map(f => (
+	          Option(f.getId).map(_.intValue()),
+	          f.getName,
+	          Option(f.getOriginalType).map(_.name()),
+	          Option(f.getRepetition).map(_.name()))
+	        ).toArray
+	      )
+	    } finally {
+	      reader.close()
+	    }
+	  } //map
+	  .toDF("schema name", "fields")
+	  .show(false)
+	
+.binaryFiles provides you all filenames that match the given pattern as an RDD, so the following .map is executed on the Spark executors.
+The map then opens each parquet file via ParquetFileReader and provides access to its schema and data.
+
+
+https://confusedcoders.com/data-engineering/hadoop/how-to-view-content-of-parquet-files-on-s3hdfs-from-hadoop-cluster-using-parquet-tools

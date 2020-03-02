@@ -1,6 +1,12 @@
 # alonsoir.github.io
 
 # Things to study
+
+	Extreme programming
+
+		http://www.extremeprogramming.org/rules.html
+
+		http://www.extremeprogramming.org/rules/sequential.html
 	
 	More Docker...
 
@@ -36,6 +42,8 @@
 
 	Apache Spark
 
+		https://sparkbyexamples.com/spark/spark-dataframe-how-to-select-the-first-row-of-each-group/?fbclid=IwAR21-ydaE8QQwSgJhwyOzy1XfewiRymr9RzXd48tLtPNx3DhbNkVwrNq-DA
+
 		https://learning.oreilly.com/live-training/courses/stream-processing-with-apache-spark/0636920360490/
 
 		https://learning.oreilly.com/videos/apache-spark-with/9781787129849/9781787129849-video3_3?autoplay=false
@@ -47,6 +55,8 @@
 		https://es.slideshare.net/cloudera/top-5-mistakes-to-avoid-when-writing-apache-spark-applications
 
 		https://spark.apache.org/docs/latest/tuning.html
+
+		https://www.youtube.com/watch?v=FydxEfOU6D8&fbclid=IwAR3EIcMNEvyiKKlZIrLnMuQqGlRlli1bru4kTSDgn62MtaHgir5zN4pwYPE
 
 	Apúntate a esta escuela del CERN antes del 27 de febrero
 
@@ -158,6 +168,6 @@
 
 	http://highscalability.com/blog/2013/7/8/the-architecture-twitter-uses-to-deal-with-150m-active-users.html
 
-
+	https://piotrminkowski.com/2017/06/26/monitoring-microservices-with-spring-boot-admin/
 
 
