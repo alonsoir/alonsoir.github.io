@@ -170,4 +170,12 @@
 
 	https://piotrminkowski.com/2017/06/26/monitoring-microservices-with-spring-boot-admin/
 
+	Maldacena!!
+
+		https://www.youtube.com/watch?v=_O2J83rsGnc&feature=youtu.be&fbclid=IwAR2MB_Nig-ZCgWxRypbHOFSGEWBaDvDJChYkNyPRTFDbJc9mH_k19JKo2Wc
+
+	Nintendo Switch
+
+		https://www.nintendo.es/Juegos/Programas-descargables-Nintendo-Switch/Divinity-Original-Sin-2-Definitive-Edition-1633057.html#
+
 

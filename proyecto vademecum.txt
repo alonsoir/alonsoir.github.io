@@ -1,0 +1,49 @@
+Digamos que tenemos un fichero con el vademecum y lo limpio de tal forma que al final tengo un fichero asi:
+#name_disease,sympton1,...,symptonN
+resfriado,fiebre,dolor de cabeza,dolor muscular,fatiga,tos,congestion nasal, rinorrea,moco amarillo, moco verde, estornudos,dolor de garganta
+...
+
+Podría procesar el csv de tal manera que con un map clave valor, donde la clave es el nombre de la enfermedad y el valor es una lista o un conjunto de los sintomas.
+
+  def loadVademecum() : Map[String, Set<String>] = {
+    
+    // Create a Map of Ints to Strings, and populate it from u.item.
+    var vademecum:Map[String, Set<String>] = Map()
+    
+     val lines = Source.fromFile("PATH_TO_VADEMECUM").getLines()
+     var symptons:Set<String> = Set()
+
+     for (line <- lines) {
+       var fields = line.split(',')
+       for (index <- 1 to fields.length){
+       		symptons += fields(index)
+       }
+       if (fields.length > 1) {
+        vademecum += (fields(0).toInt -> symptons)
+       }
+     }
+    
+     return vademecum
+  }
+
+Luego, cargando en un Dataframe el VADEMECUM, podría hacer una consulta como esta para sacar el nombre de la enfermedad, incluidas las enfermedades raras.
+
+SELECT name_disease FROM VADEMECUM WHERE symptom1 EXISTS IN list_symptons OR sympton2 EXISTS IN list_symptons OR ...;
+
+El principal problema es, puedo convertir un Dataframe a partir de un esquema asi? 
+
+	String, Set<String>
+
+Y luego buscar en ese Set<String> introduciendo un numero aleatorio de sintomas?
+
+https://www.tutorialspoint.com/scala/scala_sets.htm
+
+https://stackoverflow.com/questions/60511927/how-to-search-data-in-a-dataframe-with-a-dynamic-schema
+
+https://stackoverflow.com/questions/49088401/spark-from-json-with-dynamic-schema?rq=1
+
+https://stackoverflow.com/questions/34861516/spark-replacement-for-exists-and-in/34866817
+
+http://spark.apache.org/docs/latest/sql-getting-started.html
+
+https://www.geeksforgeeks.org/for-loop-in-scala/
