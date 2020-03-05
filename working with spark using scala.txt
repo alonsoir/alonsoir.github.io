@@ -771,3 +771,5 @@ object PopularMoviesNicer {
 
 https://sparkbyexamples.com/spark/spark-read-write-dataframe-parquet-example/
 
+https://learning.oreilly.com/videos/apache-spark-with/9781787129849/9781787129849-video4_3?autoplay=false
+

@@ -2,6 +2,10 @@
 
 # Things to study
 
+	Microservicios
+	
+		https://dzone.com/articles/break-a-monolith-to-microservices-12-best-practice?edition=583294&utm_source=Weekly%20Digest&utm_medium=email&utm_campaign=Weekly%20Digest%202020-03-04
+
 	Extreme programming
 
 		http://www.extremeprogramming.org/rules.html
@@ -176,6 +180,6 @@
 
 	Nintendo Switch
 
-		https://www.nintendo.es/Juegos/Programas-descargables-Nintendo-Switch/Divinity-Original-Sin-2-Definitive-Edition-1633057.html#
+		https://www.nintendo.es/Juegos/Programas-descargables-Nintendo-Switch/Divinity-Original-Sin-2-Definitive-Edition-1633057.html#	
 
 

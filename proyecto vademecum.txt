@@ -1,30 +1,55 @@
 Digamos que tenemos un fichero con el vademecum y lo limpio de tal forma que al final tengo un fichero asi:
+
 #name_disease,sympton1,...,symptonN
 resfriado,fiebre,dolor de cabeza,dolor muscular,fatiga,tos,congestion nasal, rinorrea,moco amarillo, moco verde, estornudos,dolor de garganta
 ...
 
 Podría procesar el csv de tal manera que con un map clave valor, donde la clave es el nombre de la enfermedad y el valor es una lista o un conjunto de los sintomas.
 
-  def loadVademecum() : Map[String, Set<String>] = {
-    
-    // Create a Map of Ints to Strings, and populate it from u.item.
-    var vademecum:Map[String, Set<String>] = Map()
-    
-     val lines = Source.fromFile("PATH_TO_VADEMECUM").getLines()
-     var symptons:Set<String> = Set()
+import java.util.Set
 
-     for (line <- lines) {
+import scala.io.Source
+
+import spark.implicits._
+
+
+def loadVademecum() = {
+    
+    val lines = Source.fromFile("/Users/aironman/Downloads/vademecum.txt").getLines()
+
+    var vademecumMap = collection.mutable.Map[String,scala.collection.mutable.ListBuffer[String]]()
+
+    var symptons =  scala.collection.mutable.ListBuffer.empty[String]
+
+    for (line <- lines) {
        var fields = line.split(',')
-       for (index <- 1 to fields.length){
-       		symptons += fields(index)
+       for (index <- 1 to fields.length - 1){
+       		symptons :+ fields(index)
        }
        if (fields.length > 1) {
-        vademecum += (fields(0).toInt -> symptons)
+        vademecumMap += (fields(0) -> symptons)
        }
      }
-    
-     return vademecum
-  }
+    lines.close
+     vademecumMap
+}
+
+
+
+val myVMMap = loadVademecum
+
+val value = "fiebre"
+
+
+
+scala> val values = List(1,2,3,4,5,6,7,8,9,10,1000) //List -1
+
+scala> val factors= List(5,7) // List -2
+
+scala> values .filter(a => factors.exists(b => a == b)) //Apply different logic for our convenience
+
+listSymptons = List()
+myVMMap.values.filter(a => factors.exists(b => a == b))
 
 Luego, cargando en un Dataframe el VADEMECUM, podría hacer una consulta como esta para sacar el nombre de la enfermedad, incluidas las enfermedades raras.
 
@@ -47,3 +72,5 @@ https://stackoverflow.com/questions/34861516/spark-replacement-for-exists-and-in
 http://spark.apache.org/docs/latest/sql-getting-started.html
 
 https://www.geeksforgeeks.org/for-loop-in-scala/
+
+https://stackoverflow.com/questions/52588002/scala-how-to-get-the-key-of-map-where-value-as-list/52588107
