@@ -6,6 +6,8 @@
 	
 		https://dzone.com/articles/break-a-monolith-to-microservices-12-best-practice?edition=583294&utm_source=Weekly%20Digest&utm_medium=email&utm_campaign=Weekly%20Digest%202020-03-04
 
+		https://microservices.io/patterns/reliability/circuit-breaker.html
+
 	Extreme programming
 
 		http://www.extremeprogramming.org/rules.html

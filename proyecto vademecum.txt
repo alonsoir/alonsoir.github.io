@@ -74,3 +74,24 @@ http://spark.apache.org/docs/latest/sql-getting-started.html
 https://www.geeksforgeeks.org/for-loop-in-scala/
 
 https://stackoverflow.com/questions/52588002/scala-how-to-get-the-key-of-map-where-value-as-list/52588107
+
+
+Puedo resolver en Impala una consulta como la siguiente?
+Asumamos que tengo datos de esta forma:
+Key1,value1,value2,…,valueN
+…
+KeyM,value1,…,valueM
+
+Es decir, una unica clave y un numero indeterminado de valores asociados a esa clave.
+
+Y ahora digamos que quiero buscar claves dadas por un numero finito de valores, es decir, si proporciono value1 y value10, deberia devolverme las tuplas que tengan esos values, lo que implicaria hacer algo como
+
+SELECT key FROM MyTABLE WHERE value1 EXISTS IN SET_VALUES OR value2 EXISTS IN SET_VALUES
+
+Donde SET_VALUES sería ese conjunto de valores asociados a cada key y cada key puede tener un numero distinto de values.
+
+Espero haberme explicado bien.
+
+Puedo conseguir este tipo de consultas con Apache Impala?
+
+Gracias
