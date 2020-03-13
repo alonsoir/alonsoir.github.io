@@ -8,6 +8,26 @@
 
 		https://microservices.io/patterns/reliability/circuit-breaker.html
 
+		https://kelda.io
+
+		https://www.jaegertracing.io
+
+		https://es.wikipedia.org/wiki/Splunk
+
+		https://dzone.com/articles/10-challenges-of-microservices-and-solutions-tips
+
+		https://dzone.com/articles/microservices-architecture-challenges-of-building
+
+		https://dzone.com/articles/microservice-issues-challenges-and-hurdles
+
+		https://akka.io
+
+		https://dzone.com/microservices-news-tutorials-tools
+
+	Spring Web flux (reactive programming)
+
+		https://docs.spring.io/spring/docs/current/spring-framework-reference/web-reactive.html?fbclid=IwAR3GoDur9YEZ9lbELPsHkarsKMCPOcE0KLd_9VNCJkryyMk-psM8ujEnaxI
+
 	Extreme programming
 
 		http://www.extremeprogramming.org/rules.html
