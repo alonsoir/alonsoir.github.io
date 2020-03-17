@@ -28,6 +28,12 @@
 
 		https://docs.spring.io/spring/docs/current/spring-framework-reference/web-reactive.html?fbclid=IwAR3GoDur9YEZ9lbELPsHkarsKMCPOcE0KLd_9VNCJkryyMk-psM8ujEnaxI
 
+		https://www.baeldung.com/spring-5-webclient
+
+		https://stackoverflow.com/questions/58939365/how-to-await-when-all-http-requests-are-finished-using-spring-webclient
+
+		https://stackoverflow.com/questions/50203875/how-to-use-spring-webclient-to-make-multiple-calls-simultaneously
+
 	Extreme programming
 
 		http://www.extremeprogramming.org/rules.html
