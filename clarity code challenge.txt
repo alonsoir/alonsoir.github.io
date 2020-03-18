@@ -1,0 +1,131 @@
+clarity code challenge:
+
+ Clarity - Backend code challenge
+This challenge is meant to test your software development skills. You are free to use any programming language and tools you feel comfortable with.
+You have 24 hours to reply with your answer, but we expect this challenge to take no more than 2 to 3 hours. We don’t take into account how long it takes for you to respond, ie 2 hours or 22 hours are considered equal.
+Your answer will be evaluated based on:
+- Correctness, does it work?
+- Is it tested?
+- Is it well designed?
+- Would this code be easy to extend or maintain?
+- Is the code easy to comprehend?
+- Performs well?
+Your implementation must be your own, making use of your standard library. Also, please feel free to consult any relevant documentation. Please provide a complete solution, including any instructions an engineer would need to build and run your software, e.g. a README, Makefile, setup.py, build.xml, etc.
+Challenge description
+A log file contains newline-terminated, space-separated text formatted like:
+<unix_timestamp> <hostname> <hostname>
+For example:
+1366815793 quark garak
+1366815795 brunt quark
+1366815811 lilac garak
+Each line represents connection from a host (left) to another host (right) at a given time. The lines are roughly sorted by timestamp. They might be out of order by maximum 5 minutes.
+Implement a tool that parse log files like these, we provide you a input Data Example.
+Goals to Achieve
+1. Parse the data with a time_init, time_end
+Build a tool, that given the name of a file (with the format described above), an ​init_datetime​, an end_datetime​, and a ​Hostname​, returns:
+a list of hostnames connected to the given host during the given period
+ 
+ 2. Unlimited Input Parser
+The tool should both parse previously written log files and terminate or collect input from a new log file while it's being written and run indefinitely.
+The script will output, once every hour:
+● a list of hostnames connected to a given (configurable) host during the last hour
+● a list of hostnames received connections from a given (configurable) host during the last hour
+● the hostname that generated most connections in the last hour
+Both the number of log lines and hostnames can be very high. Consider implementing a CPU and memory-efficient solution. Please feel free to make assumptions as necessary with proper documentation.
+Good luck!
+
+
+1. Parse the data with a time_init, time_end
+Build a tool, that given the name of a file (with the format described above), an ​init_datetime​, an end_datetime​, and a ​Hostname​, returns:
+a list of hostnames connected to the given host during the given period
+
+Parece que teniendo estos datos:
+
+
+<unix_timestamp> <from-hostname> <to-hostname>
+1366815793 quark garak
+1366815795 brunt quark
+1366815811 lilac garak
+...
+
+Tengo que sacar los hostnames (from-hostname) partiendo de los siguientes datos de entrada:
+
+	​init_datetime​, end_datetime​, to-hostname
+
+Es decir, dado una entrada tal que asi:
+
+	​init_datetime​,end_datetime​,to-hostname
+	1366815790,1366815811,garak
+
+La salida es:
+
+	quark connected at 1366815793
+	lilac connected at 1366815811
+
+O una entrada tal que asi:
+
+	1366815790,1366815795,quark
+
+La salida es:
+
+	brunt connected at 1366815795
+
+Esto parece un ejemplo perfecto para usar sparksql y dataframes. La razón principal es que estos ficheros log pueden ser realmente gigantescos, 
+de GB o TB, por lo que su mejor lugar es un sistema distribuido de ficheros donde podamos distribuir dicha carga y trabajar con ellos en la memoria de cada uno de los nodos.
+Si necesitamos procesar ficheros más grandes, añadimos mas nodos al cluster (scale out)
+
+en principio hay que 
+
+	1) crear un esquema adecuado para esos campos. 
+	2) crear un Dataframe con la informacion de ese fichero csv, usando el esquema anterior.
+	3) registrar una tabla en memoria , 
+	4) crear una sql tal que así más o menos:
+
+		SELECT from,unix FROM LOGS WHERE $init_datetime < unix AND unix <=$end_datetime AND to = '${to_hostname}
+	5) Mostrar datos, guardarlo en formato parquet, crear una tabla hive...
+
+
+
+Entonces, el script completo, asumiendo que estoy detras de una spark-shell, y añadiendo a la consulta el string necesario...
+
+	import org.apache.spark.sql.types.StructType
+	import org.apache.spark.sql.types.StringType
+	import org.apache.spark.sql.types.LongType
+
+	import org.apache.spark.sql.SparkSession
+
+	val spark = SparkSession.builder().appName("Spark SQL clarity.io examples").getOrCreate()
+
+	val schema = new StructType().add("unix",LongType).add("from",StringType).add("to",StringType)
+
+	val path = "/Users/aironman/gitProjects/alonsoir.github.io/test-clarity.csv"
+
+	val dfLogsWithSchema = spark.sqlContext.read.format("csv").option("delimiter"," ").option("quote","").option("header", "false").schema(schema).load(path)
+
+	dfLogsWithSchema.registerTempTable("LOGS")
+
+	val init_datetime = 1366815790l
+	val end_datetime = 1366815811l
+	val to_hostname = "garak"
+
+	spark.sql("SELECT * FROM LOGS").show
+
+	println(s"to: $to_hostname" + s" init: $init_datetime" + s" end: $end_datetime")
+
+	spark.sql(s"""SELECT from,unix FROM LOGS WHERE $init_datetime < unix AND unix <=$end_datetime AND to = '${to_hostname}'""").show(false)
+
+links
+
+	https://stackoverflow.com/questions/39281152/spark-unix-timestamp-data-type-mismatch
+	https://stackoverflow.com/questions/39926411/provide-schema-while-reading-csv-file-as-a-dataframe
+	https://sparkbyexamples.com/spark/rename-a-column-on-spark-dataframes/
+	https://stackoverflow.com/questions/29704333/spark-load-csv-file-as-dataframe
+
+ 2. Unlimited Input Parser
+The tool should both parse previously written log files and terminate or collect input from a new log file while it's being written and run indefinitely.
+The script will output, once every hour:
+● a list of hostnames connected to a given (configurable) host during the last hour
+● a list of hostnames received connections from a given (configurable) host during the last hour
+● the hostname that generated most connections in the last hour
+Both the number of log lines and hostnames can be very high. Consider implementing a CPU and memory-efficient solution. Please feel free to make assumptions as necessary with proper documentation.
+

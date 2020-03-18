@@ -34,6 +34,8 @@
 
 		https://stackoverflow.com/questions/50203875/how-to-use-spring-webclient-to-make-multiple-calls-simultaneously
 
+		https://dzone.com/articles/reactive-microservices-with-spring-webflux-and-spr
+
 	Extreme programming
 
 		http://www.extremeprogramming.org/rules.html
