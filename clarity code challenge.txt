@@ -39,40 +39,57 @@ Good luck!
 Build a tool, that given the name of a file (with the format described above), an ​init_datetime​, an end_datetime​, and a ​Hostname​, returns:
 a list of hostnames connected to the given host during the given period
 
-Parece que teniendo estos datos:
+ANALISIS del problema:
+	Parece que teniendo estos datos:
 
 
-<unix_timestamp> <from-hostname> <to-hostname>
-1366815793 quark garak
-1366815795 brunt quark
-1366815811 lilac garak
-...
+	<unix_timestamp> <from-hostname> <to-hostname>
+	1366815793 quark garak
+	1366815795 brunt quark
+	1366815811 lilac garak
+	...
 
-Tengo que sacar los hostnames (from-hostname) partiendo de los siguientes datos de entrada:
+	Tengo que sacar los hostnames (from-hostname) partiendo de los siguientes datos de entrada:
 
-	​init_datetime​, end_datetime​, to-hostname
+		​init_datetime​, end_datetime​, to-hostname
 
-Es decir, dado una entrada tal que asi:
+	Es decir, dado una entrada tal que asi:
 
-	​init_datetime​,end_datetime​,to-hostname
-	1366815790,1366815811,garak
+		​init_datetime​,end_datetime​,to-hostname
+		1366815790,1366815811,garak
 
-La salida es:
+	La salida es:
 
-	quark connected at 1366815793
-	lilac connected at 1366815811
+		quark 1366815793
+		lilac 1366815811
 
-O una entrada tal que asi:
+	Igual habría que convertir ese unix_timestamp en algo legible por humanos, pero por ahora lo dejo así porque voy a partir del hecho que para hacer los calculos entre ventanas de uso, 
+	tendré tambien como parametro de entrada otro unix_timestamp que no deja de ser un numero Long, ideal para trabajar con estos datos. Solo hay que sumarlos, restarlos, comparar si son mayores 
+	o menores...
 
-	1366815790,1366815795,quark
+	O una entrada tal que asi:
 
-La salida es:
+		1366815790,1366815795,quark
 
-	brunt connected at 1366815795
+	La salida es:
 
-Esto parece un ejemplo perfecto para usar sparksql y dataframes. La razón principal es que estos ficheros log pueden ser realmente gigantescos, 
-de GB o TB, por lo que su mejor lugar es un sistema distribuido de ficheros donde podamos distribuir dicha carga y trabajar con ellos en la memoria de cada uno de los nodos.
-Si necesitamos procesar ficheros más grandes, añadimos mas nodos al cluster (scale out)
+		brunt 1366815795
+
+
+	Esto parece un ejemplo perfecto para usar sparksql y dataframes, incluso podría pensar en una solucion de streaming de datos porque el fichero log puede crecer a cada segundo, por lo que,
+	usar spark structured streaming para cargar el fichero tal y como se produce en una máquina remota es perfectamente factible y sólo habría que hacer mínimos cambios en el código para crear el 
+	Dataframe. Por motivos de simplicidad, asumiré la primera opción, cargar un fichero csv de datos estático para crear el Dataframe y poder hacer una consulta SQL que resuelva el primer problema.
+
+	La razón principal es que estos ficheros log pueden ser realmente gigantescos, de GB o TB diarios, por lo que su mejor lugar es un sistema distribuido de ficheros donde podamos distribuir dicha carga y trabajar con ellos en la memoria de cada uno de los nodos.
+	Si necesitamos procesar ficheros más grandes, añadimos mas nodos al cluster (scale out) y/o ampliar la capacidad de cada uno de los nodos en memoria/cpu/hdd (scale up). 
+
+	No tiene sentido crear una herramienta ad hoc para resolver un problema asi porque literalmente para tratar con ficheros que potencialmente son gigantescos, necesitaria crear un framework de procesamiento distribuido y si quisiera que fuese rápido y eficiente en tiempo, necesitaría que fuese un framework que trabaje con los datos en la memoria RAM de cada nodo. 
+
+	Literalmente esa es la definicion de uso del framework Apache Spark, procesamiento distribuido en memoria de grandes cantidades de datos.
+
+	Además, el problema se arregla montando una sentencia SQL de manera natural.
+
+	Considero que no trabajar para este tipo de problemas con algo que no sea Apache Spark es como viajar al pasado viviendo en el presente.
 
 en principio hay que 
 
@@ -91,9 +108,9 @@ Entonces, el script completo, asumiendo que estoy detras de una spark-shell, y a
 	import org.apache.spark.sql.types.StructType
 	import org.apache.spark.sql.types.StringType
 	import org.apache.spark.sql.types.LongType
-
 	import org.apache.spark.sql.SparkSession
 
+	// not needed using a spark-shell
 	val spark = SparkSession.builder().appName("Spark SQL clarity.io examples").getOrCreate()
 
 	val schema = new StructType().add("unix",LongType).add("from",StringType).add("to",StringType)
@@ -104,13 +121,15 @@ Entonces, el script completo, asumiendo que estoy detras de una spark-shell, y a
 
 	dfLogsWithSchema.registerTempTable("LOGS")
 
-	val init_datetime = 1366815790l
-	val end_datetime = 1366815811l
-	val to_hostname = "garak"
-
 	spark.sql("SELECT * FROM LOGS").show
 
-	println(s"to: $to_hostname" + s" init: $init_datetime" + s" end: $end_datetime")
+	val init_datetime = 1366815790l
+	
+	val end_datetime = 1366815811l
+	
+	val to_hostname = "garak"
+	
+	println(s"USING to_hostname: $to_hostname" + s" init_datetime: $init_datetime" + s" end_datetime: $end_datetime")
 
 	spark.sql(s"""SELECT from,unix FROM LOGS WHERE $init_datetime < unix AND unix <=$end_datetime AND to = '${to_hostname}'""").show(false)
 
@@ -128,4 +147,42 @@ The script will output, once every hour:
 ● a list of hostnames received connections from a given (configurable) host during the last hour
 ● the hostname that generated most connections in the last hour
 Both the number of log lines and hostnames can be very high. Consider implementing a CPU and memory-efficient solution. Please feel free to make assumptions as necessary with proper documentation.
+
+
+Es decir, tenemos multilples ficheros log como el anterior, por lo que tengo que suponer que existen esos ficheros en multiples sistemas de ficheros externos,
+y cada hora, tengo que agregar todos esos ficheros de log en uno sólo, de manera que, tengo que generar una salida que:
+
+	1. mostrar una lista de maquinas que se hayan conectado a una maquina (configurable por parametro) durante la ultima hora.
+
+		Algo asi, pero teniendo que tener en cuenta cuanto dura una hora...
+
+		SELECT from,unix FROM LOGS WHERE $init_datetime < unix AND unix <=$end_datetime AND to = '${to_hostname}'
+
+	2. Mostrar una lista de maquinas que hayan recibido  la conexion durante la ultima hora. Lo mismo que la anterior pero mostrando lo contrario.
+
+		Algo asi, pero teniendo que tener en cuenta cuanto dura una hora...
+
+		SELECT to,unix FROM LOGS WHERE $init_datetime < unix AND unix <=$end_datetime AND to = '${from_hostname}'
+
+	3. Mostrar el nombre de la máquina que haya generado mas conexiones en la última hora...
+
+		Por definir, que quiere decir esto? quieren el nombre de la maquina from que haya generado más conexiones?
+		el nombre de la maquina to que haya generado más conexiones? el mayor de los dos?
+
+	¿Cómo lo resuelvo?, ¿Como agrego esos ficheros de log remotos en uno solo cada hora? 
+
+	con alguna herramienta de streaming que haga la recoleccion cada hora? 
+	usar el termino cada hora implica que un planificador de tareas como quartz debería ejecutar una tarea de recoleccion de datos de cada sistema de ficheros externo
+	y agregarlos en un único fichero de datos donde se acabarían ejecutando los tres puntos anteriores. Tentador, la verdad.
+	Se puede hacer algo, 
+		
+		1. cada hora me conecto a cada sistema de ficheros y me traigo el mogollon de cada uno para finalmente agregarlo en uno final.
+		2. Cada hora recolecto los datos almacenados en cada topic gestionado por un proceso consumidor kafka agregando los datos en un fichero final.
+
+links
+
+	https://www.baeldung.com/spring-quartz-schedule
+
+
+
 
