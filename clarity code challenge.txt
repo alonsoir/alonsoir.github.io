@@ -1,40 +1,5 @@
 clarity code challenge:
 
- Clarity - Backend code challenge
-This challenge is meant to test your software development skills. You are free to use any programming language and tools you feel comfortable with.
-You have 24 hours to reply with your answer, but we expect this challenge to take no more than 2 to 3 hours. We don’t take into account how long it takes for you to respond, ie 2 hours or 22 hours are considered equal.
-Your answer will be evaluated based on:
-- Correctness, does it work?
-- Is it tested?
-- Is it well designed?
-- Would this code be easy to extend or maintain?
-- Is the code easy to comprehend?
-- Performs well?
-Your implementation must be your own, making use of your standard library. Also, please feel free to consult any relevant documentation. Please provide a complete solution, including any instructions an engineer would need to build and run your software, e.g. a README, Makefile, setup.py, build.xml, etc.
-Challenge description
-A log file contains newline-terminated, space-separated text formatted like:
-<unix_timestamp> <hostname> <hostname>
-For example:
-1366815793 quark garak
-1366815795 brunt quark
-1366815811 lilac garak
-Each line represents connection from a host (left) to another host (right) at a given time. The lines are roughly sorted by timestamp. They might be out of order by maximum 5 minutes.
-Implement a tool that parse log files like these, we provide you a input Data Example.
-Goals to Achieve
-1. Parse the data with a time_init, time_end
-Build a tool, that given the name of a file (with the format described above), an ​init_datetime​, an end_datetime​, and a ​Hostname​, returns:
-a list of hostnames connected to the given host during the given period
- 
- 2. Unlimited Input Parser
-The tool should both parse previously written log files and terminate or collect input from a new log file while it's being written and run indefinitely.
-The script will output, once every hour:
-● a list of hostnames connected to a given (configurable) host during the last hour
-● a list of hostnames received connections from a given (configurable) host during the last hour
-● the hostname that generated most connections in the last hour
-Both the number of log lines and hostnames can be very high. Consider implementing a CPU and memory-efficient solution. Please feel free to make assumptions as necessary with proper documentation.
-Good luck!
-
-
 1. Parse the data with a time_init, time_end
 Build a tool, that given the name of a file (with the format described above), an ​init_datetime​, an end_datetime​, and a ​Hostname​, returns:
 a list of hostnames connected to the given host during the given period
@@ -149,7 +114,7 @@ The script will output, once every hour:
 Both the number of log lines and hostnames can be very high. Consider implementing a CPU and memory-efficient solution. Please feel free to make assumptions as necessary with proper documentation.
 
 
-Es decir, tenemos multilples ficheros log como el anterior, por lo que tengo que suponer que existen esos ficheros en multiples sistemas de ficheros externos,
+Es decir, tenemos multiples ficheros log como el anterior, por lo que tengo que suponer que existen esos ficheros en multiples sistemas de ficheros externos,
 y cada hora, tengo que agregar todos esos ficheros de log en uno sólo, de manera que, tengo que generar una salida que:
 
 	1. mostrar una lista de maquinas que se hayan conectado a una maquina (configurable por parametro) durante la ultima hora.
@@ -173,15 +138,54 @@ y cada hora, tengo que agregar todos esos ficheros de log en uno sólo, de maner
 
 	con alguna herramienta de streaming que haga la recoleccion cada hora? 
 	usar el termino cada hora implica que un planificador de tareas como quartz debería ejecutar una tarea de recoleccion de datos de cada sistema de ficheros externo
-	y agregarlos en un único fichero de datos donde se acabarían ejecutando los tres puntos anteriores. Tentador, la verdad.
+	y agregarlos en un único fichero de datos donde se acabarían ejecutando los tres puntos anteriores. 
 	Se puede hacer algo, 
 		
 		1. cada hora me conecto a cada sistema de ficheros y me traigo el mogollon de cada uno para finalmente agregarlo en uno final.
-		2. Cada hora recolecto los datos almacenados en cada topic gestionado por un proceso consumidor kafka agregando los datos en un fichero final.
 
+			Para ello, primero necesito un job que se conecte a un sistema de ficheros externos y me traiga esos datos. Cada uno de esos ficheros estarán 
+			en una máquina dados una ip y un puerto.
+			Por ejemplo, usar algo como el job LogFileRecoveryTool.scala.
+
+		2. Cada hora recolecto los datos almacenados en cada sistema de ficheros creados por cada Job LogFileRecoveryTool, agregando los datos en un fichero final.
+
+			Para esto, puedo usar algun scheduler de tareas, de manera que se active cada hora, escaneando un directorio donde se hayan dejado los ficheros log de cada uno de los Job 
+			spark streaming del punto anterior, cogerá esos ficheros log y creará un agregado de ficheros log final con todas las lineas. Se puede crear un fichero parquet, avro, csv sin comprimir...
+			Este scheduler de tareas puede ser desde un simple trabajo CRON, hasta usar algún proceso java o scala que use alguna libreria como quartz. 
+
+		3. Una vez que tengo ese fichero final, crear un proceso final spark, crear el DataFrame con ese fichero, crear la tabla temporal y hacer las consultas necesarias descritas en los tres puntos anteriores.
+
+	Alternativas
+
+	Seguramente esto se puede hacer de mejores maneras, por ejemplo, usando software propietario ya diseñado expresamente para este tipo de tareas. Al no tener acceso ni formacion sobre ese software
+	propietario, decido usar software open source (apache spark, java y scala) que esté al alcance de todo el mundo.
+
+	Alternativas dentro del mundo open source? se podría usar apache kafka (kafka-streams, ksql) para recolectar en cada topic particionado un fichero log externo para luego hacer el merge de todos los topics y trabajar de la misma manera que he usado spark para montar la consulta sql. Aunque en el momento de escribir esto, no veía claro como gestionar el merge cada hora, supongo que haciendo uso de una ventana de tiempo. Igual, seguramente podría pasar de usar quartz como planificador de tareas para delegar en spark o en kafka para hacer la agregacion cada hora de cada log. Con más tiempo, haría varias versiones de todas estas ideas para quedarme con la mejor idea consensuada con el equipo y la que de mejor rendimiento con menor uso de recursos y facilidad de uso.
+
+	Se podría usar kibana y elasticsearch para hacer las consultas necesarias para resolver el problema. No tengo mucha experiencia con estas tecnologias, tengo proyectos en github que usan estas tecnologias
+	pero no las he usado en un par de años, por lo que necesitaria un poco de tiempo en refrescar conocimiento.
+	 
 links
 
+	http://www.quartz-scheduler.org
+
+	https://medium.com/search?q=spark%20streaming
+
+	https://databricks.gitbooks.io/databricks-spark-reference-applications/content/logs_analyzer/chapter1/streaming.html
+
+	https://github.com/apache/spark/blob/master/examples/src/main/scala/org/apache/spark/examples/streaming/RecoverableNetworkWordCount.scala
+
 	https://www.baeldung.com/spring-quartz-schedule
+
+	https://spark.apache.org/docs/latest/structured-streaming-programming-guide.html
+
+	https://www.google.com/search?client=safari&rls=en&sxsrf=ALeKk0313EQfbDJdv-_r9IWg0GhCXuFzyQ%3A1584619451466&ei=u19zXoeOHI-elwTWoIiwAw&q=spark+streaming+consuming+log+files&oq=spark+streaming+consuming+log+files&gs_l=psy-ab.3...25984.28445..28818...0.0..0.93.1398.19......0....1..gws-wiz.......35i39j33i10.0n_Yp-DgSgA&ved=0ahUKEwjH14i8v6boAhUPz4UKHVYQAjYQ4dUDCAo&uact=5
+
+	https://stackoverflow.com/questions/33009935/window-in-spark-streaming?rq=1
+
+	https://www.google.com/search?client=safari&rls=en&sxsrf=ALeKk00X0b8koqoi2akRPmfDTsXV7tFqtQ%3A1584620095532&ei=P2JzXpWTIIu-aJuZmaAO&q=collecting+log+files+every+hour+using+structured+streaming&oq=collecting+log+files+every+hour+using+structured+streaming&gs_l=psy-ab.3...10051.14403..15546...2.2..0.378.1411.9j2j0j1......0....1..gws-wiz.......0i71j33i10.1o_8NKJxqzE&ved=0ahUKEwjVrpfvwaboAhULHxoKHZtMBuQQ4dUDCAo&uact=5
+
+
 
 
 
