@@ -164,6 +164,9 @@ y cada hora, tengo que agregar todos esos ficheros de log en uno sólo, de maner
 
 	Se podría usar kibana y elasticsearch para hacer las consultas necesarias para resolver el problema. No tengo mucha experiencia con estas tecnologias, tengo proyectos en github que usan estas tecnologias
 	pero no las he usado en un par de años, por lo que necesitaria un poco de tiempo en refrescar conocimiento.
+
+	También merecería la pena echar un vistazo a este producto, https://www.datadoghq.com/dg/logs/benefits/?utm_source=Advertisement&utm_medium=TwitterAds&utm_campaign=TwitterAds-LwLVideoBenefits
+	y a este otro: https://www.graylog.org
 	 
 links
 
