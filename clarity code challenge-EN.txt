@@ -7,7 +7,9 @@ clarity code challenge:
 The challenge consists of two exercises
 
 1. Parse the data with a time_init, time_end
-Build a tool, that given the name of a file (with the format described above), an init_datetime, an end_datetime, and a Hostname, returns:
+Build a tool, that given the name of a file (with the format described above), an init_datetime, an end_datetime, 
+and a Hostname, returns:
+
 a list of hostnames connected to the given host during the given period
 
 ANALYSIS of the problem:
@@ -34,9 +36,10 @@ ANALYSIS of the problem:
 		quark 1366815793
 		lilac 1366815811
 
-	Maybe we should make that unix_timestamp into something human readable, but for now I'll leave it like that because I'm going to start from the fact that to make the calculations between windows of use, 
-	I will also have as an input parameter another unix_timestamp that is a Long number, ideal for working with this data. You only have to add them, subtract them, compare if they are bigger 
-	or minors...
+	Maybe we should make that unix_timestamp into something human readable, but for now I'll leave it like that because 
+	I'm going to start from the fact that to make the calculations between windows of use, I will also have as an input 
+	parameter another unix_timestamp that is a Long number, ideal for working with this data. You only have to add them,
+	subtract them, compare if they are bigger or minors...
 
 	Or an entry like this:
 
@@ -47,20 +50,27 @@ ANALYSIS of the problem:
 		brunt 1366815795
 
 
-	This seems a perfect example to use sparksql and dataframes, you could even think about a data streaming solution because the log file can grow every second, so,
-	using spark structured streaming to load the file as it is produced on a remote machine is perfectly feasible and only minimal code changes would need to be made to create the 
-	Dataframe. For simplicity reasons, I will assume the first option, to load a static data csv file to create the Dataframe and to be able to make a SQL query that solves the first problem.
+	This seems a perfect example to use sparksql and dataframes, you could even think about a data streaming solution 
+	because the log file can grow every second, so, using spark structured streaming to load the file as it is 
+	produced on a remote machine is perfectly feasible and only minimal code changes would need to be made to create the 
+	Dataframe. For simplicity reasons, I will assume the first option, to load a static data csv file to create the 
+	Dataframe and to be able to make a SQL query that solves the first problem.
 
-	The main reason is that these log files can be really huge, of GB or TB per day, so their best place is a distributed file system where we can distribute that load and work with them in the memory of each one of the nodes.
-	If we need to process bigger files, we add more nodes to the cluster (scale out) and/or extend the capacity of each one of the nodes in memory/cpu/hdd (scale up). 
+	The main reason is that these log files can be really huge, of GB or TB per day, so their best place is a distributed 
+	file system where we can distribute that load and work with them in the memory of each one of the nodes.
+	If we need to process bigger files, we add more nodes to the cluster (scale out) and/or extend the capacity of each one 
+	of the nodes in memory/cpu/hdd (scale up). 
 
-	It does not make sense to create an ad hoc tool to solve a problem like this because literally to deal with files that are potentially huge, you would need to create a distributed processing framework and if you wanted it to be fast and efficient in time, you would need it to be a framework that works with the data in the RAM memory of each node. 
+	It does not make sense to create an ad hoc tool to solve a problem like this because literally to deal with files that 
+	are potentially huge, you would need to create a distributed processing framework and if you wanted it to be fast and 
+	efficient in time processing, you would need it to be a framework that works with the data in the RAM memory of each node. 
 
 	That is literally the definition of the Apache Spark framework, distributed processing of large amounts of data in memory.
 
 	Besides, the problem is fixed by mounting a SQL statement in a natural way.
 
-	I consider that not working for this kind of problems with something other than Apache Spark is like traveling to the past living in the present.
+	I consider that not working for this kind of problems with something other than Apache Spark is like traveling to the past
+	living in the present.
 
 In principle you have to 
 
@@ -86,9 +96,13 @@ Then, the whole script, assuming I'm behind a spark-shell
 
 	val schema = new StructType().add("unix",LongType).add("from",StringType).add("to",StringType)
 
+	// Obviosly this should be a parameter
 	val path = "/Users/aironman/gitProjects/alonsoir.github.io/test-clarity.csv"
 
-	val dfLogsWithSchema = spark.sqlContext.read.format("csv").option("delimiter"," ").option("quote","").option("header", "false").schema(schema).load(path)
+	val dfLogsWithSchema = spark.sqlContext.read.format("csv").option("delimiter"," ").option("quote","")
+																					  .option("header", "false")
+																					  .schema(schema)
+																					  .load(path)
 
 	dfLogsWithSchema.registerTempTable("LOGS")
 
@@ -105,10 +119,12 @@ Then, the whole script, assuming I'm behind a spark-shell
 	// i am printing data, but, i could save to a parquet file or whatever we have to.
 	spark.sql(s"""SELECT from,unix FROM LOGS WHERE $init_datetime < unix AND unix <=$end_datetime AND to = '${to_hostname}'"").show(false)
 
-Obviously this is not a complete program, we must add the variables to collect by parameter the init_datetime, the end_datetime and to_hostname, the structure of the project is missing, 
+Obviously this is not a complete program, we must add the variables to collect by parameter the init_datetime, 
+the end_datetime and to_hostname, the structure of the project is missing, 
 the premises, build the jar with maven or sbt and add, perhaps, to the invocation of spark-submit
 the necessary optimization parameters that will vary depending on the cluster that is in production. 
-The ideal is always that the complete data set fits in the RAM of all the nodes, but mainly in the Driver, so it must be properly provided. 
+The ideal is always that the complete data set fits in the RAM of all the nodes, but mainly in the Driver, 
+so it must be properly provided. 
 
 links
 
@@ -118,22 +134,27 @@ links
 	https://stackoverflow.com/questions/29704333/spark-load-csv-file-as-dataframe
 
  2. Unlimited Input Parser
-The tool should both parse previously written log files and terminate or collect input from a new log file while it's being written and run indefinitely.
+The tool should both parse previously written log files and terminate or collect input from a new log file while it's 
+being written and run indefinitely.
 The script will output, once every hour:
 ● a list of hostnames connected to a given (configurable) host during the last hour
 ● a list of hostnames received connections from a given (configurable) host during the last hour
 ● the hostname that generated most connections in the last hour
-Both the number of log lines and hostnames can be very high. Consider implementing a CPU and memory-efficient solution. Please feel free to make assumptions as necessary with proper documentation.
+Both the number of log lines and hostnames can be very high. Consider implementing a CPU and memory-efficient solution. 
+Please feel free to make assumptions as necessary with proper documentation.
 
+Analysis
 
 That is, we have multiple log files like the one above, so I have to assume that these files exist on multiple external file systems,
 and every hour, I have to add all those log files into one, so, I have to generate an output that
 
 	1. show a list of machines that have connected to a machine (configurable by parameter) during the last hour.
 
-		Something like this, starting from the first exercise, capturing an added time window of one hour in a previous step of the process flow, in which you have to add the log files produced
-		every hour in a single csv file, create a Dataframe with those data taking into account the scheme that the final file will have, create a temporary table where we can launch the sql sentences,
-		something like that. Note that now that LOGS table, will only contain the hourly aggregate, so it would not be necessary to add more filters to the WHERE.
+		Something like this, starting from the first exercise, capturing an added time window of one hour in a previous step of the
+		process flow, in which you have to add the log files produced every hour in a single csv file, create a Dataframe with those
+		data taking into account the scheme that the final file will have, create a temporary table where we can launch the sql sentences,
+		something like that. Note that now that LOGS table, will only contain the hourly aggregate, so it would not be necessary to add 
+		more filters to the WHERE.
 
 		SELECT from,unix FROM LOGS WHERE to = '${to_hostname}'
 
@@ -148,17 +169,30 @@ and every hour, I have to add all those log files into one, so, I have to genera
 		By definition, what does this mean? Do you want the name of the machine from which you have generated the most connections?
 		the name of the machine that generated the most connections? the larger of the two?
 
-		Assuming that you want the largest of the hosts, to and from, you have to do two queries in which you take out the number of hosts, along with the host name, sort them in descending order and keep the first one, so that you have the machine from or to with the most connections, and then you only have to decide which one is larger.
+		Assuming that you want the largest of the hosts, to and from, you have to do two queries in which you take out the number of hosts,
+		along with the host name, sort them in descending order and keep the first one, so that you have the machine from or to with the 
+		most connections, and then you only have to decide which one is larger.
 
 		SELECT from, count(from) as cont FROM LOGS WHERE from = '${from_hostname}' ORDER BY from GROUP BY from,count
 
 		in spark would be something like that:
 
-			df.select(df.col("from"), count("from")).filter(df.col("from") = {'${from_hostname}'}).groupBy(df.col("from")).agg(max(count("from"))).cache().show()
+			df.select(df.col("from"), count("from"))
+			  .filter(df.col("from") = {'${from_hostname}'})
+			  .groupBy(df.col("from"))
+			  .agg(max(count("from")))
+			  .cache()
+			  .show()
 
-			df.select(df.col("to"), count("to")).filter(df.col("to") = {'${to_hostname}'}).groupBy(df.col("to")).agg(max(count("to"))).cache().show()
+			df.select(df.col("to"), count("to"))
+			  .filter(df.col("to") = {'${to_hostname}'})
+			  .groupBy(df.col("to"))
+			  .agg(max(count("to")))
+			  .cache()
+			  .show()			
 
-		Obviously, showing the data I'm not going to take the meter out, but I can dump it into a text file and then read it from there to operate with it. I'd have to look at how to do this more effectively, I admit it's not ideal.  
+		Obviously, showing the data I'm not going to take the meter out, but I can dump it into a text file and then read it from there to 
+		operate with it. I'd have to look at how to do this more effectively, I admit it's not ideal.  
 
 	How do I solve it, how do I add those remote log files into one every hour? 
 
@@ -167,8 +201,9 @@ and every hour, I have to add all those log files into one, so, I have to genera
 	and add them in a single data file where the three previous points would be executed. 
 	Something can be done, 
 		
-		1. every hour I connect to each external file system and bring each one to finally add it in a final one. Once added, I rename the files in that directory
-			in a way that they won't be processed again, or I move them to another directory. The point is that they won't be reprocessed
+		1. every hour I connect to each external file system and bring each one to finally add it in a final one. Once added, I rename the files
+			in that directory in a way that they won't be processed again, or I move them to another directory. 
+			The point is that they won't be reprocessed
 
 			To do this, I first need a job that connects to an external file system and brings me that data. Each of those files will be 
 			on a machine given an ip and a port.
@@ -178,24 +213,36 @@ and every hour, I have to add all those log files into one, so, I have to genera
 
 		2. Every hour I collect the data stored in each file system created by each Job LogFileRecoveryTool, adding the data in a final file.
 
-			For this, I can use some task scheduler, so that it is activated every hour, scanning a directory where the log files of each Job have been left 
-			spark streaming from the previous point, will take those log files and create a final log file aggregate with all the lines. You can create a parquet, avro, csv file without compression...
+			For this, I can use some task scheduler, so that it is activated every hour, scanning a directory where the log files of each Job 
+			have been left spark streaming from the previous point, will take those log files and create a final log file aggregate with all the lines.
+			You can create a parquet, avro, csv file without compression...
 			This task scheduler can be from a simple CRON job, to use some java or scala process that uses some library like quartz. 
 
-		3. Once I have that final file, create a final spark process, create the DataFrame with that file, create the temporary table and make the necessary queries described in the three previous points.
+		3. Once I have that final file, create a final spark process, create the DataFrame with that file, create the temporary table and make the 
+		   necessary queries described in the three previous points.
 
 	Alternatives
 
-	Surely this can be done in better ways, for example, by using proprietary software already designed specifically for this type of task. Since we don't have access at the time of writing 
-	on that proprietary software, I decide to use open source software (apache spark, java and scala) that is available to everyone.
+	Surely this can be done in better ways, for example, by using proprietary software already designed specifically for this type of task. 
+	Since i don't have access at the time of writing on that proprietary software, I decide to use open source software 
+	(apache spark, java and scala) that is available to everyone.
 
-	Alternatives within the open source world? you could use apache kafka (kafka-streams, ksql) to collect in each partitioned topic an external log file and then merge all the topics and work the same way I used spark to mount the sql query. Although at the time of writing I was not clear on how to manage the merge every hour, I guess using a time window. Still, I could probably switch from using quartz as a task scheduler to delegating to spark or kafka to do the hourly aggregation of each log. With more time, I would make several versions of all these ideas to keep the best idea agreed with the team and the one that gives better performance with less use of resources and ease of use.
+	Alternatives within the open source world? you could use apache kafka (kafka-streams, ksql) to collect in each partitioned topic an 
+	external log file and then merge all the topics and work the same way I used spark to mount the sql query.
+	Although at the time of writing I was not clear on how to manage the merge every hour, I guess using a time window.
+	Still, I could probably switch from using quartz as a task scheduler to delegating to spark or kafka to do the hourly aggregation of each log.
+	With more time and better health, I would make several versions of all these ideas to keep the best idea agreed with the team and the one that
+	gives better performance with less use of resources and ease of use.
 
-	You could use kibana and elasticsearch to make the necessary queries to solve the problem. I don't have much experience with these technologies, I have projects in github that use these technologies
-	but I haven't used them in a couple of years, so I'd need a little time to refresh my knowledge.
+	I could use kibana and elasticsearch to make the necessary queries to solve the problem. I could use too Apache Flink instead of spark streaming 
+	to capture log data.
 
-	It would also be worth taking a look at this product, https://www.datadoghq.com/dg/logs/benefits/?utm_source=Advertisement&utm_medium=TwitterAds&utm_campaign=TwitterAds-LwLVideoBenefits
-	and this one: https://www.graylog.org 
+	It would also be worth taking a look at this product, 
+
+		https://www.datadoghq.com/dg/logs/benefits/?utm_source=Advertisement&utm_medium=TwitterAds&utm_campaign=TwitterAds-LwLVideoBenefits
+	and this one: 
+
+		https://www.graylog.org 
 
 links
 
