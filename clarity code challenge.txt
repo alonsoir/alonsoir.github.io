@@ -184,6 +184,23 @@ y cada hora, tengo que agregar todos esos ficheros de log en uno sólo, de maner
 
 		3. Una vez que tengo ese fichero final, crear un proceso final spark, crear el DataFrame con ese fichero, crear la tabla temporal y hacer las consultas necesarias descritas en los tres puntos anteriores.
 
+		4. Obviamente, la ejecucion ordenada de cada uno de estos componentes necesita ser orquestada con precisión con un orquestador maestro, de manera que se encargue de la correcta ejecucion ordenada de los distintos componentes. 
+
+		Tenemos los recolectores de log capturando log de cada una de las maquinas, por lo que este orquestador se encargará de comprobar periodicamente que los procesos tienen PID activo, no en estado zombie, relanzandolos en caso de que por alguna razón estuvieran caídos.
+
+		Si despues de varios intentos, los procesos recolectores fallan, hay que lanzar una alarma para mirar con más detenimiento.
+		 
+		Por otro, el orquestador tiene que comprobar tambien el estado de salud del proceso Quartz que se encarga de recolectar cada hora los ficheros log capturados por los procesos anteriores y agregarlos en un único fichero log final. Una vez que ha terminado, debe avisar al super orquestador para lanzar los procesos finales. 
+
+		Este aviso de finalización se puede hacer de diferentes maneras, por ejemplo, enviando un evento a través de cola de mensajes, por lo que necesitaria incluir esta lógica en el proceso Quartz que se encarga de agregar los logs, podría insertar en una tabla SQL un booleano que represente a un estado, de manera que el orquestador maestro sepa en que está está para proceder. Por poner dos ejemplos. Dependiendo de la eleccion de una u otra manera, la implementacion de este orquestador maestro varía, de ahí que no introduzca una implementación. 
+		La ejecucion de este orquestador maestro basicamente comprueba el estado de ejecucion de cada elemento. Hay elementos que se ejecutan siempre, como los recolectores de log. Estos se lanzan con un script bash, que incluya la llamada al comando spark-submit. Cuando se lanza el script bash, podemos examinar el estado del proceso spark examinando su PID de manera periódica. Otra manera de hacer la monitorizacion para estos procesos  es comprobar los mismos ficheros log de cada uno de estos procesos spark mediante streaming. En el pasado encontré que esta solucion de comprobacion de logs, requiere de mucha memoria, recursos que a lo mejor no tenemos, por lo que la comprobacion periodica del PID es más ligera en terminos de recursoss.
+
+		Este orquestador maestro se puede hacer de muchas maneras, básicamente hay que comprender que es un proceso Demonio que se va a encargar de comprobar el estado de ejecucion de cada uno de los subcomponentes. Dependiendo de la tecnologia seleccionada, habría que hacer una cosa u otra, son detalles de implementacion. 
+
+		Por ejemplo se podría usar Apache Camel, un framework para integrar componentes, la ejecucion de los mismos y podríamos gestionar el estado de los mismos de varias formas tambien. Detalles de implementacion.
+		 
+		Simplemente comentar que ya he hecho cosas así en el pasado para otros clientes. Sé hacerlo, pero lleva un tiempo.  
+
 	Alternativas
 
 	Seguramente esto se puede hacer de mejores maneras, por ejemplo, usando software propietario ya diseñado expresamente para este tipo de tareas. Al no tener acceso en el momento de escribir esto 

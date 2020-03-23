@@ -1,18 +1,18 @@
 ## README.md
 
-	The idea of writing this text is to show the process of inference I take to face as I solve a problem.
+	The idea of writing this text is to show the process of inference I take to face as I solve this problem.
 
 clarity code challenge:
 
 The challenge consists of two exercises
 
-1. Parse the data with a time_init, time_end
+## 1. Parse the data with a time_init, time_end
 Build a tool, that given the name of a file (with the format described above), an init_datetime, an end_datetime, 
 and a Hostname, returns:
 
 a list of hostnames connected to the given host during the given period
 
-ANALYSIS of the problem:
+# ANALYSIS of the problem:
 
 	Having this data in log files:
 
@@ -35,6 +35,8 @@ ANALYSIS of the problem:
 
 		quark 1366815793
 		lilac 1366815811
+
+# DEDUCTION PROCESS 
 
 	Maybe we should make that unix_timestamp into something human readable, but for now I'll leave it like that because 
 	I'm going to start from the fact that to make the calculations between windows of use, I will also have as an input 
@@ -74,7 +76,9 @@ ANALYSIS of the problem:
 	I consider that not working for this kind of problems with something other than Apache Spark is like traveling to the
 	past living in the present.
 
-In principle you have to 
+# A PROPOSED SOLUTION
+
+In principle i have to 
 
 	1) create a suitable scheme for these fields. 
 	2) create a Dataframe with the information of that csv file, using the previous scheme.
@@ -85,8 +89,8 @@ In principle you have to
 	5) Display data, save it in parquet format, create a hive table...
 
 
-
-Then, the whole script, assuming I'm behind a spark-shell
+Then, the whole script, assuming I'm behind a spark-shell,although a real solution to put it in production requires the 
+assembly of the Jar with its respective dependencies...
 
 	import org.apache.spark.sql.types.StructType
 	import org.apache.spark.sql.types.StringType
@@ -136,7 +140,8 @@ links
 	https://sparkbyexamples.com/spark/rename-a-column-on-spark-dataframes/
 	https://stackoverflow.com/questions/29704333/spark-load-csv-file-as-dataframe
 
- 2. Unlimited Input Parser
+## 2. Unlimited Input Parser
+
 The tool should both parse previously written log files and terminate or collect input from a new log file while it's 
 being written and run indefinitely.
 The script will output, once every hour:
@@ -146,12 +151,14 @@ The script will output, once every hour:
 Both the number of log lines and hostnames can be very high. Consider implementing a CPU and memory-efficient solution. 
 Please feel free to make assumptions as necessary with proper documentation.
 
-Analysis
+# Analysis
 
 That is, we have multiple log files like the one above, so I have to assume that these files exist on multiple external file 
 systems,and every hour, I have to add all those log files into one, so, I have to generate an output that
 
 	1. show a list of machines that have connected to a machine (configurable by parameter) during the last hour.
+
+		# DEDUCTION PROCESS
 
 		Something like this, starting from the first exercise, capturing an added time window of one hour in a previous step 
 		of the process flow, in which you have to add the log files produced every hour in a single csv file, create a Dataframe
@@ -163,16 +170,20 @@ systems,and every hour, I have to add all those log files into one, so, I have t
 
 		SELECT from,unix FROM LOGS WHERE to = '${to_hostname}'
 
-	2. Show a list of machines that have received the connection during the last hour. Same as above but showing the opposite.
+	2. Show a list of machines that have received the connection during the last hour. 
 
-		Something like that, but considering how long an hour is...
+		# DEDUCTION PROCESS
+		
+		Same as above but showing the opposite.
 
 		SELECT to,unix FROM LOGS WHERE from = '${from_hostname}'
 
 	3. Show the name of the machine that has generated the most connections in the last hour...
 
+		# DEDUCTION PROCESS
+
 		By definition, what does this mean? Do you want the name of the machine from which you have generated the most connections?
-		the name of the machine that generated the most connections? the larger of the two?
+		the name of the machine that generated the most connections? the larger of the two? It is not clear...
 
 		Assuming that you want the largest of the hosts, to and from, you have to do two queries in which you take out the number of
 		hosts, along with the host name, sort them in descending order and keep the first one, so that you have the machine from or
@@ -197,21 +208,24 @@ systems,and every hour, I have to add all those log files into one, so, I have t
 			  .show()			
 
 		Obviously, showing the data I'm not going to take the meter out, but I can dump it into a text file and then read it from
-		there to operate with it. I'd have to look at how to do this more effectively, I admit it's not ideal.  
+		there to operate with it. I'd have to look at how to do this more effectively.  
 
-	How do I solve it, how do I add those remote log files into one every hour? 
+		How do I solve it, how do I add those remote log files into one every hour? 
 
-	with some streaming tool that does the collection every hour? 
-	using the term every hour implies that a task scheduler like quartz should execute a data collection task from each external file
-	system and add them in a single data file where the three previous points would be executed. 
-	Something can be done, 
+		with some streaming tool that does the collection every hour? 
+		using the term every hour implies that a task scheduler like quartz should execute a data collection task from each 
+		external file system and add them in a single data file where the three previous points would be executed. 
 		
-		1. every hour I connect to each external file system and bring each one to finally add it in a final one. Once added, I rename
-		 	the files in that directory in a way that they won't be processed again, or I move them to another directory. 
-			The point is that they won't be reprocessed.
+		Something like this can be done, 
+		
+		1. every hour I connect to each external file system and bring each one to finally add it in a final one. Once added, 
+			I rename the files in that directory in a way that they won't be processed again, or I move them to another 
+			directory. 
+			
+			The main point is that they won't be reprocessed.
 
-			To do this, I first need a job that connects to an external file system and brings me that data. Each of those files will 
-			be on a machine given an ip and a port.
+			To do this, I first need a job that connects to an external file system and brings me that data. 
+			Each of those files will be on a machine given an ip and a port.
 			
 			For example, use something like the LogFileRecoveryTool.scala job that is in this same Github repository.
 
@@ -229,6 +243,41 @@ systems,and every hour, I have to add all those log files into one, so, I have t
 		3. Once I have that final file, create a final spark process, create the DataFrame with that file, create the temporary table
 		   and make the necessary queries described in the three previous points.
 
+		4. Obviously, the orderly execution of each of these components needs to be precisely orchestrated with a master orchestrator, 
+		   so that he or she takes care of the correct orderly execution of the different components. 
+
+		   We have the log collectors capturing logs from each of the machines, so this orchestrator will be in charge of checking 
+		   periodically that the processes have active PID, not in zombie state, re-launching them in case for some reason they were down.
+
+		   If after several attempts, the collecting processes fail, an alarm must be launched to look more closely.
+ 
+		   On the other hand, the orchestrator must also check the health of the Quartz process which collects every hour the log files 
+		   captured by the previous processes and adds them in a single final log file. Once this is done, he must notify the super 
+		   orchestrator to launch the final processes. 
+
+		   This termination notice can be done in different ways, for example, by sending an event through the message queue, so you would
+		   need to include this logic in the Quartz process that is in charge of adding the logs, you could insert in a SQL table a boolean
+		   representing a state, so that the master orchestrator knows what he is in to proceed.
+		   To give two examples. Depending on the choice of one way or another, the implementation of this master orchestrator varies, 
+		   so do not enter an implementation. 
+	
+		   The implementation of this master orchestrator basically checks the execution status of each element. There are elements that are
+		   always executed, such as log collectors. These are launched with a bash script, which includes a call to the spark-submit command. 
+		   When the bash script is launched, we can examine the state of the spark process by examining its PID periodically. 
+		   Another way to do the monitoring for these processes is to check the same log files of each of these spark processes by streaming.
+		   In the past I found that this log checking solution, requires a lot of memory, resources that we may not have, 
+		   so the periodic PID checking is lighter in terms of resources.
+
+		   This master orchestrator can be done in many ways, basically you have to understand that it is a daemon process that will take care
+		   of checking the execution status of each of the sub-components.
+
+		   Depending on the technology selected, you would have to do one thing or another, are details of implementation. 
+
+		   For example, we could use Apache Camel, a framework to integrate components, the execution of them and we could manage the state 
+		   of them in several ways too. Implementation details.
+ 
+		   Just comment that I have done things like this in the past for other customers. I know how to do it, but it takes a while.
+	
 	Alternatives
 
 	Surely this can be done in better ways, for example, by using proprietary software already designed specifically for this type of 
