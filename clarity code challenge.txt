@@ -193,7 +193,11 @@ y cada hora, tengo que agregar todos esos ficheros de log en uno sólo, de maner
 		Por otro, el orquestador tiene que comprobar tambien el estado de salud del proceso Quartz que se encarga de recolectar cada hora los ficheros log capturados por los procesos anteriores y agregarlos en un único fichero log final. Una vez que ha terminado, debe avisar al super orquestador para lanzar los procesos finales. 
 
 		Este aviso de finalización se puede hacer de diferentes maneras, por ejemplo, enviando un evento a través de cola de mensajes, por lo que necesitaria incluir esta lógica en el proceso Quartz que se encarga de agregar los logs, podría insertar en una tabla SQL un booleano que represente a un estado, de manera que el orquestador maestro sepa en que está está para proceder. Por poner dos ejemplos. Dependiendo de la eleccion de una u otra manera, la implementacion de este orquestador maestro varía, de ahí que no introduzca una implementación. 
-		La ejecucion de este orquestador maestro basicamente comprueba el estado de ejecucion de cada elemento. Hay elementos que se ejecutan siempre, como los recolectores de log. Estos se lanzan con un script bash, que incluya la llamada al comando spark-submit. Cuando se lanza el script bash, podemos examinar el estado del proceso spark examinando su PID de manera periódica. Otra manera de hacer la monitorizacion para estos procesos  es comprobar los mismos ficheros log de cada uno de estos procesos spark mediante streaming. En el pasado encontré que esta solucion de comprobacion de logs, requiere de mucha memoria, recursos que a lo mejor no tenemos, por lo que la comprobacion periodica del PID es más ligera en terminos de recursoss.
+		La ejecucion de este orquestador maestro basicamente comprueba el estado de ejecucion de cada elemento. Hay elementos que se ejecutan siempre, como los recolectores de log. Estos se lanzan con un script bash, que incluya la llamada al comando spark-submit. Cuando se lanza el script bash, podemos examinar el estado del proceso spark examinando su PID de manera periódica. Otra manera de hacer la monitorizacion para estos procesos  es comprobar los mismos ficheros log de cada uno de estos procesos spark mediante streaming. 
+		
+		Estos ficheros log de spark viven habitualmente en el HDFS, por lo que hay que escanear esos ficheros y buscar los mensajes adecuados para comprobar el estado de salud de los procesos, sobre todo los marcados como ERROR, dependiendo del tipo de error, sugiero siempre excepciones controladas y programadas para saber exactamente que tipo de error es y algunos mensajes INFO como el SUCCESS.
+
+		En el pasado encontré que esta solucion de comprobacion de logs, requiere de mucha memoria, recursos que a lo mejor no tenemos, por lo que la comprobacion periodica del PID es más ligera en terminos de recursoss.
 
 		Este orquestador maestro se puede hacer de muchas maneras, básicamente hay que comprender que es un proceso Demonio que se va a encargar de comprobar el estado de ejecucion de cada uno de los subcomponentes. Dependiendo de la tecnologia seleccionada, habría que hacer una cosa u otra, son detalles de implementacion. 
 
@@ -214,6 +218,14 @@ y cada hora, tengo que agregar todos esos ficheros de log en uno sólo, de maner
 	También merecería la pena echar un vistazo a este producto, https://www.datadoghq.com/dg/logs/benefits/?utm_source=Advertisement&utm_medium=TwitterAds&utm_campaign=TwitterAds-LwLVideoBenefits
 	y a este otro: https://www.graylog.org
 	 
+
+	Conclusion y agradecimientos.
+
+	Ha sido divertido realizar el ejercicio intelectual, se que no se ajusta perfectamente, pero quería al menos mostrar mi manera de pensar con esta esta idea de como hacer una arquitectura para un problema en apariencia simple, pero ambos sabemos que trabajar con ficheros logs siempre ha sido un problema de altura, debido a la naturaleza distribuida de los mismos y de la gestion de recursos necesarios para mantenerlos y procesarlos para sacar valor de ellos.
+
+	Muchas gracias por todo, estaré encantado de hablar con ustedes para lo que ustedes vean necesario.
+
+
 links
 
 	http://www.quartz-scheduler.org
