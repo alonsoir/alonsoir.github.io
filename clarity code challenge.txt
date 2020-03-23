@@ -1,12 +1,18 @@
+README.md
+
+	La idea de escribir este texto es mostrar el proceso de inferencia que tomo para afrontar como resuelvo un problema.
+
 clarity code challenge:
+
+El desafío consiste en dos ejercicios
 
 1. Parse the data with a time_init, time_end
 Build a tool, that given the name of a file (with the format described above), an ​init_datetime​, an end_datetime​, and a ​Hostname​, returns:
 a list of hostnames connected to the given host during the given period
 
 ANALISIS del problema:
-	Parece que teniendo estos datos:
 
+	Teniendo estos datos eb ficheros log:
 
 	<unix_timestamp> <from-hostname> <to-hostname>
 	1366815793 quark garak
@@ -68,7 +74,7 @@ en principio hay que
 
 
 
-Entonces, el script completo, asumiendo que estoy detras de una spark-shell, y añadiendo a la consulta el string necesario...
+Entonces, el script completo, asumiendo que estoy detras de una spark-shell.
 
 	import org.apache.spark.sql.types.StructType
 	import org.apache.spark.sql.types.StringType
@@ -96,7 +102,13 @@ Entonces, el script completo, asumiendo que estoy detras de una spark-shell, y a
 	
 	println(s"USING to_hostname: $to_hostname" + s" init_datetime: $init_datetime" + s" end_datetime: $end_datetime")
 
+	// i am printing data, but, i could save to a parquet file or whatever we have to.
 	spark.sql(s"""SELECT from,unix FROM LOGS WHERE $init_datetime < unix AND unix <=$end_datetime AND to = '${to_hostname}'""").show(false)
+
+Obviamente esto no es un programa completo, hay que añadir las variables para recoger por parametro el init_datetime, el end_datetime y to_hostname, falta la estructura del proyecto, 
+las dependencias, construir el jar con maven o sbt y añadir, quizás, a la invocacion de spark-submit
+los parametros de optimizacion necesario que variarán en función del cluster que esté en produccion. 
+Lo ideal siempre es que el conjunto de datos al completo quepa en la RAM de todos los nodos, pero sobre todo en el Driver, por lo que debe estar adecuadamente provisionado. 
 
 links
 
@@ -119,20 +131,34 @@ y cada hora, tengo que agregar todos esos ficheros de log en uno sólo, de maner
 
 	1. mostrar una lista de maquinas que se hayan conectado a una maquina (configurable por parametro) durante la ultima hora.
 
-		Algo asi, pero teniendo que tener en cuenta cuanto dura una hora...
+		Algo asi, partiendo del primer ejercicio, capturando una ventana de tiempo agregado de una hora en un paso anterior del flujo de procesos, en el que hay que agregar los ficheros log producidos
+		cada hora en un único fichero csv, crear un Dataframe con esos datos teniendo en cuenta el esquema que vaya a tener el fichero final, crear una tabla temporal donde podamos lanzar las sentencias sql,
+		algo como así. Notese que ahora esa tabla LOGS, solo contendrá el agregado horario, por lo que no sería necesario añadir mas filtros al WHERE.
 
-		SELECT from,unix FROM LOGS WHERE $init_datetime < unix AND unix <=$end_datetime AND to = '${to_hostname}'
+		SELECT from,unix FROM LOGS WHERE to = '${to_hostname}'
 
 	2. Mostrar una lista de maquinas que hayan recibido  la conexion durante la ultima hora. Lo mismo que la anterior pero mostrando lo contrario.
 
 		Algo asi, pero teniendo que tener en cuenta cuanto dura una hora...
 
-		SELECT to,unix FROM LOGS WHERE $init_datetime < unix AND unix <=$end_datetime AND to = '${from_hostname}'
+		SELECT to,unix FROM LOGS WHERE from = '${from_hostname}'
 
 	3. Mostrar el nombre de la máquina que haya generado mas conexiones en la última hora...
 
 		Por definir, que quiere decir esto? quieren el nombre de la maquina from que haya generado más conexiones?
 		el nombre de la maquina to que haya generado más conexiones? el mayor de los dos?
+
+		Asumiendo que quieren el mayor de los entre los hosts, to y from, hay que hacer dos consultas en el que hay que sacar el numero de hosts, junto con el nombre del host, ordenarlos de manera decreciente y quedarte con el primero, de manera que tendremos la maquina from o to con mayor conexiones, y luego solo tendríamos que decidir cual de las dos es mayor.
+
+		SELECT from, count(from) as cont FROM LOGS WHERE from = '${from_hostname}' ORDER BY from GROUP BY from,count
+
+		en spark sería algo asi:
+
+			df.select(df.col("from"), count("from")).filter(df.col("from") = {'${from_hostname}'}).groupBy(df.col("from")).agg(max(count("from"))).cache().show()
+
+			df.select(df.col("to"), count("to")).filter(df.col("to") = {'${to_hostname}'}).groupBy(df.col("to")).agg(max(count("to"))).cache().show()
+
+		Obviamente, mostrando los datos no voy a sacar el contador, pero puedo volcarlo a un fichero de texto y luego leerlo de ahí para operar con ellos. Tendría que mirar como hacer esto de manera más efectiva, admito que no es ideal.  
 
 	¿Cómo lo resuelvo?, ¿Como agrego esos ficheros de log remotos en uno solo cada hora? 
 
@@ -141,11 +167,14 @@ y cada hora, tengo que agregar todos esos ficheros de log en uno sólo, de maner
 	y agregarlos en un único fichero de datos donde se acabarían ejecutando los tres puntos anteriores. 
 	Se puede hacer algo, 
 		
-		1. cada hora me conecto a cada sistema de ficheros y me traigo el mogollon de cada uno para finalmente agregarlo en uno final.
+		1. cada hora me conecto a cada sistema de ficheros externo y me traigo cada uno para finalmente agregarlo en uno final. Una vez agregados, renombro los ficheros de ese directorio
+			de una manera que no vuelvan a ser procesados de nuevo, o los muevo a otro directorio. El caso es que no se vuelvan a procesar
 
 			Para ello, primero necesito un job que se conecte a un sistema de ficheros externos y me traiga esos datos. Cada uno de esos ficheros estarán 
 			en una máquina dados una ip y un puerto.
-			Por ejemplo, usar algo como el job LogFileRecoveryTool.scala.
+			Por ejemplo, usar algo como el job LogFileRecoveryTool.scala que está en este mismo repositorio Github.
+
+				https://github.com/alonsoir/alonsoir.github.io/blob/master/LogFileRecoveryTool.scala
 
 		2. Cada hora recolecto los datos almacenados en cada sistema de ficheros creados por cada Job LogFileRecoveryTool, agregando los datos en un fichero final.
 
@@ -157,8 +186,8 @@ y cada hora, tengo que agregar todos esos ficheros de log en uno sólo, de maner
 
 	Alternativas
 
-	Seguramente esto se puede hacer de mejores maneras, por ejemplo, usando software propietario ya diseñado expresamente para este tipo de tareas. Al no tener acceso ni formacion sobre ese software
-	propietario, decido usar software open source (apache spark, java y scala) que esté al alcance de todo el mundo.
+	Seguramente esto se puede hacer de mejores maneras, por ejemplo, usando software propietario ya diseñado expresamente para este tipo de tareas. Al no tener acceso en el momento de escribir esto 
+	sobre ese software propietario, decido usar software open source (apache spark, java y scala) que esté al alcance de todo el mundo.
 
 	Alternativas dentro del mundo open source? se podría usar apache kafka (kafka-streams, ksql) para recolectar en cada topic particionado un fichero log externo para luego hacer el merge de todos los topics y trabajar de la misma manera que he usado spark para montar la consulta sql. Aunque en el momento de escribir esto, no veía claro como gestionar el merge cada hora, supongo que haciendo uso de una ventana de tiempo. Igual, seguramente podría pasar de usar quartz como planificador de tareas para delegar en spark o en kafka para hacer la agregacion cada hora de cada log. Con más tiempo, haría varias versiones de todas estas ideas para quedarme con la mejor idea consensuada con el equipo y la que de mejor rendimiento con menor uso de recursos y facilidad de uso.
 
@@ -187,6 +216,10 @@ links
 	https://stackoverflow.com/questions/33009935/window-in-spark-streaming?rq=1
 
 	https://www.google.com/search?client=safari&rls=en&sxsrf=ALeKk00X0b8koqoi2akRPmfDTsXV7tFqtQ%3A1584620095532&ei=P2JzXpWTIIu-aJuZmaAO&q=collecting+log+files+every+hour+using+structured+streaming&oq=collecting+log+files+every+hour+using+structured+streaming&gs_l=psy-ab.3...10051.14403..15546...2.2..0.378.1411.9j2j0j1......0....1..gws-wiz.......0i71j33i10.1o_8NKJxqzE&ved=0ahUKEwjVrpfvwaboAhULHxoKHZtMBuQQ4dUDCAo&uact=5
+
+	http://www.diegocalvo.es/funciones-estadisticas-de-dataframes-en-scala/	
+
+	https://allaboutscala.com/big-data/spark/#dataframe-sql-group-by-count-filter
 
 
 
