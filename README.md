@@ -76,6 +76,16 @@
 
 	Apache Spark
 
+		https://towardsdatascience.com/the-art-of-joining-in-spark-dcbd33d693c
+
+		https://towardsdatascience.com/why-apache-spark-is-fast-and-how-to-make-it-run-faster-9d31bf3eae04
+
+		https://allaboutscala.com/big-data/spark/#dataframe-sql-group-by-count-filter
+
+		http://www.diegocalvo.es/funciones-estadisticas-de-dataframes-en-scala/
+
+		https://medium.com/@varunabhi86/movie-recommendation-using-apache-spark-1a41e24b94ba
+
 		https://sparkbyexamples.com/spark/spark-dataframe-how-to-select-the-first-row-of-each-group/?fbclid=IwAR21-ydaE8QQwSgJhwyOzy1XfewiRymr9RzXd48tLtPNx3DhbNkVwrNq-DA
 
 		https://learning.oreilly.com/live-training/courses/stream-processing-with-apache-spark/0636920360490/

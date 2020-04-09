@@ -1,0 +1,38 @@
+## Proyecto Calvito
+
+# Introduccion
+
+	El proposito de este proyecto es crear un medio para crear audio clips mediante una app de 
+	smartphone para subirlo a un RSS feed gestionado, de manera que luego otros usuarios de
+	la arquitectura puedan consumir dichos audio clips, mediante busqueda o recomendacion 
+	basada en gustos parecidos, basado en metadatos, etiquetas.
+
+# Hipótesis de trabajo
+
+	Idealmente, habría que usar una app open source que ya permita crear el clip de audio para
+	luego subirlo al RSS, además de poder subscribirte a dichos RSS.
+
+	He encontrado un proyecto a priori interesante para empezar, Antennapod, un gestor de 
+	podcasts. Permite subscribirte a un RSS feed para luego escuchar dichos podcasts. 
+	No permite crear el audio clip, por lo que habría que ampliar las capacidades de la 
+	libreria que use para gestionar el audio, modificar la interfaz, y luego poder subir 
+	el audio a mi RSS creado para tal fin, con metaetiquetas, de manera que me permita 
+	identificar quien lo ha subido, cuando, una manera de metaidentificar el proposito 
+	de dicho audio, etc...
+
+	Antennapod usa una libreria creada ad hoc, AntennaPod-AudioPlayer, basada en 
+	Android.media. Habrá que hacer un fork para dicha libreria que permita la creacion del audio,
+	luego un servicio que recubra dicha api.
+
+
+# Enlaces interesantes
+
+	https://developer.android.com/reference/android/media/AudioRecord --> para crear el audio
+
+	https://github.com/antennapod/AntennaPod
+
+	https://github.com/AntennaPod/AntennaPod-AudioPlayer
+
+	https://antennapod.org
+
+	https://www.baeldung.com/rome-rss --> RSS. Puedo crear RSS? o sólo sirve para leer del RSS?
