@@ -24,14 +24,50 @@
 	Android.media. Habrá que hacer un fork para dicha libreria que permita la creacion del audio,
 	luego un servicio que recubra dicha api.
 
+	Para la app iOS habría que pensar en otra cosa, aún no he encontrado nada aprovechable.
+	Me centraré en principio en la app Android.
+
+# Diario de trabajo
+
+jueves 9 de Abril
+
+	Cambiar bash por fish. PENDING
+
+	Para empezar, voy a hacer un fork de la libreria y voy a cambiar de Gradle a Maven. PENDING
+
+	Instalar android-sdk, DONE luego setear ANDROID_HOME PENDING
+	# mediante brew cask
+	export ANDROID_HOME=/usr/local/Caskroom/android-sdk/4333796/
+
+	# mediante Android Studio
+	export ANDROID_HOME=/Users/aironman/Library/Android/sdk/
+
+	Elegir una de las dos, luego
+
+	export PATH=$PATH:$ANDROID_HOME/tools:$ANDROID_HOME/platform-tools PENDING
+
+	source ~/.bash_profile PENDING
+
+	Puede que haya que bajar la version de java. Actualmente está la 14... PENDING
+
+	el script gradlew es horrible, como le puede gustar a la gente esto? parece que se desarrolló originalmente 
+	con windows como SO. Habrá que adaptarlo para osx. PENDING
+
+
+
+
 
 # Enlaces interesantes
+
+	https://stackoverflow.com/questions/19986214/setting-android-home-enviromental-variable-on-mac-os-x
+
+	https://www.baeldung.com/gradle-build-to-maven-pom
 
 	https://developer.android.com/reference/android/media/AudioRecord --> para crear el audio
 
 	https://github.com/antennapod/AntennaPod
 
-	https://github.com/AntennaPod/AntennaPod-AudioPlayer
+	https://github.com/AntennaPod/AntennaPod-AudioPlayer --> libreria que gestiona actualmente el audio
 
 	https://antennapod.org
 
