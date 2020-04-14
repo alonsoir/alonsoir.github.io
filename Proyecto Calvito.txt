@@ -31,29 +31,36 @@
 
 jueves 9 de Abril
 
-	Cambiar bash por fish. PENDING
+	Cambiar bash por fish. PENDING. 
 
-	Para empezar, voy a hacer un fork de la libreria y voy a cambiar de Gradle a Maven. PENDING
+		Usaré Android Studio mientras tanto. DONE
 
-	Instalar android-sdk, DONE luego setear ANDROID_HOME PENDING
+	Para empezar, voy a hacer un fork de la libreria y voy a cambiar de Gradle a Maven. 
+
+		Creada feature-add-recording DONE
+		Compila en Android Studio el master DONE.
+
+	Instalar android-sdk, DONE luego setear ANDROID_HOME DONE
 	# mediante brew cask
 	export ANDROID_HOME=/usr/local/Caskroom/android-sdk/4333796/
 
 	# mediante Android Studio
 	export ANDROID_HOME=/Users/aironman/Library/Android/sdk/
 
+		Usaré éste
+
 	Elegir una de las dos, luego
 
-	export PATH=$PATH:$ANDROID_HOME/tools:$ANDROID_HOME/platform-tools PENDING
+	export PATH=$PATH:$ANDROID_HOME/tools:$ANDROID_HOME/platform-tools DONE
 
-	source ~/.bash_profile PENDING
+	source ~/.bash_profile DONE
 
 	Puede que haya que bajar la version de java. Actualmente está la 14... PENDING
 
 	el script gradlew es horrible, como le puede gustar a la gente esto? parece que se desarrolló originalmente 
 	con windows como SO. Habrá que adaptarlo para osx. PENDING
 
-
+	
 
 
 
