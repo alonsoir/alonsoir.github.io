@@ -222,4 +222,6 @@
 
 		https://www.nintendo.es/Juegos/Programas-descargables-Nintendo-Switch/Divinity-Original-Sin-2-Definitive-Edition-1633057.html#	
 
+	https://jameshfisher.com/2020/02/09/diffing-coronaviruses/
 
+		
