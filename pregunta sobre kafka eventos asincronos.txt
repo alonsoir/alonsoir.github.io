@@ -1,0 +1,40 @@
+Esta es la situacion:
+
+Tengo una serie de microservicios, no quiero que la comunicacion para invocarlos sea REST sincrono, quiero una comunicacion puramente asincrona con un motor de eventos,
+por poner un ejemplo, quiero usar kafka, aunque estoy abierto a usar otros motores de eventos. Dichos microservicios tendrán como punto de entrada un consumidor de eventos,
+cada uno, leyendo de un topic, y estos escribiran y leeran los datos a traves de un cluster, de manera unificada. 
+Cuando dicho microservicio seleccionado por el balanceador de carga tenga su respuesta, el microservicio devolverá el resultado a través de un productor de eventos donde
+el orquestador recogerá dicha respuesta y actuará en consecuencia.
+
+No quiero que cada uno de los microservicios tenga su 
+propia base de datos, porque al final acabaría pasando que un esquema tenga datos que otro microservicio no tenga, provocando errores lógicos indeseados.
+Todos los microservicios de una misma familia acceden a las mismas tablas alojadas en el mismo cluster. 
+Habrá un cluster para las escrituras y otro cluster para las lecturas. CQRS
+
+La pregunta es, puedo hacer esto con kafka? puedo hacer esto con otro motor de eventos? es el enfoque correcto? hay otro enfoque? 
+Pueden indicarme algun ejemplo practico con la configuracion necesaria, asumo que esto se hace mediante configuracion del motor de eventos, no creo que se haga
+a través de zookeeper... 
+
+
+Here's the situation:
+
+I have a series of microservices, I don't want the communication to invoke them to be synchronous REST, I want purely asynchronous communication with an event engine,
+To give an example, I want to use kafka, although I'm open to using other event engines. These microservices will have an event consumer as their entry point,
+Each one, reading from a topic, and they will write and read the data through a cluster, in a unified way. 
+When such microservice selected by the load balancer has its answer, the microservice will return the result through an event producer where
+the orchestrator shall collect that response and act accordingly.
+
+I don't want each of the microservices to have its 
+The reason for this is that in the end it would happen that a schema has data that another microservice does not have, causing unwanted logical errors.
+All the microservices of the same family access the same tables hosted in the same cluster. 
+There will be a cluster for writing and another cluster for reading. CQRS
+
+The question is, can I do this with kafka? can I do this with another event engine? is this the right approach? is there another approach? 
+Can you give me a practical example with the necessary configuration, I assume this is done by configuring the event engine, I don't think so
+through zookeeper...
+
+To READ
+
+	https://stackoverflow.com/search?q=kafka+asynchronous+microservices
+
+	https://stackoverflow.com/questions/61795614/can-i-use-kafka-to-invoke-microservices-from-the-same-family-of-microservices-as
