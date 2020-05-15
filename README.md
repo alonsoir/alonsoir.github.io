@@ -2,6 +2,14 @@
 
 # Things to study
 
+	Confluent platform
+
+		https://docs.confluent.io/current/tutorials/examples/microservices-orders/docs/index.html?utm_source=github&utm_medium=demo&utm_campaign=ch.examples_type.community_content.microservices-orders
+
+		https://docs.confluent.io/current/quickstart/cloud-quickstart/index.html#ccloud-quick-start
+
+		https://docs.confluent.io/current/quickstart/ce-quickstart.html
+
 	Microservicios
 	
 		https://dzone.com/articles/break-a-monolith-to-microservices-12-best-practice?edition=583294&utm_source=Weekly%20Digest&utm_medium=email&utm_campaign=Weekly%20Digest%202020-03-04
@@ -223,5 +231,9 @@
 		https://www.nintendo.es/Juegos/Programas-descargables-Nintendo-Switch/Divinity-Original-Sin-2-Definitive-Edition-1633057.html#	
 
 	https://jameshfisher.com/2020/02/09/diffing-coronaviruses/
+
+	https://www.geeksforgeeks.org
+
+	https://medium.com
 
 		
