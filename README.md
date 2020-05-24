@@ -2,6 +2,24 @@
 
 # Things to study
 
+	Istio
+
+		https://www.linkedin.com/pulse/why-you-might-need-istio-rick-hightower/
+
+		https://www.linkedin.com/pulse/service-mesh-compared-aop-servlet-filters-rick-hightower/
+
+		https://www.google.com/search?client=safari&rls=en&q=Istio&ie=UTF-8&oe=UTF-8
+
+		https://www.paradigmadigital.com/dev/jugando-con-istio-the-next-big-thing-en-microservicios-1-2/
+
+		https://istio.io
+
+		https://openwebinars.net/blog/que-es-istio/
+
+		https://github.com/istio/istio
+
+		https://istio.io/docs/concepts/what-is-istio/
+
 	Confluent platform
 
 		https://docs.confluent.io/current/tutorials/examples/microservices-orders/docs/index.html?utm_source=github&utm_medium=demo&utm_campaign=ch.examples_type.community_content.microservices-orders
@@ -61,22 +79,6 @@
 	More Scala
 
 		https://users.scala-lang.org/t/overloaded-method-value-with-alternatives/3156
-
-	Istio
-
-		https://www.linkedin.com/pulse/why-you-might-need-istio-rick-hightower/
-
-		https://www.linkedin.com/pulse/service-mesh-compared-aop-servlet-filters-rick-hightower/
-
-		https://www.google.com/search?client=safari&rls=en&q=Istio&ie=UTF-8&oe=UTF-8
-
-		https://www.paradigmadigital.com/dev/jugando-con-istio-the-next-big-thing-en-microservicios-1-2/
-
-		https://istio.io
-
-		https://openwebinars.net/blog/que-es-istio/
-
-		https://github.com/istio/istio
 
 	SOLID principles. Esto es algo que siempre debes estar refrescando. Sería ideal encontrar un plugin que haga un análisis sobre como de SOLID es el código que has escrito.
 
