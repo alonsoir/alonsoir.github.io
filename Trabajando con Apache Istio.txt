@@ -1,0 +1,48 @@
+Trabajando con Apache Istio
+
+https://istio.io/docs/setup/getting-started/#download
+
+curl -L https://istio.io/downloadIstio | sh -
+
+cd istio-1.6.0
+
+export PATH=$PWD/bin:$PATH
+
+istioctl manifest apply --set profile=demo
+
+kubectl label namespace default istio-injection=enabled
+
+kubectl apply -f samples/bookinfo/platform/kube/bookinfo.yaml
+
+# Una vez que Docker está corriendo, kubernetes está corriendo y puedes lanzar estos docs comandos para comprobar el estado...
+kubectl get services
+
+kubectl get pods
+
+kubectl exec -it $(kubectl get pod -l app=ratings -o jsonpath='{.items[0].metadata.name}') -c ratings -- curl productpage:9080/productpage | grep -o "<title>.*</title>"
+
+kubectl apply -f samples/bookinfo/networking/bookinfo-gateway.yaml
+
+istioctl analyze
+
+kubectl get svc istio-ingressgateway -n istio-system
+
+# como estás usando Docker for Desktop, debes usar este comando
+export INGRESS_HOST=127.0.0.1
+
+# Si estuvieras detrás de un kubernetes mas real, debes usar este comando
+export INGRESS_HOST=$(kubectl -n istio-system get service istio-ingressgateway -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
+
+export INGRESS_PORT=$(kubectl -n istio-system get service istio-ingressgateway -o jsonpath='{.spec.ports[?(@.name=="http2")].port}')
+export SECURE_INGRESS_PORT=$(kubectl -n istio-system get service istio-ingressgateway -o jsonpath='{.spec.ports[?(@.name=="https")].port}')
+
+export GATEWAY_URL=$INGRESS_HOST:$INGRESS_PORT
+
+echo $GATEWAY_URL
+
+echo http://$GATEWAY_URL/productpage
+
+# En mi portatil me sale esta url, http://127.0.0.1:80/productpage. Chequear que todo está bien.
+
+#admin/admin by default
+istioctl dashboard kiali
