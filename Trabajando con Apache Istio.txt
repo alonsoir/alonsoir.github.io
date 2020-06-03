@@ -1,4 +1,6 @@
-Trabajando con Apache Istio
+Trabajando con Apache Istio, mejor con bash en vez de fish
+
+bash
 
 https://istio.io/docs/setup/getting-started/#download
 
@@ -46,3 +48,29 @@ echo http://$GATEWAY_URL/productpage
 
 #admin/admin by default
 istioctl dashboard kiali
+
+kubectl apply -f samples/bookinfo/networking/destination-rule-all.yaml
+
+kubectl get destinationrules -o yaml
+
+# Mas microservicios con los que poder jugar. DaSouzza
+https://github.com/alonsoir/service-mesh-istio
+
+
+cd /Users/aironman/gitProjects/service-mesh-istio
+
+kubectl apply -f ./istio/
+
+# para ver si los contenedores están corriendo correctamente 
+kubectl get po -n istio-system -w
+
+kubectl apply -f ./
+
+# Grafana
+http://127.0.0.1:31002/?orgId=1
+
+# kiali
+http://127.0.0.1:31000/kiali/
+
+# Jaeger
+http://127.0.0.1:31001/jaeger/search
