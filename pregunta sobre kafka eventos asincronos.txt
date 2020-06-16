@@ -1,6 +1,7 @@
 Esta es la situacion:
 
-Tengo una serie de microservicios, no quiero que la comunicacion para invocarlos sea REST sincrono, quiero una comunicacion puramente asincrona con un motor de eventos,
+Tengo una serie de microservicios, no quiero que la comunicacion para invocarlos sea REST sincrono, en parte debido a que un servidor web siempre tendrá límites fisicos 
+de peticiones por segundo que podrá atender, por lo que quiero una comunicacion puramente asincrona con un motor de eventos,
 por poner un ejemplo, quiero usar kafka, aunque estoy abierto a usar otros motores de eventos. Dichos microservicios tendrán como punto de entrada un consumidor de eventos,
 cada uno, leyendo de un topic, y estos escribiran y leeran los datos a traves de un cluster, de manera unificada. 
 Cuando dicho microservicio seleccionado por el balanceador de carga tenga su respuesta, el microservicio devolverá el resultado a través de un productor de eventos donde

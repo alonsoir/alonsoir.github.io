@@ -238,4 +238,20 @@
 
 	https://medium.com
 
-		
+	https://www.slideshare.net/nfrankel/london-inmemory-computing-meetup-a-changedatacapture-usecase-designing-an-evergreen-cache
+
+	https://dzone.com/microservices-news-tutorials-tools
+
+	https://www.atomikos.com/Blog/TransactionalRESTMicroservicesWithAtomikos
+
+	https://dzone.com/articles/microservices-and-business-transactions
+
+	https://dev.to/siy/nanoservices-or-alternative-to-monoliths-and-microservices-12bb
+
+	https://www.google.com/search?client=safari&rls=en&q=distributed+monolith&ie=UTF-8&oe=UTF-8
+
+	https://medium.com/transferwise-engineering/from-monolith-to-distributed-monolith-fd53d8dbbeba
+
+	https://www.microservices.com/talks/dont-build-a-distributed-monolith/
+
+	
