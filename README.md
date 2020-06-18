@@ -86,6 +86,9 @@
 
 	Apache Spark
 
+		// get exactly-once and ACID guarantees on files, but also scale to handling millions of files.
+		https://delta.io
+
 		https://towardsdatascience.com/the-art-of-joining-in-spark-dcbd33d693c
 
 		https://towardsdatascience.com/why-apache-spark-is-fast-and-how-to-make-it-run-faster-9d31bf3eae04
