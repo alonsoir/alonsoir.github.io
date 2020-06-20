@@ -2,7 +2,15 @@
 
 # Things to study
 
-	Istio
+	# Github pages
+
+		https://help.github.com/en/github/working-with-github-pages/configuring-a-custom-domain-for-your-github-pages-site
+
+		https://pages.github.com/#generate-step-1
+
+		https://alonsoir.github.io
+
+	# Istio
 
 		https://www.linkedin.com/pulse/why-you-might-need-istio-rick-hightower/
 
@@ -20,7 +28,7 @@
 
 		https://istio.io/docs/concepts/what-is-istio/
 
-	Confluent platform
+	# Confluent platform
 
 		https://docs.confluent.io/current/tutorials/examples/microservices-orders/docs/index.html?utm_source=github&utm_medium=demo&utm_campaign=ch.examples_type.community_content.microservices-orders
 
@@ -28,7 +36,10 @@
 
 		https://docs.confluent.io/current/quickstart/ce-quickstart.html
 
-	Microservicios
+	# Microservicios
+
+		# Cool project
+		https://github.com/piomin/sample-spring-microservices-transactions
 	
 		https://dzone.com/articles/break-a-monolith-to-microservices-12-best-practice?edition=583294&utm_source=Weekly%20Digest&utm_medium=email&utm_campaign=Weekly%20Digest%202020-03-04
 
@@ -50,7 +61,11 @@
 
 		https://dzone.com/microservices-news-tutorials-tools
 
-	Spring Web flux (reactive programming)
+	# reporting spring-boot
+
+		https://www.baeldung.com/birt-reports-spring-boot
+
+	# Spring Web flux (reactive programming)
 
 		https://docs.spring.io/spring/docs/current/spring-framework-reference/web-reactive.html?fbclid=IwAR3GoDur9YEZ9lbELPsHkarsKMCPOcE0KLd_9VNCJkryyMk-psM8ujEnaxI
 
@@ -62,31 +77,37 @@
 
 		https://dzone.com/articles/reactive-microservices-with-spring-webflux-and-spr
 
-	Extreme programming
+	# Extreme programming
 
 		http://www.extremeprogramming.org/rules.html
 
 		http://www.extremeprogramming.org/rules/sequential.html
 	
-	More Docker...
+	# More Docker...
 
 		https://spring.io/blog/2020/01/27/creating-docker-images-with-spring-boot-2-3-0-m1
 
-	Time series databases...
+	# Time series databases...
 
 		https://www.google.com/search?client=safari&rls=en&sxsrf=ALeKk00RxJnQf3zHAJ2JtRMD8xCJ4E0VLg%3A1582713434059&ei=WkpWXtySA8nggwfYlrrYBA&q=time+series+database&oq=timeseries+&gs_l=psy-ab.1.1.0i10l3j0i10i203j0i203j0i10i203l5.2739.2739..5157...0.2..0.293.293.2-1......0....1..gws-wiz.......0i71.Edjx2tgOBlw
 
-	More Scala
+	# More Scala
 
 		https://users.scala-lang.org/t/overloaded-method-value-with-alternatives/3156
 
-	SOLID principles. Esto es algo que siempre debes estar refrescando. Sería ideal encontrar un plugin que haga un análisis sobre como de SOLID es el código que has escrito.
+	# SOLID principles. Esto es algo que siempre debes estar refrescando. Sería ideal encontrar un plugin que haga un análisis sobre como de SOLID es el código que has escrito.
 
 		https://howtodoinjava.com/best-practices/5-class-design-principles-solid-in-java/
 
-	Apache Spark
+	# Apache Spark
 
-		// get exactly-once and ACID guarantees on files, but also scale to handling millions of files.
+		Spark 3.0!!
+
+		https://medium.com/cloudzone/apache-spark-3-0-review-what-the-spark-is-all-about-998844e12b3c
+
+		https://databricks.com/session_eu19/dynamic-partition-pruning-in-apache-spark
+
+		# get exactly-once and ACID guarantees on files, but also scale to handling millions of files.
 		https://delta.io
 
 		https://towardsdatascience.com/the-art-of-joining-in-spark-dcbd33d693c
@@ -115,23 +136,23 @@
 
 		https://www.youtube.com/watch?v=FydxEfOU6D8&fbclid=IwAR3EIcMNEvyiKKlZIrLnMuQqGlRlli1bru4kTSDgn62MtaHgir5zN4pwYPE
 
-	Apúntate a esta escuela del CERN antes del 27 de febrero
+	# Apúntate a esta escuela del CERN antes del 27 de febrero
 
 		https://indico.cern.ch/event/861566/registrations/54683/
 
-	https://dev.to/notifications
+		https://dev.to/notifications
 
-	more java...
+	# more java...
 
 		http://tutorials.jenkov.com/java/index.html
 
 		https://blogs.oracle.com/javamagazine/quiz-2
 
-	httpie
+	# httpie
 
 		https://www.atareao.es/software/utilidades/httpie-un-cliente-http-para-la-linea-de-comandos/
 
-	nifi
+	# nifi
 
 		https://nifi.apache.org
 
@@ -143,7 +164,7 @@
 
 		https://nifi.apache.org/docs/nifi-docs/html/getting-started.html#for-linux-mac-os-x-users
 
-	jlink
+	# jlink
 
 		https://dzone.com/articles/jdk9-howto-create-a-java-run-time-image-with-maven
 
@@ -151,7 +172,7 @@
 
 		https://www.google.com/search?client=safari&rls=en&sxsrf=ACYBGNTH3k9byo_RntdX3Qbe9t9xx8SdQg%3A1579957807921&ei=Lz4sXtTlN_uJjLsPl4WgkAg&q=jlink+maven+example&oq=jlink+maven&gs_l=psy-ab.3.1.0i203l2j0i22i10i30j0i22i30l7.2270.4913..8149...0.2..0.252.1043.2j2j2......0....1..gws-wiz.......0i71j0i67j0i10j0j0i13i30.MWlDUXJ7CAQ
 
-	Amazon Web service
+	# Amazon Web service
 
 		https://www.youtube.com/channel/UCdU8fEJqQtB8e-iOpZcxKQQ
 
@@ -159,17 +180,17 @@
 
 		https://aws.amazon.com/es/whitepapers/?whitepapers-main.sort-by=item.additionalFields.sortDate&whitepapers-main.sort-order=desc
 
-	Google Cloud Platform
+	# Google Cloud Platform
 
 		https://learning.oreilly.com/live-training/courses/introduction-to-google-cloud-platform/0636920268963/#what-youll-learn
 
-	Azure
+	# Azure
 
-	more about Scala...
+	# more about Scala...
 
 		https://docs.scala-lang.org/es/tour/implicit-parameters.html
 
-	CNN training models...
+	# CNN training models...
 	
 		https://www.pyimagesearch.com/2018/04/16/keras-and-convolutional-neural-networks-cnns/
 
@@ -211,7 +232,7 @@
 
 	https://www.atareao.es/software/utilidades/httpie-un-cliente-http-para-la-linea-de-comandos/
 
-	Create a cool cv.
+	# Create a cool cv.
 	
 		https://resumedone.io/?origin=fb&fbclid=IwAR1XZr0DQCzyhPWZfVk6ZNOMPJGGLBU6Zr19A1JCxo5--CWAO5fxRuQVlGc
 
@@ -227,11 +248,13 @@
 
 	https://piotrminkowski.com/2017/06/26/monitoring-microservices-with-spring-boot-admin/
 
-	Maldacena!!
+	# Maldacena!!
 
 		https://www.youtube.com/watch?v=_O2J83rsGnc&feature=youtu.be&fbclid=IwAR2MB_Nig-ZCgWxRypbHOFSGEWBaDvDJChYkNyPRTFDbJc9mH_k19JKo2Wc
 
-	Nintendo Switch
+		https://bloggy.ific.uv.es/bloggy/index.php/2017/10/27/el-modelo-cosmologico-estandar/?fbclid=IwAR1kvQxTJP8SMSt-MMgAalgg8KItStc4fMEIpojzrtr9DHbxLLiM9LKEptM
+
+	# Nintendo Switch
 
 		https://www.nintendo.es/Juegos/Programas-descargables-Nintendo-Switch/Divinity-Original-Sin-2-Definitive-Edition-1633057.html#	
 
