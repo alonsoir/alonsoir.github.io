@@ -2,6 +2,10 @@
 
 # Things to study
 
+	# Kotlin
+
+		https://fabiomsr.github.io/from-java-to-kotlin/
+
 	# Github pages
 
 		https://help.github.com/en/github/working-with-github-pages/configuring-a-custom-domain-for-your-github-pages-site
