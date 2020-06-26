@@ -1,0 +1,38 @@
+Mis notas sobre el curso de microservicios de Atomikos.
+
+Guy está hablando sobre el problema de la escalabilidad cuando tenemos microservicios, pues, cuando antes tenias un servicio que englobaba a muchas tareas, un monolito, ahora tenemos
+un conjunto de servicios que se dedican a una única cosa, por ejemplo, un servicio para usuarios, otro para gestionar inventarios, etc...
+
+Si ya es dificil gestionar un monolito, ahora teniendo varios microservicios dedicados a una tarea, es mucho más dificil. Si tenemos 4 tareas distintas gestionadas por un ms instanciado, ahora
+imaginad varias instancias de un microservicio, a cuatro instancias levantadas por ms, tenemos 16 instancias corriendo en una nube publica o privada. 
+Una manera para acceder a los metodos de cada instancia es englobandolo en un servidor de aplicaciones ligero http rest, sincrono por naturaleza, pues los invocas, el usuario se queda esperando
+y el servidor responde con un codigo, que puede ser 20x, 40x, etc...
+Esto puede ser problematico, pq como uno se caiga, el servicio estaría inaccesible e inusable. Uno de los servicios está indispuesto, por lo que una solución sería tener en medio un servicio de mensajeria,
+un broker de mensajería agnostico, no hablaremos de ningun producto aún, pero no estoy hablando de tecnologia Enterprise Service Bus, si no más bien, de publicadores/consumidores alredederor de una cola de mensajería. 
+Con ese servicio en medio de los distintos microservicios, ya podemos pensar en tener alta disponibilidad en el ecosistema de microservicios y asimismo en el servicio de mensajería, pues tiene de por sí
+una naturaleza distribuida con alta escalabilidad. De manera natural, como decía antes, ya podemos considerar tener un conjunto de instancias del mismo microservicio para tener alta disponibilidad, pues 
+ahora esos ms tendrán un productor para hablar con el servicio de mensajeria y un consumidor para escuchar los mensajes. Si nos damos cuenta, nos podríamos preguntar si no sería necesario tambien un balanceador
+de carga en el servicio de mensajería para seleccionar a uno y solo un microservicio, pues bien, si implementamos el patron Competing Consumers, podemos saltarnos la necesidad del balanceador de carga en el servicio de mensajería.
+
+
+Uno de los grandes problemas cuando tratamos con sistemas distribuidos, sobre todo con microservicios es la inconsistencia eventual, es decir, imaginemos que tenemos dos servicios distintos, cada uno con su propia base de datos, y que en un momento dado, una de las dos, se destruye, se pierden sus datos. Qué hacemos? en el mejor de los casos, tiramos de backup para tratar de restaurar los datos, pero muy probablemente aparecerán problemas de inconsistencia cuando este back up tenga que trabajar en consonancia con el otro microservicio, de ahí el nombre de inconsistencia eventual. Este problema aparecerá incluso usando el patrón Saga. Ante ello, podemos hacer dos cosas. 
+Una es aceptarlo y tenerlo en cuenta para prepararnos ante ello. Quiero decir que tendremos que pensar en planes de contingencia para reconstruir las bases de datos de manera consistente, hacer backups de cada base de datos cada poco tiempo a la vez, de manera que haya una relacion temporal, solucion que no es perfecta, pero minimizaría el tiempo de vuelta al servicio, otra manera sería que las bases de datos de todos los microservicios estén alojadas en la misma máquina, de manera que cada vez que se haga un backup, se hace el backup de todo a la vez, pero esto ya no sería un verdadero sistema distribuido, pues las bases de datos estarían fuertemente acopladas a los microservicios...
+
+Tiene que haber alguna otra manera de poder solventar el problema de la inconsistencia eventual, que indudablemente aparecerá, pues los sistemas fallan, tarde o temprano, bien sea porque nos quedamos sin cuota de disco, ha habido un incendio, alguien ha ido con una uzi a la oficina, o algo peor.
+
+Me encanta esta definicion, la arquitectura de microservicios es una forma extremadamente eficiente para transformar problemas de negocio en problemas de transaccionalidad distribuida.
+Problemas como la consistencia eventual de los datos, es decir, tratar con datos distribuidos que no son consistentes unos con otros. Cuál es el bueno? el de la instancia A? el de la B?, el de la XYZ? 
+consumidores idempotentes, 
+el almacen de eventos,
+Domain driven design,
+patron Saga... Patron que trata de solventar el problema de la consistencia eventual haciendo operaciones de compensacion distribuida, operaciones para rehacer el estado anterior transaccional. No funciona muy bien, pues, puede provocar errores de consistencia cuando ocurra el problema de la inconsistencia eventual.
+
+Vamos a tratar sobre la manera asíncrona para hacer microservicios.
+
+Links
+
+Competing consumer pattern
+	
+	https://www.google.com/search?client=safari&rls=en&q=competing+consumer+pattern&ie=UTF-8&oe=UTF-8 
+
+	https://blog.cdemi.io/design-patterns-competing-consumer-pattern/
