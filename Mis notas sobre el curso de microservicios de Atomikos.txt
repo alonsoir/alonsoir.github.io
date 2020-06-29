@@ -111,6 +111,10 @@ Links
 
 Competing consumer pattern
 	
+	https://atomikos.teachable.com/courses/475866/lectures/9340469
+	
 	https://www.google.com/search?client=safari&rls=en&q=competing+consumer+pattern&ie=UTF-8&oe=UTF-8 
 
 	https://blog.cdemi.io/design-patterns-competing-consumer-pattern/
+
+	https://github.com/ddd-by-examples/all-things-cqrs
