@@ -105,16 +105,114 @@ Conclusión
 
 Probablementente es una mala idea tener en Los metodos transaccionales de acceso a bases de datos invocaciones al broker de mensajería.
 
-El mensajero recibe inconsistencias
+El mensajero recibe inconsistencias. Ver de nuevo, porque parece que está describiendo los mismos problemas anteriormente expuestos. En funcion de si encontramos algun problema entre hacer commit en la cola primero y hacer commit en la bd despues, problemas. Si invertimos el orden igual. Es un problema gordo.
+
+Enviando mensajes sin inconsistencias.
+
+Cuando hablamos de este tema, hablamos del problema de enviar el mensaje a la cola, hacer un commit en la cola de mensajes, si y solo si, podemos hacer un commit en la bd del microservicio. Para ello, tenemos dos posibilidades, una es seguir el protocolo Saga, que nos proporciona la capacidad de poder hacer transacciones compensatorias, la otra es seguir el protocolo Two commit phase, que necesita de la figura de un Servicio que gestione la transaccionalidad distribuida. Es decir, un servicio que pregunte a los distintos componentes si estan en disposicion de hacer el commit en sus distintas bases de datos y en las colas de mensajes. Es como decirles, "eh!, estais preparados para hacer todo lo necesario para guardar los datos e indicar a los otros que podemos hacer nuestro trabajo?", esto dicho con mi tono de voz de alguien de Extremadura suena más gracioso...
+
+El uso de estas tecnicas es para que podamos superar el hecho de que es un error poner en el metodo transaccional las dos llamadas, tanto al SGBD como a la cola de mensajes. Da igual en el orden en el que las pongamos, potencialmente hablando, puede haber en un fallo en cualquiera de los dos sistemas. 
+
+El verdadero problema cuando tratamos con estos sistemas distribuidos es:
+
+	Enviar un commit a una bd no garantiza que dicho sistema lo vaya a hacer, porque:
+
+		si hay un timeout intermedio en la base de datos, ocurrirá un rollback automático,
+
+		Si hay un fallo físico en la bd antes que el commit llegue, tendremos que forzar nosotros el rollback, o el mismo SGBD automáticamente hará el rollback. Lo más probable es que sea esto último.
+
+	Lo mismo ocurre a nivel de la cola de mensajes, esos fallos físicos, cuando ocurran, conllevarán a inconsistencias.
+	Como consecuencia de estos problemas potenciales, preguntar a varios sistemas distribuidos para hacer commit SIEMPRE es una situacion de riesgo, porque, bien uno hacerlo, el otro no, los dos no pueden,
+	lo que inevitablemente conllevará, bien a situaciones de inconsistencias en el mejor de los casos en el que uno de los sistemas no pueda hacer commit, o a situaciones de bloqueo pq ambos sistemas no pueden hacer commit. Es así. En el primer caso, los protocolos TPC y Sagas, tratan de compensar lo mejor posible dichas transacciones distribuidas que se han quedado en el aire. En el segundo, sólo podemos vigilar muy bien el sistema para tratar de no llegar nunca a esa situación y adelantarnos antes de que vaya a ocurrir. Dichos problemas de bloqueo pueden venir desde multiples lugares, como problemas en la cuota de disco, mal estado en los discos, problemas en la red, problemas gestionando el cluster, etc...
+
+Ahora, el desafío es tratar a dichas transacciones distribuidas como una transaccion global, es decir combinar ambos commits, el de la bd y el de la cola en una sola. Asegurar que se pueden hacer ambos commits en cada una de las fases. 
+
+Ojo, entiendo que la transaccion distribuida es el conjunto de la transaccion en la bd y la transaccion en la cola de eventos en un solo microservicio. No estoy hablando de todas las transacciones necesarias para una operacion compleja como ordenar una peticion de compra por parte de un usuario. Dichas peticiones, normalmente sería algo como comprobar que el usuario está en el sistema, el usuario busca un producto para comprar, el usuario solicita comprar el producto, el sistema comprueba si el usuario tiene todo en regla para poder comprar, el sistema solicita si el producto está en stock, el sistema hace el cargo del producto en su cuenta, el sistema devuelve el estado de dicha operacion inicial. Cada una de esas operaciones, conlleva una transacción global. Intimidado?
+
+En principio, puede hacerse, aunque es complejo, muy complejo. Voy a hablar un poco sobre como se haría con el protocolo Two Commit Phase. El truco se puede llamar Estado intermedio preparado, Intermediate prepared state. Los puntos claves ante esta estrategia son:
+
+	Un Backend que está advertido, puede hacer rollback, nos hemos asegurado de ello, pero no debe hacerlo por su cuenta, por iniciativa propia, porque no querremos en principio ni rollbacks cuando el sistema potencialmente se reinicie, ni rollbacks si ocurren timeouts internos en la bd.
+
+	Un backend que está preparado puede hacer commit, incluso si ha habido un problema grande en la bd.
+
+	Podemos ver al "estado preparado", como un checkpoint desde el cual tenemos seguridad de poder hacer commit o rollback a la vez en ambos sistemas o en uno solo. El caso es que necesitamos control preciso sobre estos dos sistemas.
+
+	Este checkpoint es gestionado y controlado por un manejador de transacciones.
+
+	Para un sistema así, necesitamos tecnologia JMS con soporte XA, tecnologia de bd con soporte XA, y un gestor de transacciones que gestione a esos dos sistemas anteriores. 
+
+Practicamente todos los sistemas de colas y de bd soportan XA, extendend architecture, por lo que, la parte principal del problema es implementar un buen manejador de transacciones distribuidas.
+Básicamente, lo que debe hacer dicho manejador es:
+
+	Preparar SGBD
+
+		Si responde KO, rollback en ambos sistemas, el sgbd y el broker.
+		Si responde OK, pasamos a la siguiente fase.
+
+	Preparar broker
+		Si responde KO, rollback en ambos sistemas, el sgbd y el broker.
+		Si responde OK, implica que ambos han dicho ok.
+
+	si ambos responden OK, se escribe al log que todo ha ido bien y se hace commit en los dos. Es importante el orden aquí. 
+	Es decir, ahora si podemos hacer lo que poniamos en el método marcado como transaccional, escribir en el log que todo ha ido bien, hacer commit en el broker con un mensaje exitoso, hacer commit en la bd.
+
+	Pregunta incomoda, que pasa si después de haber pasado por los dos primeros puntos, en el que tenemos el ok de los dos sistemas, ocurre una catastrofe que impide realmente hacer commit o rollback?
+
+Un usuario en Stackoverflow opina así:
+
+	"In my understanding (not a big user of 2PC since I consider it limiting):
+
+	Typically, 2PC is for immediate transactions.
+	Typically, Sagas are for long running transactions.
+	Use cases are obvious afterwards:
+
+	2PC can allow you to commit the whole transaction in a request or so, spanning this request across systems and networks. Assuming each participating system and network follows the protocol, you can commit or rollback the entire transaction seamlessly.
+	Saga allows you split transaction into multiple steps, spanning long periods of times (not necessarily systems and networks).
+	Example:
+
+	2PC: Save Customer for every received Invoice request, while both are managed by 2 different systems.
+	Sagas: Book a flight itinerary consisting of several connecting flights, while each individual flight is operated by different airlines.
+	I personally consider Saga capable of doing what 2PC can do. Opposite is not accurate.
+
+	I think Sagas are universal, while 2PC involves platform/vendor lockdown."
+
 
 Links
 
 Competing consumer pattern
 	
 	https://atomikos.teachable.com/courses/475866/lectures/9340469
-	
+
 	https://www.google.com/search?client=safari&rls=en&q=competing+consumer+pattern&ie=UTF-8&oe=UTF-8 
 
 	https://blog.cdemi.io/design-patterns-competing-consumer-pattern/
 
 	https://github.com/ddd-by-examples/all-things-cqrs
+
+Two phased commits
+
+	https://es.wikipedia.org/wiki/Commit_de_dos_fases
+
+	https://stackoverflow.com/questions/48906817/2pc-vs-sagas-distributed-transactions
+
+	https://www.atomikos.com/Documentation/SagasVsTwoPhaseCommitVsTCC
+
+	https://dzone.com/articles/xa-transactions-2-phase-commit
+
+	https://en.wikipedia.org/wiki/X/Open_XA
+
+JTA/XA
+
+	https://en.wikipedia.org/wiki/Java_Transaction_API
+
+	https://www.atomikos.com/Documentation/WhenToUseJtaXa
+
+	https://www.infoworld.com/article/2077714/xa-transactions-using-spring.html
+
+	https://docs.spring.io/spring-boot/docs/2.1.6.RELEASE/reference/html/boot-features-jta.html
+
+Microlitos, microservicios y monolitos.
+
+	https://www.paradigmadigital.com/techbiz/microservicios-vs-microlitos-vs-monolitos-ventajas-desventajas/
+
+
