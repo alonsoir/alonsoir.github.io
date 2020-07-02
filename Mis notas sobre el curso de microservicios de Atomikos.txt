@@ -307,3 +307,17 @@ Microlitos, microservicios y monolitos.
 	https://www.paradigmadigital.com/techbiz/microservicios-vs-microlitos-vs-monolitos-ventajas-desventajas/
 
 
+Domain Driven Design
+
+	https://github.com/ddd-by-examples
+
+Microservicios
+
+	https://www.microservices.com
+
+	https://deku.github.io/microservice-architecture-es/
+
+	https://microservices.io (Sagas)
+
+
+
