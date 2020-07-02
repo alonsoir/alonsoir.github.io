@@ -1,39 +1,63 @@
 Mis notas sobre el curso de microservicios de Atomikos.
 
-Si ya es dificil gestionar un monolito, ahora teniendo varios microservicios dedicados a una tarea, es mucho más dificil. Si tenemos 4 tareas distintas gestionadas por un ms instanciado, ahora
-imaginad varias instancias de un microservicio, a cuatro instancias levantadas por ms, tenemos 16 instancias corriendo en una nube publica o privada. 
+## Introducción
 
-Una manera para acceder a los metodos de cada instancia es englobandolo en un servidor de aplicaciones ligero http rest, sincrono por naturaleza, pues los invocas, el usuario se queda esperando
-y el servidor responde con un codigo, que puede ser 20x, 40x, etc...
+Si ya es dificil gestionar un monolito, o un microlito, lo que llamo embrión de monolito, ahora teniendo instancias de microservicios dedicados a una tarea, es mucho más dificil. 
+Si tenemos 4 tareas distintas gestionadas por un ms instanciado, a cuatro instancias levantadas por ms, tenemos 16 instancias corriendo en una nube publica o privada, más los nodos dedicados para el acceso a datos
 
-Esto puede ser problemático, porque como uno se caiga, y solo haya una instancia levantada, el servicio estaría inaccesible e inusable. Uno de los servicios está indispuesto, por lo que una solución sería tener en medio un servicio de mensajeria, un broker de mensajería agnostico, no hablaré de ningun producto aún, si no más bien de publicadores/consumidores alredederor de una cola de mensajería o de un topic.
+Una manera, o la manera actual y más de moda para acceder a los metodos de cada instancia, es envolviendo el servicio en un servidor de aplicaciones ligero http rest, síncrono por naturaleza, pues los invocas, el usuario se queda esperando y el servidor responde con un codigo, que puede ser 200, 400, 500, etc. Al fin y al cabo, añadir una clase @Controller a distintos métodos que atiendan peticiones REST es sencillo, mucha gente conoce la web y ahora tenemos también la posibilidad de usar librerias como Feign para crear clientes alrededor de esas clases marcadas como Controller.
 
-Con ese servicio en medio de los distintos microservicios, ya podemos pensar en tener alta disponibilidad en el ecosistema de microservicios y asimismo en el servicio de mensajería, pues tiene de por sí
-una naturaleza distribuida con alta escalabilidad. De manera natural, como decía antes, ya podemos considerar tener un conjunto de instancias del mismo microservicio para tener alta disponibilidad, pues 
-ahora esos ms tendrán un productor para hablar con el servicio de mensajeria y un consumidor para escuchar los mensajes. Si nos damos cuenta, nos podríamos preguntar si no sería necesario tambien un balanceador de carga en el servicio de mensajería para seleccionar a uno y solo un microservicio, pues bien, si implementamos el patron Competing Consumers, podemos saltarnos la necesidad del balanceador de carga en el servicio de mensajería. Literalmente, gracias a la asignación de una cola de mensajes a ese único consumidor, no necesitas un balanceador de carga pues todos los mensajes serán redirigidas a esa instancia del ms.
+## Tesis
+
+Abogo que puede ser problemático, porque como las instancias estén caídas, el servicio estaría inaccesible, inusable. En servicios reales tendremos varias instancias de dichos servidores de aplicaciones teniendo detrás una infraestructura como servicios de descubrimiento, servicios balanceadores de carga para distribuir la carga equitativamente, comprobar el estado de salud de los distintos servicios, mecanismos para romper rápidamente el circuito, el ciclo de invocaciones en caso de algún error claro y manifiesto como el uso de datos de entrada incorrectos o una invocacion incorrecta del microservicio. 
+
+Incluso en estos tiempos de alta disponibilidad, dichos servicios altamente escalados con multiples instancias almacenadas en contenedores docker y gestionados mediante pods en clusters Kubernetes u OpenShift, pueden estar no disponibles, por lo que hay que estar preparado mediante software para saber si podemos invocar una lógica de negocio distribuida entre instancias de contenedores. 
+
+Hay que contar con el hecho que, en algún momento, uno de los servicios estará indispuesto, o las instancias de ese servicio estarán caidas, o las bases de datos de alguna instancia estarán caídas, o las de todas las instancias de un microservicio A estarán caídas, o se han perdido los datos, lo que conllevaría con probabilidad a tratar de reconstuir los datos e indices perdidos mediante algún backup, pero probablemente incluso restaurando dicho backup, tendríamos el problema de la inconsistencia eventual, es decir, los datos del servicio restaurado por el backup con coinciden en su totalidad con los datos de los otros servicios que no han sufrido el problema.
 
 Uno de los grandes problemas cuando tratamos con sistemas distribuidos y microservicios, bajo mi punto de vista, es la inconsistencia eventual, es decir, imaginemos que tenemos dos servicios distintos, cada uno con su propia base de datos, y que en un momento dado, una de las dos, se destruye, se pierden sus datos, se vuelve inaccesible. Qué hacemos en esa situación? en el mejor de los casos, tiramos de backup para tratar de restaurar los datos, pero muy probablemente aparecerán problemas de inconsistencia cuando este back up tenga que trabajar en consonancia con el otro u otros microservicios, de ahí el nombre de inconsistencia eventual. Este problema aparecerá incluso usando el patrón Saga. Ante ello, podemos hacer dos cosas. 
 
 Una es aceptarlo y tenerlo en cuenta para prepararnos ante ello. Quiero decir que tendremos que pensar en planes de contingencia para reconstruir las bases de datos de manera consistente, hacer backups de cada base de datos cada poco tiempo a la vez, de manera que haya una relacion temporal, solucion que no es perfecta, pero minimizaría el tiempo de vuelta al servicio. 
 
-Otra manera sería que las bases de datos de todos los microservicios estén alojadas en la misma máquina, de manera que cada vez que se haga un backup, se hace el backup de todo a la vez, pero esto ya no sería un verdadero sistema distribuido, pues las bases de datos estarían fuertemente acopladas a los microservicios.
+Otra manera sería que las bases de datos de todos los microservicios estén alojadas en la misma máquina, de manera que cada vez que se haga un backup, se hace el backup de todo a la vez, pero esto ya no sería un verdadero sistema distribuido, pues las bases de datos estarían fuertemente acopladas a los servicios.
+
 
 Tiene que haber alguna otra manera de poder solventar el problema de la inconsistencia eventual, que indudablemente aparecerá, pues los sistemas fallan, tarde o temprano, bien sea porque nos quedamos sin cuota de disco, ha habido un incendio, alguien ha ido con una uzi a la oficina, o algo peor.
 
-Me encanta esta definicion, la arquitectura de microservicios es una forma extremadamente eficiente para transformar problemas de negocio en problemas de transaccionalidad distribuida.
+## Microservicios y alta disponibilidad al rescate
 
-Problemas potenciales?
+Me encanta esta definicion, "la arquitectura de microservicios es una forma extremadamente eficiente para transformar problemas de negocio en problemas de transaccionalidad distribuida".
 
-	Inconsistencia eventual, antes he hablado un poco sobre ello.
-	La consistencia eventual de los datos, es decir, tratar con datos distribuidos que no son consistentes unos con otros. Cuál es el bueno? el de la instancia A? el de la B?, el de la XYZ? 
-	Consumidores idempotentes, AMPLIAR
-	EL almacen de eventos, AMPLIAR
-	Domain driven design, AMPLIAR
-	Patron Saga: 
+Problemas potenciales al usar una arquitectura distribuida de microservicios con sistemas de mensajería distribuida asícrona?
 
-		Patron que trata de solventar el problema de la consistencia eventual haciendo operaciones de compensacion distribuida, operaciones para rehacer el estado anterior transaccional. No funciona muy bien, pues, puede provocar errores de consistencia cuando ocurra el problema de la inconsistencia eventual.
+Los hay bajo mi punto de vista, leves y graves.
 
-Vamos a tratar sobre la manera asíncrona para hacer microservicios, es decir, cuando tratamos con bokers de mensajería, ya sea a través de una cola de mensajes o cuando tienes productores y consumidores subscritos a un topic, un buzón. En Java, tenemos implementaciones libres, aquellas basadas en JMS, e implementaciones propietarias, como Kafka.
+Leves es tratar con la consistencia eventual, es decir, tratar con datos distribuidos que no son consistentes unos con otros. En el peor de los casos, siempre vas a devolver una lectura al cliente, que a lo mejor está un pelín anticuada. Dependiendo del tipo de negocio, puede ser soportable, por ejemplo, no pasaría demasiado si un cliente en Linkedin aún no ha leído la última actualización en su feed de noticias, o en Faceboo, o en Twitter. Al fin y al cabo, esto se traduce en saber, cuál es el dato bueno? el de la instancia A? el de la B?, el de la XYZ de hace dos minutos? Con tiempo, el cliente tendrá la última lectura consensuada y actualizada. AMPLIAR!
+
+Otro leve es tratar con la transaccionalidad distribuida, para ello en la literatura y en la practica podemos leer que existen dos grandes filosofías para tratar este problema leve. A saber, Two phased commits y el patrón Saga. 
+
+Graves como la inconsistencia eventual, antes he hablado un poco sobre ello. Perder datos en las instancias de un servicio, o varios, dejando los datos de los servicios supervivientes potencialmente inconsistentes con los datos restaurados. Puede ser el infierno en vida como no estemos preparados desde el principio a tratar este problema que inevitablemente aparecerá debido a la naturaleza finita y fallable de los sistemas físicos que lo sustentan.
+
+Consumidores idempotentes, AMPLIAR. Hay que definir si es leve o grave.
+EL almacen de eventos, AMPLIAR. Hay que definir si es leve o grave.
+Domain driven design, AMPLIAR. Hay que definir si es leve o grave.
+
+## Patron Saga 
+
+Patron que trata de solventar el problema de usar sistemas distribuidos haciendo operaciones de compensacion distribuida cuando sea necesario, es decir operaciones para rehacer el estado anterior transaccional. Hacer un rollback distribuido. Considero que por si sólo, no funciona muy bien, pues, puede provocar errores de consistencia cuando ocurra el problema de la inconsistencia eventual y en principio tampoco tiene en cuenta el problema de hacer commit en ambos sistemas, el de la cola de mensajes y en la bd. Puede presentar el problema de necesitar mucho tiempo para rehacer el estado anterior al rollback, pues si el sistema es incapaz de transmitir mediante el broker la orden de hacer el rollback inverso, el sistema tendrá ese estado inestable o pendiente de resolver.
+
+## Patrón Two phase commits
+
+Patrón que al igual que el anterior, trata de usar sistemas distribuidos para ejecutar una lógica de negocio, solo que este va a procurar asegurarse o maximizar al menos las probabilidades de hacer commit en ambos sistemas necesarios para invocar a una instancia de un microservicio. Tambien puede presentar problemas, pq asume que no será necesario hacer rollback distribuido hacia atrás, como lo hace Saga. Bajo mi punto de vista, es un error, hay que tener en cuenta que será necesario hacer rollback distribuido hacia atrás y también será necesario estar preparado para el problema de la inconsistencia eventual.
+
+# Microservicios asincronos.
+
+Vamos a tratar sobre la manera asíncrona para hacer microservicios, es decir, cuando tratamos con brokers de mensajería, ya sea a través de una cola de mensajes o cuando tienes productores y consumidores subscritos a un topic, un buzón. En Java, tenemos implementaciones libres, aquellas basadas en JMS, e implementaciones propietarias, como Kafka.
+
+Con ese servicio de mensajería en medio de los distintos microservicios, ya podemos pensar en tener alta disponibilidad en el ecosistema de microservicios y asimismo en el servicio de mensajería, pues tiene de por sí una naturaleza distribuida con alta escalabilidad. 
+
+De manera natural, como decía antes, ya podemos considerar tener un conjunto de instancias del mismo microservicio para tener alta disponibilidad, pues 
+ahora esos ms tendrán un productor para hablar con el servicio de mensajeria y un consumidor para escuchar los mensajes. Si nos damos cuenta, nos podríamos preguntar si no sería necesario tambien un balanceador de carga en el servicio de mensajería para seleccionar a uno y solo un microservicio, pues bien, si implementamos el patron Competing Consumers, podemos saltarnos la necesidad del balanceador de carga en el servicio de mensajería. Literalmente, gracias a la asignación de una cola de mensajes a ese único consumidor, no necesitas un balanceador de carga pues todos los mensajes serán redirigidas a esa instancia del ms.
 
 Basadas en JMS:
 
@@ -70,17 +94,17 @@ Hay varios conceptos importantes a tratar con las manera asíncrona para hacer m
 	
 	Mensajes duplicados.
 
-El mensajero envía potencialmente inconsistencias. 
+## El mensajero envía potencialmente inconsistencias en una arquitectura de microservicios asíncronos. 
 
 Basicamente, cuando tratamos con microservicios asíncronos, tenemos dos servicios con los que interactua, uno es la tecnologia de mensajeria, otra es la base de datos en la que guardamos la informacion.
 
-Al tratar con ellas, literalmente el mensaje o la transaccion no está hecha hasta que hacemos commit en ella, bien sea porque el mensaje ha sido finalmente introducido en la cola o el topic para que el consumidor pueda consumirlo, bien porque la bd del ms haga commit. Dependiendo de como tengamos en nuestro codigo el orden de la ejecucion transaccional, podremos tener potencialmente un error u otro cuando ocurra algún problema. Esos problemas pueden ser por ejemplo que el contenedor que contiene el ms se cae, bien porque k8s ha tenido algún problema, porque la cuota de disco en la bd se haya cumplido, porque alguien haya pegado fuego al cluster de datos, o también puede ser pq los nodos de mensajería se hayan caído tambien, por lo que tambien sería imposible hacer commit en la cola de mensajería.
+Al tratar con ellas, literalmente el mensaje o la transaccion no está hecha hasta que hacemos commit en ellas, bien sea porque el mensaje ha sido finalmente introducido en la cola o el topic para que el consumidor pueda consumirlo, bien porque la bd del ms haga commit. Dependiendo de como tengamos en nuestro codigo el orden de la ejecucion transaccional, podremos tener potencialmente un error u otro cuando ocurra algún problema. Esos problemas pueden ser por ejemplo que el contenedor que contiene el ms se cae, bien porque k8s ha tenido algún problema, porque la cuota de disco en la bd se haya cumplido, porque alguien haya pegado fuego al cluster de datos, o también puede ser pq los nodos de mensajería se hayan caído tambien, por lo que tambien sería imposible hacer commit en la cola de mensajería.
 
-Ojo, estoy hablando de la fase en la que ya hemos invocado al microservicio via REST, es decir, está preparado para invocar a la bd para hacer el commit y a pushear el mensaje para decirle a quien quiera que esté escuchando un mensaje diciendo lo que sea. 
+Ojo, estoy hablando de la fase en la que ya hemos invocado al microservicio via REST, es decir, está preparado para invocar a la bd para hacer el commit y a introducir el mensaje para decirle a quien quiera que esté escuchando un mensaje diciendo lo que sea. 
 
 Aquí tenemos un gran desafío, enviar un mensaje si y solo si, primero queremos hacer commit en la bd, es decir, vamos a hacer un insert, update o delete, operaciones que si o si necesitan de un commit en la bd, en ese caso debemos ser capaces de hacer commit en ambos sistemas, porque si solo hacemos commit en uno de los sistemas, dependiendo del orden en el que hayamos ejecutado la orden del commit, tendremos un problema u otro. El problema especialmente es que hay que hacer commit en ambos sistemas, pues, para que el mensaje sea visible en la cola para los consumidores, el sistema de mensajería debe hacer commit, y de igual manera para la bd, hay que hacer commit en la operacion de insercion, borrado o actualización.
 
-Basicamente, poner en el mismo método transaccional invocaciones a ambos sistemas, no va a funcionar, pues potencialmente uno de los dos sistemas, o los dos, no van a funcionar. 
+Basicamente, poner en el mismo método transaccional invocaciones a ambos sistemas, no va a funcionar, pues potencialmente uno de los dos sistemas, o los dos, no van a funcionar. Hay que procurar maximizar que las probabilidades para invocar a los dos sistemas cuando invoquemos a un microservicio, sean exitosas. Más aún, hay que procurar maximizar las posibilidades de hacer un commit exitoso en todas las llamadas necesarias a las distintas instancias de los distintos microservicios para ejecutar una logica de negocio distribuida antes de siquiera hacerlas, para que, en caso de tener operaciones de rollback distribuido, es decir, transacciones de compensacion a la inversa, ocurran las menos veces posibles. Más adelante hablaré sobre esto, cuando haya descrito un poco las dos filosofías para afrontar este problema de la transaccionalidad distribuida. Dichas filosofias son Two phase commit y Sagas. Las dos usan bases de datos para guardar el dato, el estado del mismo y tambien usan brokers de mensajería para transportar dicho estado al invocante del microservicio. La primera va a tratar de asegurarse el consenso de ambos sistemas individuales para conseguir el commit antes de siquiera invocar al servicio, la segunda tratará de compensar al menos las transacciones realizadas en la base de datos de cada instancia de cada servicio anterior al que ha ocurrido el fallo. No es buena idea dejar en las bases de datos, datos inconsistentes o pendientes, pero es que tampoco es buena idea dejar en los sistemas de brokers de mensajería commits realizados cuando en la bd no se ha hecho commit. Hay que procurar bien hacer commit en ambos sistemas a la vez, o no hacerlo. Y en caso de ocurra, que sea las menos veces posible. A continuación paso a describir que pasa cuando se ha hecho commit en el broker pero no en la bd y al revés.
 
 Tendremos mensajes perdidos si primero hacemos commit en la bd y luego no somos capaces de hacer commit en la cola de mensajería, en el broker. Esos problemas con el broker pueden ser variados, como que te quedes sin memoria, el típico OutOfMemoryException, puede ser un bug en la libreria del broker, que alguien mate el contenedor del microservicio o del broker, incluso puede ocurrir cuando se ha detectado algún error de esos y el sistema está haciendo un RESTART de esa parte del sistema. 
 
@@ -101,13 +125,15 @@ Tendremos mensajes fantasmas si primero hacemos commit en el broker de mensajer�
 
 Si en el caso del mensaje fantasma, en el que no hemos sido capaces de hacer commit en la base de datos, potencialmente hablando publicaremos de nuevo en la cola de mensajes, es decir, haremos commit en el broker de mensajería teniendo un mensaje duplicado. Basicamente, tratar que nuestras transacciones sigan un orden es dificil y potencialmente fallable, pues entre medias puede ocurrir el desastre, da igual que lo llames problema de mensaje perdido, mensaje fantasma o mensaje duplicado. Son errores que tendremos que tener en cuenta en nuestra arquitectura para solventarlos.
 
-Conclusión
+## Conclusión sobre el envio de inconsistencias transaccionales y/o de mensajería.
 
-Probablementente es una mala idea tener en Los metodos transaccionales de acceso a bases de datos invocaciones al broker de mensajería.
+Probablementente es una mala idea tener en Los metodos transaccionales de acceso a bases de datos invocaciones al broker de mensajería. Como poco, es una postura bastante inocente poner las dos llamadas a ambos sistemas sin estar seguros al 100% de que ambos van a hacer commit. 
 
-El mensajero recibe inconsistencias. Ver de nuevo, porque parece que está describiendo los mismos problemas anteriormente expuestos. En funcion de si encontramos algun problema entre hacer commit en la cola primero y hacer commit en la bd despues, problemas. Si invertimos el orden igual. Es un problema gordo.
+## El mensajero recibe inconsistencias. 
 
-Enviando mensajes sin inconsistencias.
+Ver de nuevo, porque parece que está describiendo los mismos problemas anteriormente expuestos. En funcion de si encontramos algun problema entre hacer commit en la cola primero y hacer commit en la bd despues, problemas. Si invertimos el orden igual. Es un problema gordo.
+
+## Enviando mensajes sin inconsistencias.
 
 Cuando hablamos de este tema, hablamos del problema de enviar el mensaje a la cola, hacer un commit en la cola de mensajes, si y solo si, podemos hacer un commit en la bd del microservicio. Para ello, tenemos dos posibilidades, una es seguir el protocolo Saga, que nos proporciona la capacidad de poder hacer transacciones compensatorias, la otra es seguir el protocolo Two commit phase, que necesita de la figura de un Servicio que gestione la transaccionalidad distribuida. Es decir, un servicio que pregunte a los distintos componentes si estan en disposicion de hacer el commit en sus distintas bases de datos y en las colas de mensajes. Es como decirles, "eh!, estais preparados para hacer todo lo necesario para guardar los datos e indicar a los otros que podemos hacer nuestro trabajo?", esto dicho con mi tono de voz de alguien de Extremadura suena más gracioso...
 
@@ -210,6 +236,7 @@ JTA/XA
 	https://www.infoworld.com/article/2077714/xa-transactions-using-spring.html
 
 	https://docs.spring.io/spring-boot/docs/2.1.6.RELEASE/reference/html/boot-features-jta.html
+
 
 Microlitos, microservicios y monolitos.
 
