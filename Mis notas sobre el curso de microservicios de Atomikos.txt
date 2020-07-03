@@ -86,11 +86,11 @@ No Basadas en JMS:
 
 Hay varios conceptos importantes a tratar con las manera asíncrona para hacer microservicios, sobre todo porque hay que evitarlos:
 
-	Mensajes perdidos.
+	1. Mensajes perdidos. Tendremos mensajes perdidos si primero hacemos commit en la bd y luego no somos capaces de hacer commit en la cola de mensajería, en el broker.
 
-	Mensajes fantasma.
+	2. Mensajes fantasma. Al reves, no hemos sido capaces de hacer commit en la bd, pero si se hizo commit en la cola de mensajes.
 	
-	Mensajes duplicados.
+	3. Mensajes duplicados. Potencialmente, ocurrirá a consecuencia de lo anterior, como se hizo commit previo en la cola, si no se borró dicho commit, el sistema podría intentar hacer commit del mensaje en la cola.
 
 ## 2.1 El mensajero envía potencialmente inconsistencias en una arquitectura de microservicios asíncronos. 
 
@@ -214,9 +214,9 @@ El gestor de transacciones, uno decente, debe ser capaz de hacer rollback tanto 
 
 	Pregunta incomoda, a relación del punto 7 descrito anteriormente. Qué pasa si después de haber pasado por los dos primeros puntos, en el que tenemos el ok de los dos sistemas, ocurre una catastrofe que impide realmente hacer commit o rollback? o cuando el gestor de transacciones decida que hay que hacer ROLLBACK en ambos subsistemas y no pueda?
 
-# 2.3.1.1.2. Posible solución a los fallos potenciales a 2cp/XA
+# 2.3.1.1.2. Posible solución a los fallos potenciales a 2cp/XA. Una propuesta.
 
-	No sería posible tener lo mejor de ambos mundos? es decir, coger la idea de las Sagas, es decir, un coreografo que gestione el estado transaccional de cada microservicio y un gestor de transacciones globales maestro que conozca y gestione a cada gestor de transacciones globales de cada microservicio. Así, antes de lanzar una serie de operaciones que exige invocaciones colas de mensajes y posibles commits a sus bases de datos, tendríamos que asegurarnos que estos, todos ellos, nos ha devuelto un mensaje ok que permitirá al Gestor maestro de transacciones que con mayor probabilidad habrá commits tanto en cada cola de mensajes como en su base de datos, permitiendo avanzar al orquestador en las siguientes invocaciones a las otras colas de mensajes y base de datos hasta finalmente tener una respuesta final del último microservicio que necesitamos invocar para obtener el mensaje final que debería llegar al que haya invocado dicha lógica de negocio. En caso de que alguno haya respondido KO antes de empezar el proceso, directamente se le dice al invocador que no es posible realizar la operacion, sin necesidad de hacer operaciones de compensacion transaccional innecesarias, por lo menos a priori. Eso no quita, que es posible que entre el tiempo que el gestor maestro de transacciones globales recibió el OK de todos los subgestores, alguno se caiga. Entonces, no nos queda más remedio que hacer el rollback distribuido inverso, pero solo en casos de fuerza mayor en el que alguien haya roto el pacto inicial. En principio, no quiero que haya un orquestador involucrado, porque incluir un gestor maestro de transacciones que conozca el estado inicial y final de cada gestor de transacciones subscrito a cada microservicio, es añadirle el estado a dicho coreografo y el hombre orquesta, es decir, que los microservicios se llamen unos a otros, no tendría sentido. Literalmente, el orquestador tendría, para cada operacion de logica de negocio, un enumerado para describir internamente las distintas llamadas y un mecanismo para gestionar a los distintos gestores de transacciones de cada microservicio. Recordemos, dicho gestor, para cada estado, debe conocer el estado de su cola de mensajes y de su base de datos. Debe tratar de asegurar el commit en los dos sistemas o decir que no podrá en caso de que alguno no esté disponible. 
+	No sería posible tener lo mejor de ambos mundos? es decir, coger la idea de las Sagas, es decir, un coreografo que gestione el estado transaccional de cada microservicio y un gestor de transacciones globales maestro que conozca y gestione a cada gestor de transacciones globales de cada microservicio. Así, antes de lanzar una serie de operaciones que exige invocaciones colas de mensajes y posibles commits a sus bases de datos, tendríamos que asegurarnos que estos, todos ellos, nos ha devuelto un mensaje ok que permitirá al Gestor maestro de transacciones que con mayor probabilidad habrá commits tanto en cada cola de mensajes como en su base de datos, permitiendo avanzar al orquestador en las siguientes invocaciones a las otras colas de mensajes y base de datos hasta finalmente tener una respuesta final del último microservicio que necesitamos invocar para obtener el mensaje final que debería llegar al que haya invocado dicha lógica de negocio. En caso de que alguno haya respondido KO antes de empezar el proceso, directamente se le dice al invocador que no es posible realizar la operacion, sin necesidad de hacer operaciones de compensacion transaccional innecesarias, por lo menos a priori. Eso no quita, que es posible que entre el tiempo que el gestor maestro de transacciones globales recibió el OK de todos los subgestores, alguno se caiga. Entonces, no nos queda más remedio que hacer el rollback distribuido inverso, pero solo en casos de fuerza mayor en el que alguien haya roto el pacto inicial. En principio, no quiero que haya un orquestador involucrado, porque incluir un gestor maestro de transacciones que conozca el estado inicial y final de cada gestor de transacciones subscrito a cada microservicio, es añadirle el estado a dicho coreografo y el hombre orquesta, es decir, que los microservicios se llamen unos a otros, no tendría sentido. Literalmente, el orquestador tendría, para cada operacion de logica de negocio, un enumerado para describir internamente las distintas llamadas y un mecanismo para gestionar a los distintos gestores de transacciones de cada microservicio. Recordemos, dicho gestor, para cada estado, debe conocer el estado de su cola de mensajes y de su base de datos. Debe tratar de asegurar el commit en los dos sistemas o decir que no podrá en caso de que alguno no esté disponible. Puede que el rendimiento fuese malo. Si para resolver una logica de negocio tienes que llamar a, pongamos cinco microservicios, cada llamada necesitaría primero preguntar a su gestor transaccional, conseguir el ok y el pid de cada proceso que asegure, a priori, el commit de cada sistema, y luego, lanzar las peticiones de commit de cada transaccion de cada ms, dejarlas en estado preparado, para luego en caso afirmativo global, lanzar las ordenes de commit. Si tenemos 5 ms, cada operacion necesita, por poner un ejemplo, 10ms de media para preguntar a cada gestor transaccional, pongamos que cada operacion para hacer el commit real son 500ms y tenemos microservicios con parametros de entrada de manera que no necesitamos comunicar datos del estado anterior,es decir, un microservicio me devuelve algo que necesito para invocar al siguiente, si lo tenemos así, tendriamos que para resolver de manera exitosa una invocacion casi 3 segundos! Puede ser totalmente lamentable esta aproximación, pero a cambio tienes un sistema capaz de atender a potencialmente millones de peticiones por segundo.
 
 Un usuario en Stackoverflow opina así:
 
@@ -261,11 +261,42 @@ Coincido contigo, compañero.
 
 # 2.4. Recibiendo mensajes sin inconsistencias.
 
-	Vas por aquí. https://atomikos.teachable.com/courses/475866/lectures/11750732
+	Exactly once delivery, ess decir, tratar de recibir un mensaje único una sola vez, evitando procesar mensajes perdidos o duplicados. Kafka y RabbitMQ al no implementar XA de manera nativa, delega en los consumidores esta característica.
+
+	Los mensajes perdidos, recordemos, son mensajes que no fueron capaz de hacer commit en la cola pero si en la bd.
+	Un mensaje duplicado es aquel que no fue capaz de hacer commit en la bd pero si en la cola, y al no hacer rollback de la cola, el sistema trataría de hacer commit en la cola, de nuevo. Son situaciones a evitar.
+
+	El problema a evitar viene dado por las caracteristicas de ambos sistemas, de la cola de mensajes y de la bd. Recordemos.
+	
+	La transaccion local en el broker de mensajes implica:
+
+		1. Leer el mensaje de la cola.
+		2. Marcar el mensaje para ser borrado al hacer el commit. Aquí pueden pasar dos cosas:
+
+			2.1. Hacer el commit en el broker, lo que implica que el mensaje desaparece del broker.
+			
+			2.2 O hacer el rollback en el broker, lo que implica tratar de entregar el mensaje de nuevo al broker para volver a leerlo.
+
+	La transaccion local en el SGBD implica:
+
+		1. Insertar el registro en la bd.
+		2. Hacer commit en la bd.
+
+	Como recordemos, queremos y necesitamos tener el control preciso y estricto de los sistemas para hacer ROLLBACK o COMMIT. No queremos que se realice de manera automatica por los distintos subsistemas.
+
+	Queremos poder tratar dichas transacciones como una transaccion global, hacer commit o rollback siguiendo la filosofia todo o nada. 
+	Tambien podemos llamar a estas transacciones globales, transacciones distribuidas, lógico no?.
+
+	El mecanismo para recibir mensajes sin inconsistencias es exactamente igual que el mecanimos para enviar un mensaje anteriormente descrito.
+	Básicamente, el microservicio preguntará el gestor transaccional sobre la disponibilidad de los distintos subsistemas, si están en buen estado para atender peticiones, tanto al broker de mensajes como al gestor de base de datos. Cada uno de estos realizará una operacion que garantice que se puede hacer commit tanto como para marcar al mensaje para ser extraido de la cola como, commit en el broker, como para hacer la lectura de la bd, que será alguna sentencia SELECT * FROM. Ambas operaciones devuelven un pid o algo que indique que son posibles, cuando el gestor obtiene dicho OK, manda hacer el commit permanente en ambos sistemas, si recibe un KO, manda hacer el ROLLBACK conjunto. Finalmente el Manejador de transacciones distribuido manda escribir en el LOG el resultado final de la operacion.
+
+	Recordemos tambien, todo este trabajo es evitar las inconsistencias que pueden ocurrir cuando tenemos las dos peticiones de hacer commit en el método marcado como @Transactional, tanto a la hora de escribir o leer.
+
 
 # 2.5 Entrega de mensajes únicos. Exactly once delivery.
 
-	HACER!!!
+	Vas por aquí. https://atomikos.teachable.com/courses/475866/lectures/11892250
+
 	
 Links
 
@@ -290,6 +321,10 @@ Two phased commits
 	https://dzone.com/articles/xa-transactions-2-phase-commit
 
 	https://en.wikipedia.org/wiki/X/Open_XA
+
+	https://github.com/atomikos
+
+	https://www.atomikos.com/Blog/HighPerformanceJMSProcessingWithXA
 
 JTA/XA
 

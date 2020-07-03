@@ -1,0 +1,6 @@
+EL Pais
+
+Abrir la consola CMD + OPT + c
+Pegar esto:
+
+anonymData = JSON.parse(localStorage.getItem('ArcP'));anonymData.anonymous.rc["8"].c = -800;localStorage.setItem('ArcP', JSON.stringify(anonymData));
