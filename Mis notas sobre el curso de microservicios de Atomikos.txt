@@ -24,7 +24,7 @@ Otra manera sería que las bases de datos de todos los microservicios estén alo
 
 Tiene que haber alguna otra manera de poder solventar el problema de la inconsistencia eventual, que indudablemente aparecerá, pues los sistemas fallan, tarde o temprano, bien sea porque nos quedamos sin cuota de disco, ha habido un incendio, alguien ha ido con una uzi a la oficina, o algo peor.
 
-## 1.1 Microservicios y alta disponibilidad al rescate
+# 1.1 Microservicios y alta disponibilidad al rescate
 
 Me encanta esta definicion, "la arquitectura de microservicios es una forma extremadamente eficiente para transformar problemas de negocio en problemas de transaccionalidad distribuida".
 
@@ -48,7 +48,7 @@ Domain driven design, AMPLIAR. Hay que definir si es leve o grave.
 
 Patron que trata de solventar el problema de usar sistemas distribuidos haciendo operaciones de compensacion distribuida cuando sea necesario, es decir operaciones para rehacer el estado anterior transaccional. Hacer un rollback distribuido. Considero que por si sólo, no funciona muy bien, pues, puede provocar errores de consistencia cuando ocurra el problema de la inconsistencia eventual y en principio tampoco tiene en cuenta el problema de hacer commit en ambos sistemas, el de la cola de mensajes y en la bd. Puede presentar el problema de necesitar mucho tiempo para rehacer el estado anterior al rollback, pues si el sistema es incapaz de transmitir mediante el broker la orden de hacer el rollback inverso, el sistema tendrá ese estado inestable o pendiente de resolver. 
 
-# 2. Microservicios asíncronos.
+## 2. Microservicios asíncronos.
 
 Vamos a tratar sobre la manera asíncrona para hacer microservicios, es decir, cuando tratamos con brokers de mensajería, ya sea a través de una cola de mensajes o cuando tienes productores y consumidores subscritos a un topic, un buzón. En Java, tenemos implementaciones libres, aquellas basadas en JMS, e implementaciones propietarias, como Kafka.
 
@@ -92,7 +92,7 @@ Hay varios conceptos importantes a tratar con las manera asíncrona para hacer m
 	
 	3. Mensajes duplicados. Potencialmente, ocurrirá a consecuencia de lo anterior, como se hizo commit previo en la cola, si no se borró dicho commit, el sistema podría intentar hacer commit del mensaje en la cola.
 
-## 2.1 El mensajero envía potencialmente inconsistencias en una arquitectura de microservicios asíncronos. 
+# 2.1 El mensajero envía potencialmente inconsistencias en una arquitectura de microservicios asíncronos. 
 
 Basicamente, cuando tratamos con microservicios asíncronos, tenemos dos servicios con los que interactua, uno es la tecnologia de mensajeria, otra es la base de datos en la que guardamos la informacion.
 
@@ -123,15 +123,15 @@ Tendremos mensajes fantasmas si primero hacemos commit en el broker de mensajer�
 
 Si es el caso del mensaje fantasma, en el que no hemos sido capaces de hacer commit en la base de datos, potencialmente hablando publicaremos de nuevo en la cola de mensajes, es decir, haremos commit en el broker de mensajería teniendo un mensaje duplicado. Basicamente, tratar que nuestras transacciones sigan un orden es dificil y potencialmente fallable, pues entre medias puede ocurrir el desastre, da igual que lo llames problema de mensaje perdido, mensaje fantasma o mensaje duplicado. Son errores que tendremos que tener en cuenta en nuestra arquitectura para solventarlos.
 
-## 2.1.1 Conclusión sobre el envio de inconsistencias transaccionales y/o de mensajería.
+# 2.1.1 Conclusión sobre el envio de inconsistencias transaccionales y/o de mensajería.
 
 Probablementente es una mala idea tener en Los metodos transaccionales de acceso a bases de datos invocaciones al broker de mensajería. Como poco, es una postura bastante inocente poner las dos llamadas a ambos sistemas sin estar seguros al 100% de que ambos van a hacer commit. 
 
-## 2.2 El mensajero recibe inconsistencias. 
+# 2.2 El mensajero recibe inconsistencias. 
 
 Ver de nuevo, porque parece que está describiendo los mismos problemas anteriormente expuestos. En funcion de si encontramos algun problema entre hacer commit en la cola primero y hacer commit en la bd despues, problemas. Si invertimos el orden igual. Es un problema gordo.
 
-## 2.3. Enviando mensajes sin inconsistencias.
+# 2.3. Enviando mensajes sin inconsistencias.
 
 Cuando hablamos de este tema, hablamos del problema de enviar el mensaje a la cola, hacer un commit en la cola de mensajes, si y solo si, podemos hacer un commit en la bd del microservicio. Para ello, tenemos dos posibilidades, una es seguir el protocolo Saga, que nos proporciona la capacidad de poder hacer transacciones compensatorias, la otra es seguir el protocolo Two commit phase, que necesita de la figura de un Servicio que gestione la transaccionalidad distribuida. Es decir, un servicio que pregunte a los distintos componentes si estan en disposicion de hacer el commit en sus distintas bases de datos y en las colas de mensajes. Es como decirles, "eh!, estais preparados para hacer todo lo necesario para guardar los datos e indicar a los otros que podemos hacer nuestro trabajo?", esto dicho con mi tono de voz de alguien de Extremadura suena más gracioso...
 
@@ -153,12 +153,12 @@ Ahora, el desafío es tratar a dichas transacciones distribuidas como una transa
 
 Ojo, entiendo que la transaccion distribuida es el conjunto de la transaccion en la bd y la transaccion en la cola de eventos en un solo microservicio. No estoy hablando de todas las transacciones necesarias para una operacion compleja como ordenar una peticion de compra por parte de un usuario. Dichas peticiones, normalmente sería algo como comprobar que el usuario está en el sistema, el usuario busca un producto para comprar, el usuario solicita comprar el producto, el sistema comprueba si el usuario tiene todo en regla para poder comprar, el sistema solicita si el producto está en stock, el sistema hace el cargo del producto en su cuenta, el sistema devuelve el estado de dicha operacion inicial. Cada una de esas operaciones, conlleva una transacción global. Intimidado?
 
-## 2.3.1. Patrón Two phase commits
+# 2.3.1. Patrón Two phase commits
 
 Patrón que al igual que el anterior, trata de usar sistemas distribuidos para ejecutar una lógica de negocio, solo que este va a procurar asegurarse o maximizar al menos las probabilidades de hacer commit en ambos sistemas necesarios para invocar a una instancia de un microservicio. Tambien puede presentar problemas, porque asume que no será necesario hacer rollback distribuido hacia atrás, como lo hace Saga. Bajo mi punto de vista, es un error, hay que tener en cuenta que será necesario hacer rollback distribuido hacia atrás y también será necesario estar preparado para el problema de la inconsistencia eventual.
 
 
-En principio, puede hacerse, aunque es complejo, muy complejo. Voy a hablar un poco sobre como se haría con el protocolo Two Commit Phase. El truco se puede llamar Estado intermedio preparado, Intermediate prepared state. Los puntos claves ante esta estrategia son:
+En principio, puede hacerse, aunque es complejo, muy complejo. Voy a hablar un poco sobre como se haría con el protocolo Two Commit Phase, a partir de ahora, 2CP. El truco se puede llamar Estado intermedio preparado, Intermediate prepared state. Los puntos claves ante esta estrategia son:
 
 	Un Backend que está advertido, puede hacer rollback, nos hemos asegurado de ello, pero no debe hacerlo por su cuenta, por iniciativa propia, porque no querremos en principio ni rollbacks cuando el sistema potencialmente se reinicie, ni rollbacks si ocurren timeouts internos en la bd.
 
@@ -218,50 +218,30 @@ El gestor de transacciones, uno decente, debe ser capaz de hacer rollback tanto 
 
 	No sería posible tener lo mejor de ambos mundos? es decir, coger la idea de las Sagas, es decir, un coreografo que gestione el estado transaccional de cada microservicio y un gestor de transacciones globales maestro que conozca y gestione a cada gestor de transacciones globales de cada microservicio. Así, antes de lanzar una serie de operaciones que exige invocaciones colas de mensajes y posibles commits a sus bases de datos, tendríamos que asegurarnos que estos, todos ellos, nos ha devuelto un mensaje ok que permitirá al Gestor maestro de transacciones que con mayor probabilidad habrá commits tanto en cada cola de mensajes como en su base de datos, permitiendo avanzar al orquestador en las siguientes invocaciones a las otras colas de mensajes y base de datos hasta finalmente tener una respuesta final del último microservicio que necesitamos invocar para obtener el mensaje final que debería llegar al que haya invocado dicha lógica de negocio. En caso de que alguno haya respondido KO antes de empezar el proceso, directamente se le dice al invocador que no es posible realizar la operacion, sin necesidad de hacer operaciones de compensacion transaccional innecesarias, por lo menos a priori. Eso no quita, que es posible que entre el tiempo que el gestor maestro de transacciones globales recibió el OK de todos los subgestores, alguno se caiga. Entonces, no nos queda más remedio que hacer el rollback distribuido inverso, pero solo en casos de fuerza mayor en el que alguien haya roto el pacto inicial. En principio, no quiero que haya un orquestador involucrado, porque incluir un gestor maestro de transacciones que conozca el estado inicial y final de cada gestor de transacciones subscrito a cada microservicio, es añadirle el estado a dicho coreografo y el hombre orquesta, es decir, que los microservicios se llamen unos a otros, no tendría sentido. Literalmente, el orquestador tendría, para cada operacion de logica de negocio, un enumerado para describir internamente las distintas llamadas y un mecanismo para gestionar a los distintos gestores de transacciones de cada microservicio. Recordemos, dicho gestor, para cada estado, debe conocer el estado de su cola de mensajes y de su base de datos. Debe tratar de asegurar el commit en los dos sistemas o decir que no podrá en caso de que alguno no esté disponible. Puede que el rendimiento fuese malo. Si para resolver una logica de negocio tienes que llamar a, pongamos cinco microservicios, cada llamada necesitaría primero preguntar a su gestor transaccional, conseguir el ok y el pid de cada proceso que asegure, a priori, el commit de cada sistema, y luego, lanzar las peticiones de commit de cada transaccion de cada ms, dejarlas en estado preparado, para luego en caso afirmativo global, lanzar las ordenes de commit. Si tenemos 5 ms, cada operacion necesita, por poner un ejemplo, 10ms de media para preguntar a cada gestor transaccional, pongamos que cada operacion para hacer el commit real son 500ms y tenemos microservicios con parametros de entrada de manera que no necesitamos comunicar datos del estado anterior,es decir, un microservicio me devuelve algo que necesito para invocar al siguiente, si lo tenemos así, tendriamos que para resolver de manera exitosa una invocacion casi 3 segundos! Puede ser totalmente lamentable esta aproximación, pero a cambio tienes un sistema capaz de atender a potencialmente millones de peticiones por segundo.
 
-Un usuario en Stackoverflow opina así:
+	Un usuario en Stackoverflow opina así:
 
-	"In my understanding (not a big user of 2PC since I consider it limiting):
+		"In my understanding (not a big user of 2PC since I consider it limiting):
 
-	Typically, 2PC is for immediate transactions.
-	Typically, Sagas are for long running transactions.
-	Use cases are obvious afterwards:
+		Typically, 2PC is for immediate transactions. --> En principio, para transacciones que harías en un banco delante de un cliente.
+		Typically, Sagas are for long running transactions. --> Para transacciones que harías por las noches, mientras todo el mundo duerme.
+		Use cases are obvious afterwards:
 
-	2PC can allow you to commit the whole transaction in a request or so, spanning this request across systems and networks. Assuming each participating system and network follows the protocol, you can commit or rollback the entire transaction seamlessly.
-	Saga allows you split transaction into multiple steps, spanning long periods of times (not necessarily systems and networks).
-	Example:
+		2PC can allow you to commit the whole transaction in a request or so, spanning this request across systems and networks. Assuming each participating system and network follows the protocol, you can commit or rollback the entire transaction seamlessly.
+		Saga allows you split transaction into multiple steps, spanning long periods of times (not necessarily systems and networks).
+		Example:
 
-	2PC: Save Customer for every received Invoice request, while both are managed by 2 different systems.
-	Sagas: Book a flight itinerary consisting of several connecting flights, while each individual flight is operated by different airlines.
-	I personally consider Saga capable of doing what 2PC can do. Opposite is not accurate.
+		2PC: Save Customer for every received Invoice request, while both are managed by 2 different systems.
+		Sagas: Book a flight itinerary consisting of several connecting flights, while each individual flight is operated by different airlines.
+		I personally consider Saga capable of doing what 2PC can do. Opposite is not accurate.
 
-	I think Sagas are universal, while 2PC involves platform/vendor lockdown."
+		I think Sagas are universal, while 2PC involves platform/vendor lockdown."
 
-Coincido contigo, compañero.
-
-#Qué es eso de JTA/XA?
-
-	JTA significa java transaction api, basicamente es la api estandard de Java para transacciones en bd, tanto en sistemas monolíticos como en sistemas distribuidos.
-
-	XA significa eXtended Architecture, la API abierta y estándar de OSI de manera que los recursos del backend funcionen con transacciones distribuidas. Es deseable para que no tengan que depender de unsistema gestor de bases de datos en particular. 
-
-# ¿Qué sucede si mi proveedor de broker de mensajería no es compatible con XA?
-
-	Kafka y RabbitMQ y otros productos recientes no admiten XA, por lo que hay que tener en cuenta esta realidad si queremos implementar 2cp con alguno de estos brokers. 
-
-	https://stackoverflow.com/questions/58128037/does-kafka-supports-xa-transactions
-
-	https://stackoverflow.com/questions/20540710/xa-transactions-and-message-bus
-
-# ¿Cuáles son los equivalentes .Net?
-
-	En .Net usaría el DTC (Coordinador de transacciones distribuidas) en lugar de JTA. Para XA, nada cambia.
-
-
+	Coincido contigo, compañero. Con el patrón Saga, a dia de hoy, tienes que implementar tú mismo la arquitectura, tienes que implementar el coordinador u orquestador que gestione la compensacion de transaccionalidad inversa. Existen frameworks, como eventuate-tram, axon, microprofile-lra, mientras con el patrón 2cp, tienes que usar algún producto que te de el gestor de transacciones globales, o hacerlo tú mismo.
 
 
 # 2.4. Recibiendo mensajes sin inconsistencias.
 
-	Exactly once delivery, ess decir, tratar de recibir un mensaje único una sola vez, evitando procesar mensajes perdidos o duplicados. Kafka y RabbitMQ al no implementar XA de manera nativa, delega en los consumidores esta característica.
+	Exactly once delivery, es decir, tratar de entregar y recibir un mensaje único una sola vez, evitando procesar mensajes perdidos o duplicados. 
 
 	Los mensajes perdidos, recordemos, son mensajes que no fueron capaz de hacer commit en la cola pero si en la bd.
 	Un mensaje duplicado es aquel que no fue capaz de hacer commit en la bd pero si en la cola, y al no hacer rollback de la cola, el sistema trataría de hacer commit en la cola, de nuevo. Son situaciones a evitar.
@@ -292,10 +272,56 @@ Coincido contigo, compañero.
 
 	Recordemos tambien, todo este trabajo es evitar las inconsistencias que pueden ocurrir cuando tenemos las dos peticiones de hacer commit en el método marcado como @Transactional, tanto a la hora de escribir o leer.
 
+	Kafka y RabbitMQ al no implementar XA de manera nativa, delega en los consumidores esta característica.
 
 # 2.5 Entrega de mensajes únicos. Exactly once delivery.
 
-	Vas por aquí. https://atomikos.teachable.com/courses/475866/lectures/11892250
+	Imagina en cuales situaciones querrías o necesitarias que se entregara un mensaje de un sistema a otro una única vez. Ya? A mi se ocurren situaciones como, ingresa dinero de la cuenta A a la cuenta B, o retira dinero de la cuenta A para la cuenta B a primeros de mes, o reserva este objeto X que está en el almacen A para el cliente Y que ya lo ha pagado. Esas son situaciones que no nos gustaría que ocurriera más de una vez por error, no? 
+
+	Usar brokers de mensajería y transacciones ACID en cada de uno de los sistemas, A y B, es fácil tener este tipo de comportamiento. 
+
+	Esto tengo que ampliarlo, un montón, porque esto se puede conseguir de multiples maneras, bien sea usando JTA y XA, a la manera de 2CP, pero también con brokers de mensajería que implementen en los consumidores dicho control de mensajería. Primero hay que asegurar que el mensaje está en el broker, extraerlo, commit en el broker, y luego hacer el commit en la bd destino. Si hacemos esto, el mensaje se entrega y procesa en destino una vez y no tenemos mensajes perdidos, mensajes fantasmas o mensajes duplicados.
+
+## 3. Microservicios Síncronos.
+
+# 3.1 Introducción
+
+	Qué significa que algo, una operación es síncrona? basicamente yo lo entiendo como una operación para la que tengo que esperar esperando por una respuesta y no puedo atender a ninguna otra cosa más.
+	A diferencia de asíncrono, me tengo que esperar a que me digan algo y no puedo hacer nada más. Cuando trabajamos con microservicios, trabajar con el estilo síncrono puede ser más dificil, más propenso a errores, pues, al haber errores remotos en la comunicacion entre servicios externos, que los habrá, como mínimo necesitaremos siempre alta disponibilidad entre las instancias de los microservicios, un mayor cuidado si cabe en el código pues tendremos que tener en cuenta los timeouts y los try catch para capturar excepciones y actuar en consecuencia. Ante un error timeout, volvemos a llamar?, cuantas veces haremos un retry ante time outs? o si estamos invocando una y otra vez con datos de entrada que el sistema llamado no reconoce? o si la url ha cambiado? o la api detrás de la url? Ya ni digamos si necesitamos hacer un rollback inverso si una invocacion a un sistema fracasa por la razón que sea. Además, puede introducirse errores ante inconsistencias eventuales.
+
+	Cuando se deben usar? bueno, pues cuando no te quede más remedio, como cuando necesitas un dato para continuar que solo te puede dar otro servicio. Por ejemplo, imagina cuando tenemos que reservar un vuelo. Es una situación bastante común, por lo que, al igual que con los métodos asíncronos anteriorme descritos, tenemos que tratar con las inconsistencias que pueden aparecer tanto al enviar como al recibir una invocacion síncrona.
+
+3.2 Inconsistencias ante llamadas síncronas.
+
+	https://atomikos.teachable.com/courses/475866/lectures/9340474  
+
+
+
+# Terminología.
+
+# Qué es eso de la consistencia eventual?
+
+	Es tratar de entregar el último dato actualizado consensuado de un sistema de datos distribuido. No tiene porqué ser el valor más actualizado existente.
+
+	https://es.qwe.wiki/wiki/Eventual_consistency
+
+# Qué es eso de JTA/XA?
+
+	JTA significa java transaction api, basicamente es la api estandard de Java para transacciones en bd, tanto en sistemas monolíticos como en sistemas distribuidos.
+
+	XA significa eXtended Architecture, la API abierta y estándar de OSI de manera que los recursos del backend funcionen con transacciones distribuidas. Es deseable para que no tengan que depender de un sistema gestor de bases de datos en particular. 
+
+# ¿Qué sucede si mi proveedor de broker de mensajería no es compatible con XA?
+
+	Kafka y RabbitMQ y otros productos recientes no admiten XA, por lo que hay que tener en cuenta esta realidad si queremos implementar 2cp con alguno de estos brokers. 
+
+	https://stackoverflow.com/questions/58128037/does-kafka-supports-xa-transactions
+
+	https://stackoverflow.com/questions/20540710/xa-transactions-and-message-bus
+
+# ¿Cuáles son los equivalentes .Net?
+
+	En .Net usaría el DTC (Coordinador de transacciones distribuidas) en lugar de JTA. Para XA, nada cambia.
 
 	
 Links
@@ -341,6 +367,8 @@ Microlitos, microservicios y monolitos.
 
 	https://www.paradigmadigital.com/techbiz/microservicios-vs-microlitos-vs-monolitos-ventajas-desventajas/
 
+	https://www.jrebel.com/blog/popular-java-microservices-frameworks
+
 
 Domain Driven Design
 
@@ -354,5 +382,15 @@ Microservicios
 
 	https://microservices.io (Sagas)
 
+	https://medium.com/microservices-architecture/top-10-microservices-framework-for-2020-eefb5e66d1a2
 
 
+Patrón Saga
+
+	http://jbossts.blogspot.com/2017/12/saga-implementations-comparison.html
+
+	https://github.com/eclipse/microprofile-lra
+
+	https://axoniq.io
+
+	https://medium.com/@ijayakantha/microservices-the-saga-pattern-for-distributed-transactions-c489d0ac0247
