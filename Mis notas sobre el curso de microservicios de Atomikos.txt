@@ -394,3 +394,17 @@ Patrón Saga
 	https://axoniq.io
 
 	https://medium.com/@ijayakantha/microservices-the-saga-pattern-for-distributed-transactions-c489d0ac0247
+
+Crítica 2pc/saga. Se deben leer.
+
+	https://medium.com/@ijayakantha/microservices-the-saga-pattern-for-distributed-transactions-c489d0ac0247
+
+	https://medium.com/swlh/handling-transactions-in-the-microservice-world-c77b275813e0
+
+	https://developers.redhat.com/blog/2018/10/01/patterns-for-distributed-transactions-within-a-microservices-architecture/
+
+Otros
+
+	GRIT: Consistent Distributed Transactions across Polyglot Microservices with Multiple Databases
+	
+	https://greensky00.github.io/pdf/grit_icde19.pdf
