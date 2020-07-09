@@ -2,6 +2,20 @@
 
 # Things to study
 
+	# Fullstack
+
+		https://www.codeinwp.com/blog/angular-vs-vue-vs-react/
+
+		https://medium.com/somoswigou/angular-vs-react-vs-vue-cuál-es-la-mejor-opción-941a207951c7
+
+		https://www.google.com/search?client=safari&rls=en&q=angular+vs+react+vs+vue&ie=UTF-8&oe=UTF-8
+
+		angular
+
+		React
+
+		typescript
+
 	# Kotlin
 
 		https://fabiomsr.github.io/from-java-to-kotlin/
