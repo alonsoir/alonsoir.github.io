@@ -9,7 +9,7 @@ Si tenemos 4 tareas distintas gestionadas por un microservicio instanciado, a cu
 en una nube pública o privada, más los nodos dedicados para el acceso a datos.
 
 Una manera, o la manera actual y más de moda para acceder a los metodos de cada instancia, es envolviendo el servicio en un servidor de aplicaciones ligero 
-http rest, síncrono por naturaleza, pues los invocas, el usuario se queda esperando y el servidor responde con un codigo, que puede ser 200, 400, 500, etc.
+http rest, síncrono por naturaleza, pues los invocas, el usuario se queda esperando y el servidor responde con un código, que puede ser 200, 400, 500, etc.
 
 Al fin y al cabo, añadir una clase @Controller a distintos métodos que atiendan peticiones REST es sencillo, mucha gente conoce la web y ahora tenemos 
 también la posibilidad de usar librerias como Feign para crear clientes alrededor de esas clases marcadas como Controller.
@@ -19,7 +19,7 @@ también la posibilidad de usar librerias como Feign para crear clientes alreded
 Abogo que puede ser problemático, porque como las instancias estén caídas, el servicio estaría inaccesible, inusable. En servicios reales tendremos varias
 instancias de dichos servidores de aplicaciones teniendo detrás una infraestructura como servicios de descubrimiento, servicios balanceadores de carga 
 para distribuir la carga equitativamente, comprobar el estado de salud de los distintos servicios, mecanismos para romper rápidamente el circuito,
-el ciclo de invocaciones en caso de algún error claro y manifiesto como el uso de datos de entrada incorrectos o una invocacion incorrecta del microservicio. 
+el ciclo de invocaciónes en caso de algún error claro y manifiesto como el uso de datos de entrada incorrectos o una invocación incorrecta del microservicio. 
 
 Incluso en estos tiempos de alta disponibilidad, dichos servicios altamente escalados con multiples instancias almacenadas en contenedores docker y
 gestionados mediante pods en clusters Kubernetes u OpenShift, pueden estar no disponibles, por lo que hay que estar preparado mediante software para saber 
@@ -38,7 +38,7 @@ probablemente aparecerán problemas de inconsistencia cuando este back up tenga 
 nombre de inconsistencia eventual. Este problema aparecerá incluso usando el patrón Saga. Ante ello, podemos hacer dos cosas. 
 
 Una es aceptarlo y tenerlo en cuenta para prepararnos ante ello. Quiero decir que tendremos que pensar en planes de contingencia para reconstruir las bases 
-de datos de manera consistente, hacer backups de cada base de datos cada poco tiempo a la vez, de manera que haya una relacion temporal, solucion que no es 
+de datos de manera consistente, hacer backups de cada base de datos cada poco tiempo a la vez, de manera que haya una relacion temporal, solución que no es 
 perfecta, pero minimizaría el tiempo de vuelta al servicio. 
 
 Otra manera sería que las bases de datos de todos los microservicios estén alojadas en la misma máquina, de manera que cada vez que se haga un backup, se 
@@ -61,13 +61,13 @@ Los hay bajo mi punto de vista, leves y graves.
 Leves es tratar con la consistencia eventual, es decir, tratar con datos distribuidos que no son consistentes unos con otros. 
 En el peor de los casos, siempre vas a devolver una lectura al cliente, que a lo mejor está un pelín anticuada. 
 Dependiendo del tipo de negocio, puede ser soportable, por ejemplo, no pasaría demasiado si un cliente en Linkedin aún no ha leído la última actualización 
-en su feed de noticias, o en Facebook, o en Twitter. Al fin y al cabo, esto se traduce en saber, cuál es el dato bueno? el de la instancia A? el de la B?, 
-el de la XYZ de hace dos minutos? Con tiempo, el cliente tendrá la última lectura consensuada y actualizada. AMPLIAR!
+en su feed de noticias, o en Facebook, o en Twitter. Al fin y al cabo, esto se traduce en saber, cuál es el dato bueno? el de la instancia A? el de la B?.
+Con tiempo, el cliente tendrá la última lectura consensuada y actualizada. AMPLIAR!
 
-Otro leve es tratar con la transaccionalidad distribuida, para ello en la literatura y en la practica podemos leer que existen dos grandes filosofías para 
-tratar este problema leve. 
+Otro leve es tratar con la transaccionalidad distribuida, para ello en la literatura y en la práctica podemos leer que existen dos grandes filosofías para 
+tratar los problemas que aparecen con arquitecturas de datos distribuidas. 
 
-A saber, Two commits phase (2cp) y el patrón Saga. 
+A saber, Two commit phase (2cp) y el patrón Saga. 
 
 Graves como la inconsistencia eventual, antes he hablado un poco sobre ello. Perder datos en las instancias de un servicio, o varios, dejando los datos 
 de los servicios supervivientes potencialmente inconsistentes con los datos restaurados. Puede ser el infierno en vida como no estemos preparados desde 
@@ -152,7 +152,7 @@ de datos en la que guardamos la informacion.
 
 Al tratar con ellas, literalmente el mensaje o la transaccion no está hecha hasta que hacemos commit en ellas, bien sea porque el mensaje ha sido finalmente 
 introducido en la cola o el topic para que el consumidor pueda consumirlo, bien porque la bd del microservicio haga commit. Dependiendo de como tengamos en nuestro 
-codigo el orden de la ejecucion transaccional, podremos tener potencialmente un error u otro cuando ocurra algún problema. 
+código el orden de la ejecucion transaccional, podremos tener potencialmente un error u otro cuando ocurra algún problema. 
 Esos problemas pueden ser por ejemplo que el contenedor que contiene el microservicio se cae, bien porque k8s ha tenido algún problema, porque la cuota de disco en la bd 
 se haya cumplido, porque alguien haya pegado fuego al cluster de datos, o también puede ser pq los nodos de mensajería se hayan caído tambien, por lo que 
 tambien sería imposible hacer commit en la cola de mensajería.
@@ -166,7 +166,7 @@ en uno de los sistemas, dependiendo del orden en el que hayamos ejecutado la ord
 que hay que hacer commit en ambos sistemas, pues, para que el mensaje sea visible en la cola para los consumidores, el sistema de mensajería debe hacer 
 commit, y de igual manera para la bd, hay que hacer commit en la operacion de insercion, borrado o actualización.
 
-Basicamente, poner en el mismo método transaccional invocaciones a ambos sistemas, no va a funcionar, pues potencialmente uno de los dos sistemas, o los dos, 
+Basicamente, poner en el mismo método transaccional invocaciónes a ambos sistemas, no va a funcionar, pues potencialmente uno de los dos sistemas, o los dos, 
 no van a funcionar. Hay que procurar maximizar que las probabilidades para invocar a los dos sistemas cuando invoquemos a un microservicio, sean exitosas. 
 Más aún, hay que procurar maximizar las posibilidades de hacer un commit exitoso en todas las llamadas necesarias a las distintas instancias de los distintos 
 microservicios para ejecutar una logica de negocio distribuida antes de siquiera hacerlas, para que, en caso de tener operaciones de rollback distribuido, 
@@ -213,7 +213,7 @@ o mensaje duplicado. Son errores que tendremos que tener en cuenta en nuestra ar
 
 # 2.1.1 Conclusión sobre el envio de inconsistencias transaccionales y/o de mensajería.
 
-Probablementente es una mala idea tener en Los metodos transaccionales de acceso a bases de datos invocaciones al broker de mensajería. Como poco, es una 
+Probablementente es una mala idea tener en Los metodos transaccionales de acceso a bases de datos invocaciónes al broker de mensajería. Como poco, es una 
 postura para mí poner las dos llamadas a ambos sistemas sin estar seguros al 100% de que ambos van a hacer commit. 
 
 # 2.2 El mensajero recibe inconsistencias. 
@@ -302,7 +302,7 @@ El truco se puede llamar Estado intermedio preparado, Intermediate prepared stat
 	Para un sistema así, necesitamos tecnologia Jmicroservicio con soporte XA, tecnologia de bd con soporte XA, y un gestor de transacciones que gestione a esos 
 	dos sistemas anteriores. 
 
-Practicamente todos los sistemas de colas y de bd soportan XA, eXtendend Architecture, por lo que, la parte principal del problema es implementar un 
+prácticamente todos los sistemas de colas y de bd soportan XA, eXtendend Architecture, por lo que, la parte principal del problema es implementar un 
 buen manejador de transacciones distribuidas.
 
 Básicamente, lo que debe hacer dicho manejador es:
@@ -344,7 +344,7 @@ en la cola?
 
 	7. Opcional, esto lo digo yo personalmente. Lo separo de los pasos anteriores, con la esperanza que los lectores no me machaquen demasiado. 
 		
-		Se comunica al orquestador que la invocacion a este conjunto de subsistemas ha ido bien, o no, en cuyo caso, habrá que actuar en consecuencia, bien sea 
+		Se comunica al orquestador que la invocación a este conjunto de subsistemas ha ido bien, o no, en cuyo caso, habrá que actuar en consecuencia, bien sea 
 		invocando al resto de microservicios para ejecutar su logica de negocio normal o en caso contrario y si es necesario, iniciar la fase de compensacion 
 		distribuida inversa. Hay que tener en cuenta que dichas operaciones de compensación no tienen porque poderse ejecutar de manera inmediata, ya que alguno 
 		de los subsistemas tendrá un problema grave que seguramente necesitará de la acción de alguna persona. Probablemente será buena idea dejar guardado en 
@@ -371,7 +371,7 @@ implica un reinicio o un fallo catastrófico de alguno de los subsistemas. Así 
 	hemos hecho rollback en ambos subsistemas y no tendremos los indeseados mensajes fantasmas, mensajes perdidos o mensajes duplicados.
 
 	Como consecuencia, siguiendo los pasos de 2cp/xa, podemos evitar las inconsistencias descritas anteriormente en el problema de los commits ordenados. 
-	Recordemos, cuando poníamos en el método transaccional las invocaciones a ambos subsistemas, tanto el SGBD como el broker de mensajería.
+	Recordemos, cuando poníamos en el método transaccional las invocaciónes a ambos subsistemas, tanto el SGBD como el broker de mensajería.
 
 	Pregunta incomoda, a relación del punto 7 descrito anteriormente. Qué pasa si después de haber pasado por los dos primeros puntos, en el que tenemos el ok 
 	de los dos sistemas, ocurre una catastrofe que impide realmente hacer commit o rollback? o cuando el gestor de transacciones decida que hay que hacer 
@@ -379,34 +379,42 @@ implica un reinicio o un fallo catastrófico de alguno de los subsistemas. Así 
 
 # 2.3.1.1.2. Posible solución a los fallos potenciales a 2cp/XA. Una propuesta.
 
-	No sería posible tener lo mejor de ambos mundos? es decir, coger la idea de las Sagas, es decir, un coreografo que gestione el estado transaccional de cada 
-	microservicio y un gestor de transacciones globales maestro que conozca y gestione a cada gestor de transacciones globales de cada microservicio. 
-	Así, antes de lanzar una serie de operaciones que exige invocaciones colas de mensajes y posibles commits a sus bases de datos, tendríamos que asegurarnos 
-	que estos, todos ellos, nos ha devuelto un mensaje ok que permitirá al Gestor maestro de transacciones que con mayor probabilidad habrá commits tanto en 
-	cada cola de mensajes como en su base de datos, permitiendo avanzar al orquestador en las siguientes invocaciones a las otras colas de mensajes y base de 
-	datos hasta finalmente tener una respuesta final del último microservicio que necesitamos invocar para obtener el mensaje final que debería llegar al que 
-	haya invocado dicha lógica de negocio. En caso de que alguno haya respondido KO antes de empezar el proceso, directamente se le dice al invocador que no 
-	es posible realizar la operacion, sin necesidad de hacer operaciones de compensacion transaccional innecesarias, por lo menos a priori. 
+	No sería posible tener lo mejor de ambos mundos? es decir, coger la idea de las Sagas, es decir, un coreografo que gestione el estado transaccional de 
+	cada microservicio y un gestor de transacciones globales maestro que conozca y gestione a cada gestor de transacciones globales de cada microservicio. 
+	Así, antes de lanzar una serie de operaciones que exige invocaciónes colas de mensajes y posibles commits a sus bases de datos, tendríamos que 
+	asegurarnos que estos, todos ellos, nos ha devuelto un mensaje ok que permitirá al Gestor maestro de transacciones que con mayor probabilidad habrá 
+	commits tanto en cada cola de mensajes como en su base de datos, permitiendo avanzar al orquestador en las siguientes invocaciónes a las otras colas 
+	de mensajes y base de datos hasta finalmente tener una respuesta final del último microservicio que necesitamos invocar para obtener el mensaje final 
+	que debería llegar al que haya invocado dicha lógica de negocio. En caso de que alguno haya respondido KO antes de empezar el proceso, directamente 
+	se le dice al invocador que no es posible realizar la operacion, sin necesidad de hacer operaciones de compensacion transaccional innecesarias, por 
+	lo menos a priori. 
 
-	Eso no quita, que es posible que entre el tiempo que el gestor maestro de transacciones globales recibió el OK de todos los subgestores, alguno se caiga. 
-	Entonces, no nos queda más remedio que hacer el rollback distribuido inverso, pero solo en casos de fuerza mayor en el que alguien haya roto el pacto 
-	inicial. 
+	Eso no quita, que es posible que entre el tiempo que el gestor maestro de transacciones globales recibió el OK de todos los subgestores, alguno se 
+	caiga. 
+	Entonces, no nos queda más remedio que hacer el rollback distribuido inverso, pero solo en casos de fuerza mayor en el que alguien haya roto el 
+	pacto inicial. 
 
-	En principio, no quiero que haya un orquestador involucrado, porque incluir un gestor maestro de transacciones que conozca el estado inicial y final de 
-	cada gestor de transacciones subscrito a cada microservicio, es añadirle el estado a dicho coreografo y el hombre orquesta, es decir, que los 
-	microservicios se llamen unos a otros, no tendría sentido. Literalmente, el orquestador tendría, para cada operacion de logica de negocio, un enumerado 
-	para describir internamente las distintas llamadas y un mecanismo para gestionar a los distintos gestores de transacciones de cada microservicio. 
+	En principio, no considero necesario que haya un orquestador involucrado, primero porque eso implica que cada servicio tenga que ser consciente de los 
+	otros servicios, considero que eso rompe el principio de la independencia habiendo de facto un acoplamiento fuerte. Considero mejor un coreógrafo con 
+	control sobre un gestor maestro de transacciones que conozca el estado inicial y final de cada gestor de transacciones subscrito a cada microservicio, 
+	es decir, un coreógrafo capaz de gestionar de manera idempotente las transacciones distribuidas de cada uno de los microservicios, con capacidad de 
+	hacer rollback tan pronto como pueda de los estados intermedios. 
+
+	Literalmente, el orquestador tendría, para cada operacion de logica de negocio, un enumerado para describir internamente las distintas llamadas y un 
+	mecanismo para gestionar a los distintos gestores de transacciones de cada microservicio. 
 
 	Recordemos, dicho gestor, para cada estado, debe conocer el estado de su cola de mensajes y de su base de datos. 
 	Debe tratar de asegurar el commit en los dos sistemas o decir que no podrá en caso de que alguno no esté disponible. 
 
 	Puede que el rendimiento fuese malo. Si para resolver una logica de negocio tienes que llamar a, pongamos cinco microservicios, cada llamada necesitaría 
 	primero preguntar a su gestor transaccional, conseguir el ok y el pid de cada proceso que asegure, a priori, el commit de cada sistema, y luego, lanzar 
-	las peticiones de commit de cada transaccion de cada microservicio, dejarlas en estado preparado, para luego en caso afirmativo global, lanzar las ordenes de commit. 
-	Si tenemos 5 microservicio, cada operacion necesita, por poner un ejemplo, 10microservicio de media para preguntar a cada gestor transaccional, pongamos que cada operacion para 
-	hacer el commit real son 500microservicio y tenemos microservicios con parametros de entrada de manera que no necesitamos comunicar datos del estado anterior,es decir, 
-	un microservicio me devuelve algo que necesito para invocar al siguiente, si lo tenemos así, tendriamos que para resolver de manera exitosa una invocacion 
-	casi 3 segundos!. 
+	las peticiones de commit de cada transaccion de cada microservicio, dejarlas en estado preparado, para luego en caso afirmativo global, lanzar las ordenes 
+	de commit. 
+	
+	Si tenemos 5 microservicio, cada operacion necesita, por poner un ejemplo, 10microservicio de media para preguntar a cada gestor transaccional, pongamos 
+	que cada operacion para hacer el commit real son 500microservicio y tenemos microservicios con parametros de entrada de manera que no necesitamos 
+	comunicar datos del estado anterior,es decir, un microservicio me devuelve algo que necesito para invocar al siguiente, si lo tenemos así, tendriamos 
+	que para resolver de manera exitosa una invocación casi 3 segundos!. 
 
 	Puede ser totalmente lamentable esta aproximación, pero a cambio tienes un sistema capaz de atender a potencialmente millones de peticiones por segundo, 
 	capaz de operar tambien en procesos de largo plazo.
@@ -506,13 +514,13 @@ implica un reinicio o un fallo catastrófico de alguno de los subsistemas. Así 
 	un mayor cuidado si cabe en el código pues tendremos que tener en cuenta los timeouts y los try catch para capturar excepciones y actuar 
 	en consecuencia. Ante un error timeout, volvemos a llamar?, cuantas veces haremos un retry ante time outs? o si estamos invocando una y 
 	otra vez con datos de entrada que el sistema llamado no reconoce? o si la url ha cambiado? o la api detrás de la url? Ya ni digamos si 
-	necesitamos hacer un rollback inverso si una invocacion a un sistema fracasa por la razón que sea. Además, puede introducirse errores 
+	necesitamos hacer un rollback inverso si una invocación a un sistema fracasa por la razón que sea. Además, puede introducirse errores 
 	ante inconsistencias eventuales.
 
 	Cuando se deben usar? bueno, pues cuando no te quede más remedio, como cuando necesitas un dato para continuar que solo te puede dar 
 	otro servicio. Por ejemplo, imagina cuando tenemos que reservar un vuelo. Es una situación bastante común, por lo que, al igual que con 
 	los métodos asíncronos anteriorme descritos, tenemos que tratar con las inconsistencias que pueden aparecer tanto al enviar como al 
-	recibir una invocacion síncrona.
+	recibir una invocación síncrona.
 
 3.2 Inconsistencias ante llamadas síncronas.
 
@@ -523,7 +531,7 @@ implica un reinicio o un fallo catastrófico de alguno de los subsistemas. Así 
 		* un invocante llama a un servicio externo, este responde, pero la respuesta no le llega al invocante, se ha hecho commit, 
 		  al menos en alguno de los dos, probablemente en la bd.
 
-	Dichos problemas de red suelen venir provocados por timeouts, probablemente debidos por el codigo del servidor de aplicaciones que 
+	Dichos problemas de red suelen venir provocados por timeouts, probablemente debidos por el código del servidor de aplicaciones que 
 	albergue dicho servicio web. Ayer mismo leía sobre un bug que afecta de este problema en una versión bastante actualizada de 
 	spring-boot, la 2.2.6-RELEASE. Hay que actualizar a una versión superior. 
 	El caso es que, para el invocante, el error es indistinguible.
@@ -535,7 +543,7 @@ implica un reinicio o un fallo catastrófico de alguno de los subsistemas. Así 
 	La solución ante estos dos problemas es obvia, no? Hay que reintentar hasta que tengas un OK, pero, y esto es muy importante, 
 	necesitas que tu servicio externo sea idempotente.
 
-	Qué significa que la invocacion a un servicio web REST sea idempotente? pues que si lo invocas con los mismos paramétros, 
+	Qué significa que la invocación a un servicio web REST sea idempotente? pues que si lo invocas con los mismos paramétros, 
 	sobre el mismo recurso, éste tenga la misma respuesta lo hayas invocado una o N veces. Por ejemplo, para crear un nuevo recurso 
 	en un sistema externos, invocaremos una accion POST una primera vez, cuando el servicio responda con el identificador del nuevo recurso, 
 	podremos hacer PUT las veces que sea necesario en caso de TIME OUT. Si la invocación POST fracasa, podremos repetir la operación 
@@ -546,7 +554,7 @@ implica un reinicio o un fallo catastrófico de alguno de los subsistemas. Así 
 	respuesta no llega a la app. Harás RETRY y al llegar de nuevo, haciendo una operacion PUT, como mucho harás commit otra vez. O N veces, 
 	por eso es tan importante que la operacion sea idempotente, como mucho harás un UPDATE con la misma información.
 
-	Es muy importante que la parte invocante recuerde que tenga que hacer RETRY si no le llega el codigo de respuesta del otro servicio web.
+	Es muy importante que la parte invocante recuerde que tenga que hacer RETRY si no le llega el código de respuesta del otro servicio web.
 
 	Ahora, imaginad una situacion en la que tenemos que invocar a más de un servicio web, algo muy normal. La primera invocación es correcta, 
 	hay commit en la bd, el servidor nos devuelve un 201. Invocamos al segundo, y ocurre una excepcion. Invocamos otra vez, RETRY hasta el 
@@ -560,7 +568,7 @@ implica un reinicio o un fallo catastrófico de alguno de los subsistemas. Así 
 
 # Terminología.
 
-# Qué significa invocacion idempotente?
+# Qué significa invocación idempotente?
 
 	https://www.adictosaltrabajo.com/2015/06/29/rest-y-el-principio-de-idempotencia/
 
