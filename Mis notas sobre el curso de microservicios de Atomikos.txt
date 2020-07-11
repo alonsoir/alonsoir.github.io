@@ -170,11 +170,11 @@ En principio, puede hacerse, aunque es complejo, muy complejo. Voy a hablar un p
 
 	Para un sistema así, necesitamos tecnologia JMS con soporte XA, tecnologia de bd con soporte XA, y un gestor de transacciones que gestione a esos dos sistemas anteriores. 
 
-Practicamente todos los sistemas de colas y de bd soportan XA, extendend architecture, por lo que, la parte principal del problema es implementar un buen manejador de transacciones distribuidas.
+Practicamente todos los sistemas de colas y de bd soportan XA, eXtendend Architecture, por lo que, la parte principal del problema es implementar un buen manejador de transacciones distribuidas.
 
 Básicamente, lo que debe hacer dicho manejador es:
 
-	Preparar SGBD
+	Preparar SGBD en todos los microservicios necesarios para dicha transacción.
 
 		Si responde KO, rollback en ambos sistemas, el sgbd y el broker.
 		Si responde OK, pasamos a la siguiente fase.
@@ -198,7 +198,8 @@ Como funcionaría el mecanismo en el que cada microservicio tiene que hablar con
 	6. Por último, guardamos en el log del sistema que ambos subsistemas han hecho commit, o no.
 
 	7. Opcional, esto lo digo yo personalmente. Lo separo de los pasos anteriores, con la esperanza que los lectores no me machaquen demasiado. 
-	Se comunica al orquestador que la invocacion a este conjunto de subsistemas ha ido bien, o no, en cuyo caso, habrá que actuar en consecuencia, bien sea invocando al resto de microservicios para ejecutar su logica de negocio normal o en caso contrario y si es necesario, iniciar la fase de compensacion distribuida inversa.
+		
+		Se comunica al orquestador que la invocacion a este conjunto de subsistemas ha ido bien, o no, en cuyo caso, habrá que actuar en consecuencia, bien sea invocando al resto de microservicios para ejecutar su logica de negocio normal o en caso contrario y si es necesario, iniciar la fase de compensacion distribuida inversa.
 
 El gestor de transacciones, uno decente, debe ser capaz de hacer rollback tanto en su cola de mensajes como en su bd, ya sea porque ha ocurrido un problema que implica un reinicio o un fallo catastrófico de alguno de los subsistemas. Así mismo, debe tratar de asegurar el commit en ambos subsistemas.
 
@@ -293,11 +294,37 @@ El gestor de transacciones, uno decente, debe ser capaz de hacer rollback tanto 
 
 3.2 Inconsistencias ante llamadas síncronas.
 
-	https://atomikos.teachable.com/courses/475866/lectures/9340474  
+	Los fallos de inconsistencia pueden venir sobre todo con problemas de la red, por ejemplo:
 
+		* un invocante llama a un servicio externo y dicha llamada no le llega, no se hace commit en la bd.
 
+		* un invocante llama a un servicio externo, este responde, pero la respuesta no le llega al invocante, se ha hecho commit, al menos en alguno de los dos, probablemente en la bd.
+
+	Dichos problemas de red suelen venir provocados por timeouts, probablemente debidos por el codigo del servidor de aplicaciones que albergue dicho servicio web. Ayer mismo leía sobre un bug que afecta de este problema en una versión bastante actualizada de spring-boot, la 2.2.6-RELEASE. Hay que actualizar a una versión superior. El caso es que, para el invocante, el error es indistinguible.
+
+	Ver enlace para mejor explicación:
+
+		https://medium.com/javarevisited/how-we-found-apache-tomcat-couldnt-handle-large-requests-fd41b8b5f8e7
+
+	La solución ante estos dos problemas es obvia, no? Hay que reintentar hasta que tengas un OK, pero, y esto es muy importante, necesitas que tu servicio externo sea idempotente.
+
+	Qué significa que la invocacion a un servicio web REST sea idempotente? pues que si lo invocas con los mismos paramétros, sobre el mismo recurso, éste tenga la misma respuesta lo hayas invocado una o N veces. Por ejemplo, para crear un nuevo recurso en un sistema externos, invocaremos una accion POST una primera vez, cuando el servicio responda con el identificador del nuevo recurso, podremos hacer PUT las veces que sea necesario en caso de TIME OUT. Si la invocación POST fracasa, podremos repetir la operación mientras el servidor web no nos haya devuelto el identificador. Dicho identificador indica si se ha creado o no el recurso, en este caso es un recurso virtual, no implica que dicho recurso lo hayamos guardado en la base de datos.
+
+	Ojo, es posible que ocurra un doble commit. Imagina que la app invoca al servicio remoto, el servicio hace commit en la bd, pero la respuesta no llega a la app. Harás RETRY y al llegar de nuevo, haciendo una operacion PUT, como mucho harás commit otra vez. O N veces, por eso es tan importante que la operacion sea idempotente, como mucho harás un UPDATE con la misma información.
+
+	Es muy importante que la parte invocante recuerde que tenga que hacer RETRY si no le llega el codigo de respuesta del otro servicio web.
+
+	Ahora, imaginad una situacion en la que tenemos que invocar a más de un servicio web, algo muy normal. La primera invocación es correcta, hay commit en la bd, el servidor nos devuelve un 201. Invocamos al segundo, y ocurre una excepcion. Invocamos otra vez, RETRY hasta el numero de veces que tengamos configurado, pero llega al límite de RETRY. Qué hacemos con lo primero? un rollback en una situación que hay un commit? No vamos a poder hacer rollback ante un dato previamente insertado correctamente. Cuando ocurren estos problemas de red en las llamadas síncronas a microservicios, tendremos commits huerfanos o commits duplicados, es decir, inconsistencia. Y hay que lidiar con ella.
+
+3.3 Llamadas síncronas sin inconsistencias.
+
+	https://atomikos.teachable.com/courses/475866/lectures/9340476  
 
 # Terminología.
+
+# Qué significa invocacion idempotente?
+
+	https://www.adictosaltrabajo.com/2015/06/29/rest-y-el-principio-de-idempotencia/
 
 # Qué es eso de la consistencia eventual?
 
@@ -384,6 +411,8 @@ Microservicios
 
 	https://medium.com/microservices-architecture/top-10-microservices-framework-for-2020-eefb5e66d1a2
 
+	https://docs.microsoft.com/es-es/azure/architecture/patterns/bulkhead
+
 
 Patrón Saga
 
@@ -406,5 +435,5 @@ Crítica 2pc/saga. Se deben leer.
 Otros
 
 	GRIT: Consistent Distributed Transactions across Polyglot Microservices with Multiple Databases
-	
+
 	https://greensky00.github.io/pdf/grit_icde19.pdf
