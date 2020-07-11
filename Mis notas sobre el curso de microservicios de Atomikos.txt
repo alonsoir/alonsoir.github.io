@@ -1,12 +1,12 @@
-Mis notas sobre el curso de microservicios de Atomikos.
+Mis notas sobre el curso de microservicios de Atomikos junto con un análisis.
 
 ## 0. Introducción
 
-Si ya es dificil gestionar un monolito, o un microlito, lo que llamo embrión de monolito, ahora teniendo instancias de microservicios dedicados a una tarea, 
-es mucho más dificil. 
+Si ya es difícil gestionar un monolito, o un microlito, lo que llamo embrión de monolito, ahora teniendo instancias de microservicios dedicados a una tarea, 
+es mucho más difícil. 
 
-Si tenemos 4 tareas distintas gestionadas por un ms instanciado, a cuatro instancias levantadas por ms, tenemos 16 instancias corriendo en una nube publica 
-o privada, más los nodos dedicados para el acceso a datos
+Si tenemos 4 tareas distintas gestionadas por un microservicio instanciado, a cuatro instancias levantadas por microservicio, tenemos 16 instancias corriendo 
+en una nube pública o privada, más los nodos dedicados para el acceso a datos.
 
 Una manera, o la manera actual y más de moda para acceder a los metodos de cada instancia, es envolviendo el servicio en un servidor de aplicaciones ligero 
 http rest, síncrono por naturaleza, pues los invocas, el usuario se queda esperando y el servidor responde con un codigo, que puede ser 200, 400, 500, etc.
@@ -14,7 +14,7 @@ http rest, síncrono por naturaleza, pues los invocas, el usuario se queda esper
 Al fin y al cabo, añadir una clase @Controller a distintos métodos que atiendan peticiones REST es sencillo, mucha gente conoce la web y ahora tenemos 
 también la posibilidad de usar librerias como Feign para crear clientes alrededor de esas clases marcadas como Controller.
 
-## 1. Tesis
+## 1. Tésis
 
 Abogo que puede ser problemático, porque como las instancias estén caídas, el servicio estaría inaccesible, inusable. En servicios reales tendremos varias
 instancias de dichos servidores de aplicaciones teniendo detrás una infraestructura como servicios de descubrimiento, servicios balanceadores de carga 
@@ -46,12 +46,12 @@ hace el backup de todo a la vez, pero esto ya no sería un verdadero sistema dis
 servicios.
 
 
-Tiene que haber alguna otra manera de poder solventar el problema de la inconsistencia eventual, que indudablemente aparecerá, pues los sistemas fallan, 
-tarde o temprano, bien sea porque nos quedamos sin cuota de disco, ha habido un incendio, alguien ha ido con una uzi a la oficina, o algo peor.
+Tiene que haber alguna otra manera mejor de poder solventar el problema de la inconsistencia eventual, que indudablemente aparecerá, pues los subsistemass 
+fallan, tarde o temprano, bien sea porque nos quedamos sin cuota de disco, ha habido un incendio, alguien ha ido con una uzi a la oficina, o algo peor.
 
 # 1.1 Microservicios y alta disponibilidad al rescate
 
-Me encanta esta definicion, "la arquitectura de microservicios es una forma extremadamente eficiente para transformar problemas de negocio en problemas de 
+Me encanta esta definición, "la arquitectura de microservicios es una forma extremadamente eficiente para transformar problemas de negocio en problemas de 
 transaccionalidad distribuida".
 
 Problemas potenciales al usar una arquitectura distribuida de microservicios con sistemas de mensajería distribuida asícrona?
@@ -90,19 +90,19 @@ inestable o pendiente de resolver. AMPLIAR.
 
 Vamos a tratar sobre la manera asíncrona para hacer microservicios, es decir, cuando tratamos con brokers de mensajería, ya sea a través de una cola 
 de mensajes o cuando tienes productores y consumidores subscritos a un topic, un buzón. En Java, tenemos implementaciones libres, aquellas basadas en 
-JMS, e implementaciones propietarias, como Kafka.
+Jmicroservicio, e implementaciones propietarias, como Kafka.
 
 Con ese servicio de mensajería en medio de los distintos microservicios, ya podemos pensar en tener alta disponibilidad en el ecosistema de microservicios 
 y asimismo en el servicio de mensajería, pues tiene de por sí una naturaleza distribuida con alta escalabilidad. 
 
 De manera natural, como decía antes, ya podemos considerar tener un conjunto de instancias del mismo microservicio para tener alta disponibilidad, pues 
-ahora esos ms tendrán un productor para hablar con el servicio de mensajeria y un consumidor para escuchar los mensajes. 
+ahora esos microservicio tendrán un productor para hablar con el servicio de mensajeria y un consumidor para escuchar los mensajes. 
 Si nos damos cuenta, nos podríamos preguntar si no sería necesario tambien un balanceador de carga en el servicio de mensajería para seleccionar a uno 
 y solo un microservicio, pues bien, si implementamos el patron Competing Consumers, podemos saltarnos la necesidad del balanceador de carga en el 
 servicio de mensajería. Literalmente, gracias a la asignación de una cola de mensajes a ese único consumidor, no necesitas un balanceador de carga pues 
-todos los mensajes serán redirigidas a esa instancia del ms.
+todos los mensajes serán redirigidas a esa instancia del microservicio.
 
-Basadas en JMS:
+Basadas en Jmicroservicio:
 
 	IBM MQ series
 	Sonic MQ
@@ -113,11 +113,11 @@ Basadas en JMS:
 
 Soportan colas y topics.
 
-JMS basadas en colas. Implica que cada mensaje es entregado a un consumidor, y solo uno. Es escalable de manera natural gracias al patrón Competing Consumer, 
+Jmicroservicio basadas en colas. Implica que cada mensaje es entregado a un consumidor, y solo uno. Es escalable de manera natural gracias al patrón Competing Consumer, 
 ya que si necesitamos mayor escalabilidad, solo tenemos que añadir mas consumidores adjuntos a una nueva cola y la carga de mensajería se va a distribuir 
 equitativamente entre los distintos consumidores.
 
-JMS basadas en topics. No es como los topics de kafka. Un Topic en este contexto significa mensajería basada en productores y consumidores. Los mensajes 
+Jmicroservicio basadas en topics. No es como los topics de kafka. Un Topic en este contexto significa mensajería basada en productores y consumidores. Los mensajes 
 van a todos los consumidores, esta es la principal diferencia con las colas anteriormente descrita. Significa que los mensajes son potencialmente procesables 
 por tantos consumidores haya subscrito al topic. No hay patrón Competing Consumer actuando. Bajo mi punto de vista, hay que evitar este tipo de implementacion 
 para una arquitectura de microservicios pues asignar el mismo mensaje a varios consumidores implica que los microservicios actuaran sobre el mismo mensaje. 
@@ -125,11 +125,11 @@ Interesa que uno y solo uno actue sobre el mensaje, en principio.
 
 Hay dos tipos de subscriptores:
 	
-	subscripcion duradera: Recibiran mensajes incluso si los productores no estén publicando nuevos mensajes.
+	subscripcion duradera: Recibiran mensajes incluso si los productores no estén públicando nuevos mensajes.
 
-	subscripcion no duradera: No recibirán mensajes, los mensajes se perderán si los productores estan publicando nuevos mensajes.
+	subscripcion no duradera: No recibirán mensajes, los mensajes se perderán si los productores estan públicando nuevos mensajes.
 
-No Basadas en JMS:
+No Basadas en Jmicroservicio:
 
 	Kafka
 	RabbitMQ
@@ -151,9 +151,9 @@ Basicamente, cuando tratamos con microservicios asíncronos, tenemos dos servici
 de datos en la que guardamos la informacion.
 
 Al tratar con ellas, literalmente el mensaje o la transaccion no está hecha hasta que hacemos commit en ellas, bien sea porque el mensaje ha sido finalmente 
-introducido en la cola o el topic para que el consumidor pueda consumirlo, bien porque la bd del ms haga commit. Dependiendo de como tengamos en nuestro 
+introducido en la cola o el topic para que el consumidor pueda consumirlo, bien porque la bd del microservicio haga commit. Dependiendo de como tengamos en nuestro 
 codigo el orden de la ejecucion transaccional, podremos tener potencialmente un error u otro cuando ocurra algún problema. 
-Esos problemas pueden ser por ejemplo que el contenedor que contiene el ms se cae, bien porque k8s ha tenido algún problema, porque la cuota de disco en la bd 
+Esos problemas pueden ser por ejemplo que el contenedor que contiene el microservicio se cae, bien porque k8s ha tenido algún problema, porque la cuota de disco en la bd 
 se haya cumplido, porque alguien haya pegado fuego al cluster de datos, o también puede ser pq los nodos de mensajería se hayan caído tambien, por lo que 
 tambien sería imposible hacer commit en la cola de mensajería.
 
@@ -180,7 +180,8 @@ tratará de compensar al menos las transacciones realizadas en la base de datos 
 No es buena idea dejar en las bases de datos, datos inconsistentes o pendientes, pero es que tampoco es buena idea dejar en los sistemas de brokers de 
 mensajería commits realizados cuando en la bd no se ha hecho commit. Hay que procurar bien hacer commit en ambos sistemas a la vez, o no hacerlo. 
 
-Y en caso de ocurra, que sea las menos veces posible. A continuación paso a describir que pasa cuando se ha hecho commit en el broker pero no en la bd y al revés.
+Y en caso de ocurra, que sea las menos veces posible. A continuación paso a describir que pasa cuando se ha hecho commit en el broker pero no en la bd y 
+al revés.
 
 Tendremos mensajes perdidos si primero hacemos commit en la bd y luego no somos capaces de hacer commit en la cola de mensajería, en el broker. 
 Esos problemas con el broker pueden ser variados, como que te quedes sin memoria, el típico OutOfMemoryException, puede ser un bug en la libreria del broker, 
@@ -190,8 +191,9 @@ RESTART de esa parte del sistema.
 	@Transactional 
 	public void save() {
 		jdbcTemplate.execute("INSERT INTO Order VALUES()"); // esto se ejecuta bien, commit en la bd.
-		// aqui salta una excepcion, no hacemos commit en la cola, por lo que el consumidor no se entera del commit en la bd. Tendremos un mensaje perdido.
-		jmsTemplate.convertAndSend("Order created..."); 
+		// aqui salta una excepcion, no hacemos commit en la cola, por lo que el consumidor no se entera del commit en la bd. 
+		//Tendremos un mensaje perdido.
+		jmicroservicioTemplate.convertAndSend("Order created..."); 
 	}
 
 Tendremos mensajes fantasmas si primero hacemos commit en el broker de mensajería diciendo que hemos hecho commit en la bd, y luego al invocar la logica 
@@ -199,20 +201,20 @@ del commit en la bd tenemos un crash. Es decir, si tenemos algo así:
 
 	@Transactional 
 	public void save() {
-		jmsTemplate.convertAndSend("Order created..."); // esto se ejecuta bien, commit en el broker
+		jmicroservicioTemplate.convertAndSend("Order created..."); // esto se ejecuta bien, commit en el broker
 		jdbcTemplate.execute("INSERT INTO Order VALUES()"); // aqui salta una excepcion, no hacemos commit en la bd. Tendremos un mensaje fantasma.
 
 	}
 
-Si es el caso del mensaje fantasma, en el que no hemos sido capaces de hacer commit en la base de datos, potencialmente hablando publicaremos de nuevo en la cola 
-de mensajes, es decir, haremos commit en el broker de mensajería teniendo un mensaje duplicado. Basicamente, tratar que nuestras transacciones sigan un orden es 
-dificil y potencialmente fallable, pues entre medias puede ocurrir el desastre, da igual que lo llames problema de mensaje perdido, mensaje fantasma o mensaje 
-duplicado. Son errores que tendremos que tener en cuenta en nuestra arquitectura para solventarlos.
+Si es el caso del mensaje fantasma, en el que no hemos sido capaces de hacer commit en la base de datos, potencialmente hablando públicaremos de nuevo en la 
+cola de mensajes, es decir, haremos commit en el broker de mensajería teniendo un mensaje duplicado. Basicamente, tratar que nuestras transacciones sigan un 
+orden es difícil y potencialmente fallable, pues entre medias puede ocurrir el desastre, da igual que lo llames problema de mensaje perdido, mensaje fantasma 
+o mensaje duplicado. Son errores que tendremos que tener en cuenta en nuestra arquitectura para solventarlos.
 
 # 2.1.1 Conclusión sobre el envio de inconsistencias transaccionales y/o de mensajería.
 
-Probablementente es una mala idea tener en Los metodos transaccionales de acceso a bases de datos invocaciones al broker de mensajería. Como poco, es una postura 
-bastante inocente poner las dos llamadas a ambos sistemas sin estar seguros al 100% de que ambos van a hacer commit. 
+Probablementente es una mala idea tener en Los metodos transaccionales de acceso a bases de datos invocaciones al broker de mensajería. Como poco, es una 
+postura para mí poner las dos llamadas a ambos sistemas sin estar seguros al 100% de que ambos van a hacer commit. 
 
 # 2.2 El mensajero recibe inconsistencias. 
 
@@ -221,16 +223,19 @@ la cola primero y hacer commit en la bd despues, problemas. Si invertimos el ord
 
 # 2.3. Enviando mensajes sin inconsistencias.
 
-Cuando hablamos de este tema, hablamos del problema de enviar el mensaje a la cola, hacer un commit en la cola de mensajes, si y solo si, podemos hacer un commit 
-en la bd del microservicio. Para ello, tenemos dos posibilidades, una es seguir el protocolo Saga, que nos proporciona la capacidad de poder hacer transacciones 
-compensatorias, la otra es seguir el protocolo Two commit phase, que necesita de la figura de un Servicio que gestione la transaccionalidad distribuida. 
+Cuando hablamos de este tema, hablamos del problema de enviar el mensaje a la cola, hacer un commit en la cola de mensajes, si y solo si, podemos hacer un 
+commit en la bd del microservicio. Para ello, tenemos dos posibilidades, una es seguir el protocolo Saga, que nos proporciona la capacidad de poder hacer 
+transacciones compensatorias, la otra es seguir el protocolo Two commit phase, que necesita de la figura de un Servicio que gestione la transaccionalidad 
+distribuida. 
 
-Es decir, un servicio que pregunte a los distintos componentes si estan en disposicion de hacer el commit en sus distintas bases de datos y en las colas de mensajes. 
-Es como decirles, "eh!, estais preparados para hacer todo lo necesario para guardar los datos e indicar a los otros que podemos hacer nuestro trabajo?", esto dicho 
-con mi tono de voz de alguien de Extremadura suena más gracioso...
+Es decir, un servicio que pregunte a los distintos componentes si estan en disposicion de hacer el commit en sus distintas bases de datos y en las colas 
+de mensajes. 
 
-El uso de estas tecnicas es para que podamos superar el hecho de que es un error poner en el metodo transaccional las dos llamadas, tanto al SGBD como a la cola de 
-mensajes. Da igual en el orden en el que las pongamos, potencialmente hablando, puede haber en un fallo en cualquiera de los dos sistemas. 
+Es como decirles, "eh!, estais preparados para hacer todo lo necesario para guardar los datos e indicar a los otros que podemos hacer nuestro trabajo?", 
+esto dicho con mi tono de voz de alguien de Extremadura suena más gracioso...
+
+El uso de estas tecnicas es para que podamos superar el hecho de que es un error poner en el metodo transaccional las dos llamadas, tanto al SGBD como 
+a la cola de mensajes. Da igual en el orden en el que las pongamos, potencialmente hablando, puede haber en un fallo en cualquiera de los dos sistemas. 
 
 El verdadero problema cuando tratamos con estos sistemas distribuidos es:
 
@@ -238,18 +243,22 @@ El verdadero problema cuando tratamos con estos sistemas distribuidos es:
 
 		si hay un timeout intermedio en la base de datos, ocurrirá un rollback automático,
 
-		Si hay un fallo físico en la bd antes que el commit llegue, tendremos que forzar nosotros el rollback, o el mismo SGBD automáticamente hará el rollback. 
-		Lo más probable es que sea esto último.
+		Si hay un fallo físico en la bd antes que el commit llegue, tendremos que forzar nosotros el rollback, o el mismo SGBD automáticamente hará el 
+		rollback. Lo más probable es que sea esto último.
 
 Lo mismo ocurre a nivel de la cola de mensajes, esos fallos físicos, cuando ocurran, conllevarán a inconsistencias.
-Como consecuencia de estos problemas potenciales, preguntar a varios sistemas distribuidos para hacer commit SIEMPRE es una situacion de riesgo, porque, bien uno 
-hacerlo, el otro no, los dos no pueden, lo que inevitablemente conllevará, bien a situaciones de inconsistencias en el mejor de los casos en el que uno de los 
-sistemas no pueda hacer commit, o a situaciones de bloqueo pq ambos sistemas no pueden hacer commit. Es así. En el primer caso, los protocolos 2CP y Sagas, 
-tratan de compensar lo mejor posible dichas transacciones distribuidas que se han quedado en el aire. En el segundo, sólo podemos vigilar muy bien el sistema 
-para tratar de no llegar nunca a esa situación y adelantarnos antes de que vaya a ocurrir. Dichos problemas de bloqueo pueden venir desde multiples lugares, 
-como problemas en la cuota de disco, mal estado en los discos, problemas en la red, problemas gestionando el cluster, etc...
+Como consecuencia de estos problemas potenciales, preguntar a varios sistemas distribuidos para hacer commit SIEMPRE es una situacion de riesgo, porque, 
+bien uno hacerlo, el otro no, los dos no pueden, lo que inevitablemente conllevará, bien a situaciones de inconsistencias en el mejor de los casos en el 
+que uno de los sistemas no pueda hacer commit, o a situaciones de bloqueo pq ambos sistemas no pueden hacer commit. Es así. 
 
-Ahora, el desafío es tratar a dichas transacciones distribuidas como una transaccion global, es decir combinar ambos commits, el de la bd y el de la cola en una sola.
+En el primer caso, los protocolos 2CP y Sagas, tratan de compensar lo mejor posible dichas transacciones distribuidas que se han quedado en el aire. 
+En el segundo, sólo podemos vigilar muy bien el sistema para tratar de no llegar nunca a esa situación y adelantarnos antes de que vaya a ocurrir. 
+Dichos problemas de bloqueo pueden venir desde multiples lugares, como problemas en la cuota de disco, mal estado en los discos, problemas en la red, 
+problemas gestionando el cluster, etc...
+
+Ahora, el desafío es tratar a dichas transacciones distribuidas como una transaccion global, es decir combinar ambos commits, el de la bd y el de la 
+cola en una sola.
+
 Asegurar que se pueden hacer ambos commits en cada una de las fases. 
 
 Ojo, entiendo que la transaccion distribuida es el conjunto de la transaccion en la bd y la transaccion en la cola de eventos en un solo microservicio. 
@@ -261,36 +270,40 @@ transacción global. Intimidado?
 
 # 2.3.1. Patrón Two phase commits
 
-Patrón que al igual que el anterior, trata de usar sistemas distribuidos para ejecutar una lógica de negocio, solo que este va a procurar asegurarse o maximizar al 
-menos las probabilidades de hacer commit en ambos sistemas necesarios para invocar a una instancia de un microservicio. Tambien puede presentar problemas, porque 
-asume que no será necesario hacer rollback distribuido hacia atrás, como lo hace Saga. Bajo mi punto de vista, es un error, hay que tener en cuenta que será necesario 
-hacer rollback distribuido hacia atrás y también será necesario estar preparado para el problema de la inconsistencia eventual.
-Se llama 2CP porque establece que es necesario controlar la transaccion distribuida sobre cada llamada a un sistema externos mediante dos acciones, una de preparacion, 
-otra con el commit real, por cada llamada externa. Si para ejecutar una lógica de negocio, tenemos tres sistemas, por poner un número, 2CP, tratará de alertar a los 
-tres sistemas con una operacion inicial de preparación y una vez que tenga el ok de cada de los subsistemas, es decir, broker de mensaje y bd de cada uno, procederá 
-a ejecutar en orden la peticion de commit final en cada uno de los subsistemas. No me cansaré de incidir sobre esto, si queremos que no haya mensajes fantasmas, mensajes
-duplicados o mensajes perdidos, necesitamos tratar de asegurar que todos los sistemas están preparados para hacer su trabajo. Esta es la razón principal por la que el 
-protocolo no tiene en cuanta la necesidad de controlar situaciones de transaccionalidad distribuida inversa en caso de error de alguna llamada intermedia o final.
+Patrón que al igual que el anterior, trata de usar sistemas distribuidos para ejecutar una lógica de negocio, solo que este va a procurar asegurarse o 
+maximizar al menos las probabilidades de hacer commit en ambos sistemas necesarios para invocar a una instancia de un microservicio. 
+Tambien puede presentar problemas, porque asume que no será necesario hacer rollback distribuido hacia atrás, como lo hace Saga. 
+Bajo mi punto de vista, es un error, hay que tener en cuenta que será necesario hacer rollback distribuido hacia atrás y también será necesario estar 
+preparado para el problema de la inconsistencia eventual.
+
+Se llama 2CP porque establece que es necesario controlar la transaccion distribuida sobre cada llamada a un sistema externos mediante dos acciones, 
+una de preparacion, otra con el commit real, por cada llamada externa. Si para ejecutar una lógica de negocio, tenemos tres sistemas, por poner un número, 
+2CP, tratará de alertar a los tres sistemas con una operacion inicial de preparación y una vez que tenga el ok de cada de los subsistemas, es decir, 
+broker de mensaje y bd de cada uno, procederá a ejecutar en orden la peticion de commit final en cada uno de los subsistemas. 
+No me cansaré de incidir sobre esto, si queremos que no haya mensajes fantasmas, mensajes duplicados o mensajes perdidos, necesitamos tratar de 
+asegurar que todos los sistemas están preparados para hacer su trabajo. Esta es la razón principal por la que el protocolo no tiene en cuanta la 
+necesidad de controlar situaciones de transaccionalidad distribuida inversa en caso de error de alguna llamada intermedia o final.
+
 Pero los problemas pueden ocurrir aún así. 
 
 Voy a hablar un poco sobre el protocolo Two Commit Phase, a partir de ahora, 2CP. 
 El truco se puede llamar Estado intermedio preparado, Intermediate prepared state. Los puntos claves ante esta estrategia son:
 
-	1. Un Backend que está advertido, puede hacer rollback, nos hemos asegurado de ello, pero no debe hacerlo por su cuenta, por iniciativa propia, porque no querremos 
-	   en principio ni rollbacks cuando el sistema potencialmente se reinicie, ni rollbacks si ocurren timeouts internos en la bd.
+	1. Un Backend que está advertido, puede hacer rollback, nos hemos asegurado de ello, pero no debe hacerlo por su cuenta, por iniciativa propia, 
+	   porque no querremos en principio ni rollbacks cuando el sistema potencialmente se reinicie, ni rollbacks si ocurren timeouts internos en la bd.
 
 	2. Un backend que está preparado puede hacer commit, incluso si ha habido un problema grande en la bd.
 
-	3. Podemos ver al "estado preparado", como un checkpoint desde el cual tenemos seguridad de poder hacer commit o rollback a la vez en ambos sistemas o en uno solo. 
-	   El caso es que necesitamos control preciso sobre estos dos sistemas.
+	3. Podemos ver al "estado preparado", como un checkpoint desde el cual tenemos seguridad de poder hacer commit o rollback a la vez en ambos sistemas 
+	   o en uno solo. El caso es que necesitamos control preciso sobre estos dos sistemas.
 
 	4. Este checkpoint es gestionado y controlado por un manejador de transacciones.
 
-	Para un sistema así, necesitamos tecnologia JMS con soporte XA, tecnologia de bd con soporte XA, y un gestor de transacciones que gestione a esos dos sistemas 
-	anteriores. 
+	Para un sistema así, necesitamos tecnologia Jmicroservicio con soporte XA, tecnologia de bd con soporte XA, y un gestor de transacciones que gestione a esos 
+	dos sistemas anteriores. 
 
-Practicamente todos los sistemas de colas y de bd soportan XA, eXtendend Architecture, por lo que, la parte principal del problema es implementar un buen manejador 
-de transacciones distribuidas.
+Practicamente todos los sistemas de colas y de bd soportan XA, eXtendend Architecture, por lo que, la parte principal del problema es implementar un 
+buen manejador de transacciones distribuidas.
 
 Básicamente, lo que debe hacer dicho manejador es:
 
@@ -304,26 +317,28 @@ Básicamente, lo que debe hacer dicho manejador es:
 		Si responde OK, implica que ambos han dicho ok.
 
 	si ambos responden OK, se escribe al log que todo ha ido bien y se hace commit en los dos. Es importante el orden aquí. 
-	Es decir, ahora si podemos hacer lo que poniamos en el método marcado como transaccional, escribir en el log que todo ha ido bien, hacer commit en el broker 
-	con un mensaje exitoso, hacer commit en la bd.
+	Es decir, ahora si podemos hacer lo que poniamos en el método marcado como transaccional, escribir en el log que todo ha ido bien, hacer commit en el 
+	broker con un mensaje exitoso, hacer commit en la bd.
 
-Como funcionaría el mecanismo en el que cada microservicio tiene que hablar con su gestor transaccional para saber si es posible hacer commit en la bd y en la cola?
+Como funcionaría el mecanismo en el que cada microservicio tiene que hablar con su gestor transaccional para saber si es posible hacer commit en la bd y 
+en la cola?
 
 # 2.3.1.1. Descripción del funcionamiento de 2CP en cada microservicio:
 
 	1. El microservicio hace una peticion JTA (java transaction api) al gestor embebido de transacciones JTA.
 	
 	2. Éste, primero pregunta al SGBD, comprobando el estado del objeto factoria que controla las conexiones con la bd, en concreto, lanzaremos una consulta 
-	   ultrarapida. Si la respuesta es correcta, nos quedamos con el pid de dicho proceso, o algo que indique que efectivamente todo ha ido bien con la bd, o mal.
+	   ultrarapida. Si la respuesta es correcta, nos quedamos con el pid de dicho proceso, o algo que indique que efectivamente todo ha ido bien con la bd, 
+	   o mal.
 	
-	3. Despues preguntamos a la cola de mensajes, como? lanzando un mensaje. De igual manera, recogemos el pid de dicho proceso u otra informacion que indique todo 
-	   ha ido bien, o mal.
+	3. Despues preguntamos a la cola de mensajes, como? lanzando un mensaje. De igual manera, recogemos el pid de dicho proceso u otra informacion que indique 
+	   todo ha ido bien, o mal.
 	
 	4. Devolvemos ambas respuestas el gestor de transacciones.
 	
 	5. Si la respuesta es OK, lanzamos las distintas lógicas a cada sistema, a la bd y a la cola de mensajes, que hagan commit. Es importante tener en cuenta 
-	   que aquí le estamos diciendo al gestor de transacciones, que haga lo posible para hacer commit en ambos subsistemas, pues aunque inicialmente hayas obtenido 
-	   un OK en ambos sistemas, los problemas de conectividad o demás pueden aparecer y realmente no puedas hacer commit.
+	   que aquí le estamos diciendo al gestor de transacciones, que haga lo posible para hacer commit en ambos subsistemas, pues aunque inicialmente hayas 
+	   obtenido un OK en ambos sistemas, los problemas de conectividad o demás pueden aparecer y realmente no puedas hacer commit.
 	
 	6. Por último, guardamos en el log del sistema que ambos subsistemas han hecho commit, o no.
 
@@ -387,9 +402,9 @@ implica un reinicio o un fallo catastrófico de alguno de los subsistemas. Así 
 
 	Puede que el rendimiento fuese malo. Si para resolver una logica de negocio tienes que llamar a, pongamos cinco microservicios, cada llamada necesitaría 
 	primero preguntar a su gestor transaccional, conseguir el ok y el pid de cada proceso que asegure, a priori, el commit de cada sistema, y luego, lanzar 
-	las peticiones de commit de cada transaccion de cada ms, dejarlas en estado preparado, para luego en caso afirmativo global, lanzar las ordenes de commit. 
-	Si tenemos 5 ms, cada operacion necesita, por poner un ejemplo, 10ms de media para preguntar a cada gestor transaccional, pongamos que cada operacion para 
-	hacer el commit real son 500ms y tenemos microservicios con parametros de entrada de manera que no necesitamos comunicar datos del estado anterior,es decir, 
+	las peticiones de commit de cada transaccion de cada microservicio, dejarlas en estado preparado, para luego en caso afirmativo global, lanzar las ordenes de commit. 
+	Si tenemos 5 microservicio, cada operacion necesita, por poner un ejemplo, 10microservicio de media para preguntar a cada gestor transaccional, pongamos que cada operacion para 
+	hacer el commit real son 500microservicio y tenemos microservicios con parametros de entrada de manera que no necesitamos comunicar datos del estado anterior,es decir, 
 	un microservicio me devuelve algo que necesito para invocar al siguiente, si lo tenemos así, tendriamos que para resolver de manera exitosa una invocacion 
 	casi 3 segundos!. 
 
@@ -404,12 +419,12 @@ implica un reinicio o un fallo catastrófico de alguno de los subsistemas. Así 
 		Typically, Sagas are for long running transactions. --> Para transacciones que harías por las noches, mientras todo el mundo duerme.
 		Use cases are obvious afterwards:
 
-		2PC can allow you to commit the whole transaction in a request or so, spanning this request across systems and networks. 
+		2PC can allow you to commit the whole transaction in a request or so, spanning this request across systemicroservicio and networks. 
 		Assuming each participating system and network follows the protocol, you can commit or rollback the entire transaction seamlessly.
-		Saga allows you split transaction into multiple steps, spanning long periods of times (not necessarily systems and networks).
+		Saga allows you split transaction into multiple steps, spanning long periods of times (not necessarily systemicroservicio and networks).
 		Example:
 
-		2PC: Save Customer for every received Invoice request, while both are managed by 2 different systems.
+		2PC: Save Customer for every received Invoice request, while both are managed by 2 different systemicroservicio.
 		Sagas: Book a flight itinerary consisting of several connecting flights, while each individual flight is operated by different airlines.
 		I personally consider Saga capable of doing what 2PC can do. Opposite is not accurate.
 
@@ -486,7 +501,7 @@ implica un reinicio o un fallo catastrófico de alguno de los subsistemas. Así 
 	por una respuesta y no puedo atender a ninguna otra cosa más.
 	
 	A diferencia de asíncrono, me tengo que esperar a que me digan algo y no puedo hacer nada más. Cuando trabajamos con microservicios, 
-	trabajar con el estilo síncrono puede ser más dificil, más propenso a errores, pues, al haber errores remotos en la comunicacion 
+	trabajar con el estilo síncrono puede ser más difícil, más propenso a errores, pues, al haber errores remotos en la comunicacion 
 	entre servicios externos, que los habrá, como mínimo necesitaremos siempre alta disponibilidad entre las instancias de los microservicios, 
 	un mayor cuidado si cabe en el código pues tendremos que tener en cuenta los timeouts y los try catch para capturar excepciones y actuar 
 	en consecuencia. Ante un error timeout, volvemos a llamar?, cuantas veces haremos un retry ante time outs? o si estamos invocando una y 
@@ -604,7 +619,7 @@ Two phased commits
 
 	https://github.com/atomikos
 
-	https://www.atomikos.com/Blog/HighPerformanceJMSProcessingWithXA
+	https://www.atomikos.com/Blog/HighPerformanceJmicroservicioProcessingWithXA
 
 JTA/XA
 
