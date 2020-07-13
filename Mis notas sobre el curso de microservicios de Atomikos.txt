@@ -597,7 +597,10 @@ Básicamente, lo que debe hacer dicho manejador es:
 	en algún microservicio, es decirle al servicio que si ha funcionado o demostrado que puede funcionar que haga ROLLBACK para volver al estado 
 	anterior.
 
-	Personalmente veo este método de llamadas síncronas más propenso a errores y a los bugs.
+	Personalmente veo este método de llamadas síncronas más propenso a errores y a los bugs, además de tener un peor rendimiento en arquitecturas 
+	de alto rendimiento en el que el número de operaciones por segundo sea un factor clave. Una arquitectura en la que involucres a servicios 
+	REST siempre estará limitada al número de invocaciones por segundo que pueda soportar el servidor de aplicaciones que tenga detrás dicho
+	servicio.
 
 4. Backups consistentes
 
@@ -605,7 +608,47 @@ Básicamente, lo que debe hacer dicho manejador es:
 		https://atomikos.teachable.com/courses/475866/lectures/11892330
 	4.2 Inconsistencia eventual
 
+5. Componentes de Spring Cloud en una arquitectura de Microservicios.
 
+	Este framework propone una serie de componentes para gestionar el correcto funcionamiento de una arquitectura distribuida de microservicios.
+
+	Antes comentaba que toda arquitectura de microservicios debería ser capaz de gestionar una serie de características mínimas, como ser capaz 
+	de presentarse ante el resto de servicios cuando instancias el contenedor o simplementa levantas el servicio, debes ser capaz de comprobar 
+	el estado de salud del servicio y actuar en uno u otro caso, debes ser capaz de gestionar el balanceo de carga para invocar a una u otra 
+	instancia del servicio, debes ser capaz de hacer RETRY en caso de que haya algún TIMEOUT y tengas que volver a invocar al servicio y debes 
+	ser capaz también de ejecutar la operacion CIRCUIT BREAKER para romper la cadena de invocaciones en caso de que estés tratando de invocar al 
+	servicio con parámetros incorrectos, url incorrecta. Estas son las características mínimas que debería tener una arquitectura de microservicios.
+
+	5.1. Eureka
+
+	Eureka es basicamente un servicio corriendo en un servidor de aplicaciones web encargado de gestionar el descubrimiento de las instancias de
+	los nuevos microservicios. 
+	
+	Su objetivo es registrar y localizar microservicios existentes, informar de su localización, su estado y datos relevantes de cada uno de ellos. 
+	Además, nos facilita el balanceo de carga y tolerancia a fallos.
+
+	5.2. Zuul/Hystrix/Ribbon
+
+	Zuul nos servirá como el punto de entrada al que llegarán todas nuestras peticiones, las cuales serán securizadas, balanceadas, enrutadas, 
+	monitorizadas, securizadas y filtradas. Basicamente tratará de coordinarse con Eureka es decir, se encarga de solicitar una instancia 
+	de un microservicio concreto a Eureka y de su enrutamiento hacia el servicio que queramos consumir. Podemos ver a Zuul además como un filtro 
+	que tratará de rechazar todas las peticiones sospechosas basadas en motivos de seguridad, de manera que podremos marcar dichas peticiones
+	para un posterior analisis.
+
+	Con Zuul tenemos también Hystrix y Ribbon. El primero sirve como mecanismo CIRCUIT BREAKER, es decir, mecanismos para la resiliencia y tolerancia
+	a fallos. El segundo actua como balanceador de carga, ayudará a Zuul a localizar las instancias de los servicios que han sido descubiertos por 
+	Eureka.
+
+	¿Cuáles son las ventajas de Zuul?
+
+		Dispone de varios filtros enfocados a gestionar diferentes situaciones.
+		
+		Transforma nuestro sistema en uno más ágil, capaz de reaccionar de manera más rápida y eficaz.
+		
+		Puede encargarse de gestionar la autenticación de manera general al ser nuestro punto de entrada al ecosistema.
+		
+		Es capaz de realizar el despliegue de filtros en caliente, de manera que podríamos realizar pruebas sobre nuevas funcionalidades 
+		sin parar la aplicación.
 
 # Terminología.
 
@@ -694,6 +737,8 @@ Domain Driven Design
 
 Microservicios
 
+	https://blog.bi-geek.com/arquitecturas-spring-cloud-netflix-eureka/
+
 	https://www.microservices.com
 
 	https://deku.github.io/microservice-architecture-es/
@@ -726,6 +771,8 @@ Crítica 2pc/saga. Se deben leer.
 Otros
 
 	https://www.paradigmadigital.com/dev/quien-es-quien-en-la-arquitectura-de-microservicios-spring-cloud-22/
+
+	https://blog.bi-geek.com/arquitecturas-basadas-en-microservicios-spring-cloud-netflix-zuul/
 
 	GRIT: Consistent Distributed Transactions across Polyglot Microservices with Multiple Databases
 
