@@ -564,7 +564,42 @@ implica un reinicio o un fallo catastrófico de alguno de los subsistemas. Así 
 
 3.3 Llamadas síncronas sin inconsistencias.
 
-	https://atomikos.teachable.com/courses/475866/lectures/9340476  
+	Cómo podríamos resolver esos problemas de inconsistencias cuando estamos trabajando con microservicios síncronos?.
+	
+	Los requerimientos son varios, no querremos commits huerfanos en algún microservicio después de que haya ocurrido algún TIMEOUT en la llamada
+	a otro microservicio, no querremos multiples commits sobre el mismo dato en el mismo microservicio y querremos poder hacer ROLLBACK inverso
+	en los otros microservicios si no somos capaces de conseguir COMMIT después de varios intentos. Lo que queremos es poder hacer commit en 
+	todos los microservicios si o solo si podemos hacerlo y tratar de minimizar los errores de inconsistencias si ha habido algún commit.
+
+	Queremos evitar los problemas de inconsistencias de datos cuando estos errores de red ocurran, básicamente, necesitaremos hacer ROLLBACK en 
+	aquellos microservicios que hayan hecho COMMIT. Esto no es un CIRCUIT BREAKER, pues este patrón tratará de evitar más llamadas a los 
+	microservicios después de un número de llamadas, pero no se encarga de tratar de arreglar las posibles inconsistencias en los datos después 
+	de un commit huerfano. Circuit Breaker tratará de cerrar el circuito de llamadas REST lo más rápido posible si detecta algún problema de red.
+
+	Estaría bien que lo hiciera, la verdad, pero nos da una pista sobre lo que hay que hacer, cuando nuestra lógica de negocio detecta que
+	hay un error en la llamada a algún microservicio, tenemos que indicarle que haga ROLLBACK, en todas las llamadas a dichos microservicios que 
+	hayan hecho commit.
+
+	La forma de hacerlo a lo 2CP es la siguiente:
+
+	El microservicio maestro pide a los otros microservicios que se preparen, que inicialicen su gestor de transacciones para dicha transacción,
+	es decir, el maestros hace una llamada y estos responden con un identificador para ser registrado en caso de tener que solicitar que hagan 
+	ROLLBACK. Una vez que el maestro tiene un OK de todos los servicios, este les pide que hagan la fase PREPARE en cada uno de los 
+	microservicios para finalmente pedirles que hagan COMMIT. 
+
+	En caso de que haya un error TIMEOUT, necesitaremos un componente en cada microservicio que haga el ROLLBACK, no necesitaremos dejar 
+	transacciones en estado prepared. Dejar esa transaccion en estado preparado es un desperdicio de recursos. Mejor indicar al SGBD que recupere
+	dichos recursos.  
+
+	AMPLIAR! Cómo se haría de otra manera? lo ideal sería que si ha habido algún timeout que obliga a cancelar la operación trás múltiples RETRY
+	en algún microservicio, es decirle al servicio que si ha funcionado o demostrado que puede funcionar que haga ROLLBACK para volver al estado 
+	anterior.
+
+	Personalmente veo este método de llamadas síncronas más propenso a errores y a los bugs.
+
+4. Backups consistentes
+
+	https://atomikos.teachable.com/courses/475866/lectures/11892330
 
 # Terminología.
 
@@ -684,6 +719,14 @@ Crítica 2pc/saga. Se deben leer.
 
 Otros
 
+	https://www.paradigmadigital.com/dev/quien-es-quien-en-la-arquitectura-de-microservicios-spring-cloud-22/
+
 	GRIT: Consistent Distributed Transactions across Polyglot Microservices with Multiple Databases
 
 	https://greensky00.github.io/pdf/grit_icde19.pdf
+
+	https://medium.com/swlh/microservices-observability-with-distributed-tracing-32ae467bb72a
+
+	https://medium.com/better-programming/observer-vs-pub-sub-pattern-50d3b27f838c
+
+	https://www.google.com/search?client=safari&rls=en&sxsrf=ALeKk02BW8CTyKAQszlaKXx2TVq5R7avwQ%3A1594470113646&ei=4a4JX679JrnVgwezqKbIAg&q=hacer+rollaback+despues+de+hacer+un+commit&oq=hacer+rollaback+despues+de+hacer+un+commit&gs_lcp=CgZwc3ktYWIQAzoECAAQRzoECCEQCjoICAAQCBANEB5QwZkBWImuAWCqsAFoAHACeACAAX6IAaQKkgEEMTUuMZgBAKABAaoBB2d3cy13aXo&sclient=psy-ab&ved=0ahUKEwju8emFmMXqAhW56uAKHTOUCSkQ4dUDCAs&uact=5
