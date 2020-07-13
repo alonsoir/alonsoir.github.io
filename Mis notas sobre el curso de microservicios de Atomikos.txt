@@ -268,7 +268,7 @@ solicita comprar el producto, el sistema comprueba si el usuario tiene todo en r
 el sistema hace el cargo del producto en su cuenta, el sistema devuelve el estado de dicha operacion inicial. Cada una de esas operaciones, conlleva una 
 transacción global. Intimidado?
 
-# 2.3.1. Patrón Two phase commits
+# 2.3.1. Patrón Two commits phase (2CP) 
 
 Patrón que al igual que el anterior, trata de usar sistemas distribuidos para ejecutar una lógica de negocio, solo que este va a procurar asegurarse o 
 maximizar al menos las probabilidades de hacer commit en ambos sistemas necesarios para invocar a una instancia de un microservicio. 
@@ -286,11 +286,18 @@ necesidad de controlar situaciones de transaccionalidad distribuida inversa en c
 
 Pero los problemas pueden ocurrir aún así. 
 
-Voy a hablar un poco sobre el protocolo Two Commit Phase, a partir de ahora, 2CP. 
-El truco se puede llamar Estado intermedio preparado, Intermediate prepared state. Los puntos claves ante esta estrategia son:
+Voy a hablar un poco sobre el protocolo Two Commit Phase. Se llama así porque para conseguir el correcto funcionamiento, necesitamos realizar dos 
+operaciones para invocar a un servicio externo. Una fase que consiste en preparar la transacción y otra en la que pedimos al sistema que haga el 
+commit. Un buen gestor de transacciones, uno que tenga en cuenta las interacciones con un servicio, tratará de conseguir esas dos fases con cada
+uno de los componentes necesarios para invocar a cada uno de los servicios externos, como el broker de mensajería y la base de datos.
+En realidad, el gestor tratará de negociar con todos los servicios siguiendo esta estrategia al inicio de la operación. Siguiendo esta estrategia,
+minimizaremos al máximo la necesidad de hacer ROLLBACK distribuido.
 
-	1. Un Backend que está advertido, puede hacer rollback, nos hemos asegurado de ello, pero no debe hacerlo por su cuenta, por iniciativa propia, 
-	   porque no querremos en principio ni rollbacks cuando el sistema potencialmente se reinicie, ni rollbacks si ocurren timeouts internos en la bd.
+Los puntos claves ante esta estrategia son:
+
+	1. Un Backend que está advertido, preparado, puede hacer rollback, nos hemos asegurado de ello, pero no debe hacerlo por su cuenta, por 
+	   iniciativa propia, porque no querremos en principio ni rollbacks cuando el sistema potencialmente se reinicie, ni rollbacks si ocurren 
+	   timeouts internos en la bd.
 
 	2. Un backend que está preparado puede hacer commit, incluso si ha habido un problema grande en la bd.
 
@@ -299,10 +306,10 @@ El truco se puede llamar Estado intermedio preparado, Intermediate prepared stat
 
 	4. Este checkpoint es gestionado y controlado por un manejador de transacciones.
 
-	Para un sistema así, necesitamos tecnologia Jmicroservicio con soporte XA, tecnologia de bd con soporte XA, y un gestor de transacciones que gestione a esos 
-	dos sistemas anteriores. 
+	Para un sistema así, necesitamos tecnologia Jmicroservicio con soporte XA, tecnologia de bd con soporte XA, y un gestor de transacciones que gestione 
+	a esos dos sistemas anteriores. 
 
-prácticamente todos los sistemas de colas y de bd soportan XA, eXtendend Architecture, por lo que, la parte principal del problema es implementar un 
+Prácticamente todos los sistemas de colas y de bd soportan XA, eXtendend Architecture, por lo que, la parte principal del problema es implementar un 
 buen manejador de transacciones distribuidas.
 
 Básicamente, lo que debe hacer dicho manejador es:
@@ -319,9 +326,6 @@ Básicamente, lo que debe hacer dicho manejador es:
 	si ambos responden OK, se escribe al log que todo ha ido bien y se hace commit en los dos. Es importante el orden aquí. 
 	Es decir, ahora si podemos hacer lo que poniamos en el método marcado como transaccional, escribir en el log que todo ha ido bien, hacer commit en el 
 	broker con un mensaje exitoso, hacer commit en la bd.
-
-Como funcionaría el mecanismo en el que cada microservicio tiene que hablar con su gestor transaccional para saber si es posible hacer commit en la bd y 
-en la cola?
 
 # 2.3.1.1. Descripción del funcionamiento de 2CP en cada microservicio:
 
@@ -342,7 +346,7 @@ en la cola?
 	
 	6. Por último, guardamos en el log del sistema que ambos subsistemas han hecho commit, o no.
 
-	7. Opcional, esto lo digo yo personalmente. Lo separo de los pasos anteriores, con la esperanza que los lectores no me machaquen demasiado. 
+	7. Opcional. 
 		
 		Se comunica al orquestador que la invocación a este conjunto de subsistemas ha ido bien, o no, en cuyo caso, habrá que actuar en consecuencia, bien sea 
 		invocando al resto de microservicios para ejecutar su logica de negocio normal o en caso contrario y si es necesario, iniciar la fase de compensacion 
@@ -350,8 +354,8 @@ en la cola?
 		de los subsistemas tendrá un problema grave que seguramente necesitará de la acción de alguna persona. Probablemente será buena idea dejar guardado en 
 		un log aquellas operaciones que no se ha podido realizar y que necesitan de una compensación.
 
-El gestor de transacciones, uno decente, debe ser capaz de hacer rollback tanto en su cola de mensajes como en su bd, ya sea porque ha ocurrido un problema que 
-implica un reinicio o un fallo catastrófico de alguno de los subsistemas. Así mismo, debe tratar de asegurar el commit en ambos subsistemas.
+		El gestor de transacciones, uno decente, debe ser capaz de hacer rollback tanto en su cola de mensajes como en su bd, ya sea porque ha ocurrido un 
+		problema que implica un reinicio o un fallo catastrófico de alguno de los subsistemas. Así mismo, debe tratar de asegurar el commit en ambos subsistemas.
 
 # 2.3.1.1.1. Analizando los fallos del sistema en 2CP.
 
@@ -420,8 +424,6 @@ implica un reinicio o un fallo catastrófico de alguno de los subsistemas. Así 
 	capaz de operar tambien en procesos de largo plazo.
 
 	Un usuario en Stackoverflow opina así:
-
-		"In my understanding (not a big user of 2PC since I consider it limiting):
 
 		Typically, 2PC is for immediate transactions. --> En principio, para transacciones que harías en un banco delante de un cliente.
 		Typically, Sagas are for long running transactions. --> Para transacciones que harías por las noches, mientras todo el mundo duerme.
@@ -599,7 +601,11 @@ implica un reinicio o un fallo catastrófico de alguno de los subsistemas. Así 
 
 4. Backups consistentes
 
-	https://atomikos.teachable.com/courses/475866/lectures/11892330
+	4.1 Introducción
+		https://atomikos.teachable.com/courses/475866/lectures/11892330
+	4.2 Inconsistencia eventual
+
+
 
 # Terminología.
 

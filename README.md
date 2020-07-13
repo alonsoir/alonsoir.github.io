@@ -1,5 +1,14 @@
 # alonsoir.github.io
 
+	Hello, basically this is a repository where I leave my notes on what I am learning, and things I want to learn.
+	I am currently gaining more knowledge about the microservices architecture, thinking especially about the issue 
+	of managing distributed transactionality and the different mechanisms that exist to deal with it.
+
+	The file is Mis notas sobre el curso de microservicios de Atomikos.txt
+
+	Está en Español, con la idea de algún dia seguir añadiendo más contenido y puede que algún día sea el germen para
+	un libro en Inglés y en Español.
+
 # Things to study
 
 	# Fullstack
