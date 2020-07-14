@@ -767,6 +767,8 @@ Spring Cloud
 
 	https://www.baeldung.com/spring-cloud-netflix-eureka
 
+	https://www.baeldung.com/spring-rest-with-zuul-proxy
+
 	https://blog.bi-geek.com/arquitecturas-spring-cloud-netflix-eureka/
 
 	https://www.paradigmadigital.com/dev/quien-es-quien-en-la-arquitectura-de-microservicios-spring-cloud-22/
