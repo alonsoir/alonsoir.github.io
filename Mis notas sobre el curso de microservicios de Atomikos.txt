@@ -684,6 +684,8 @@ Básicamente, lo que debe hacer dicho manejador es:
 		como punto de partida, aunque habría que añadir muchas más características, como externalizar los tokens de seguridad para no tener que usar el que 
 		puedas tener incluido en el proyecto, añadir spring-security5, añadir soporte para Hystrix y Ribbon... AMPLIAR!!!
 
+		https://github.com/spring-projects/spring-security-oauth/blob/master/spring-security-oauth2/src/main/java/org/springframework/security/oauth2/provider/token/store/redis/RedisTokenStore.java
+
 		Lo primero es añadir la dependencia de maven a nuestro pom.xml:
 
 			<dependency>
