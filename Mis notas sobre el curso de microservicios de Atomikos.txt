@@ -627,12 +627,38 @@ Básicamente, lo que debe hacer dicho manejador es:
 	Su objetivo es registrar y localizar microservicios existentes, informar de su localización, su estado y datos relevantes de cada uno de ellos. 
 	Además, nos facilita el balanceo de carga y tolerancia a fallos.
 
+	Podemos instalarlo usando Docker, preferentemente. Para ello, lanzamos el siguiente comando:
+
+		docker pull springcloud/eureka
+
+	Para lanzarlo, escuchando en el puerto 8761, el siguiente comando:
+
+		docker run -p 8761:8761 -t springcloud/eureka
+
+	Luego, cada microservicio que quiera descubrirse ante Eureka, deberá añadir la dependencia “spring-cloud-starter-eureka-server”, o mejor aún, la 
+	dependencia spring-cloud-starter-parent para que seleccione esa depencia spring-cloud-starter-eureka-server por nosotros.
+
+	Agregar a la clase main de nuestro microservicio la anotación @EnableEurekaClient y configurar su fichero de propiedades de la siguiente manera:
+
+	application.yml
+
+		spring:
+	  		application:
+	    		name: my-application-name
+		server:
+	  		port: 8080
+		eureka:
+	  		client:
+	    		serviceUrl:
+	      			defaultZone: ${EUREKA_URI:http://localhost:8761/eureka}
+
 	5.2. Zuul/Hystrix/Ribbon
 
-	Zuul nos servirá como el punto de entrada al que llegarán todas nuestras peticiones, las cuales serán securizadas, balanceadas, enrutadas, 
-	monitorizadas, securizadas y filtradas. Basicamente tratará de coordinarse con Eureka es decir, se encarga de solicitar una instancia 
-	de un microservicio concreto a Eureka y de su enrutamiento hacia el servicio que queramos consumir. Podemos ver a Zuul además como un filtro 
-	que tratará de rechazar todas las peticiones sospechosas basadas en motivos de seguridad, de manera que podremos marcar dichas peticiones
+	Zuul nos servirá como el punto de entrada al que llegarán todas nuestras peticiones, las cuales serán securizadas, balanceadas, enrutadas y monitorizadas. 
+	Basicamente va a filtrar cada petición y tratará de coordinarse con Eureka es decir, se encarga de solicitar una instancia 
+	de un microservicio concreto a Eureka y de su enrutamiento hacia el servicio que queramos consumir. 
+
+	Podemos ver a Zuul además como un filtro que tratará de rechazar todas las peticiones sospechosas basadas en motivos de seguridad, de manera que podremos marcar dichas peticiones
 	para un posterior analisis.
 
 	Con Zuul tenemos también Hystrix y Ribbon. El primero sirve como mecanismo CIRCUIT BREAKER, es decir, mecanismos para la resiliencia y tolerancia
@@ -649,6 +675,54 @@ Básicamente, lo que debe hacer dicho manejador es:
 		
 		Es capaz de realizar el despliegue de filtros en caliente, de manera que podríamos realizar pruebas sobre nuevas funcionalidades 
 		sin parar la aplicación.
+
+	¿Cómo se usa?
+
+		Primero, hay que tener en cuenta que querremos que Zuul/Hystrix y Ribbon sea el punto de entrada para nuestra arquitectura, y querremos poder aplicar 
+		mecanismos de seguridad, balanceo, enrutación para acceder a recursos. Dicho esto, será mejor añadir todas estas características a una aplicacion 
+		spring-cloud que también se descubrirá ante Eureka, para trabajar en conjunto. Se puede tomar este ejemplo, https://github.com/kakawait/uaa-behind-zuul-sample
+		como punto de partida, aunque habría que añadir muchas más características, como externalizar los tokens de seguridad para no tener que usar el que 
+		puedas tener incluido en el proyecto, añadir spring-security5, añadir soporte para Hystrix y Ribbon... AMPLIAR!!!
+
+		Lo primero es añadir la dependencia de maven a nuestro pom.xml:
+
+			<dependency>
+    			<groupId>org.springframework.cloud</groupId>
+    			<artifactId>spring-cloud-starter-netflix-zuul</artifactId>
+    			<version>2.2.0.RELEASE</version> --> Aségurate que es una version compatible
+			</dependency>
+
+
+	5.3. Feign.
+
+	Es otra libreria de Spring Cloud pensada para crear clientes REST de manera declarativa, es decir, acceder a recursos REST con un nombre de nuestra 
+	elección. Se ve mejor con un ejemplo. 
+
+		@FeignClient("my-application-name")
+		public interface GreetingClient {
+    	
+    		@RequestMapping("/greeting")
+    		String greeting();
+		}
+
+	Marcaremos nuestras clases @Controller con la anotacion @EnableFeignClients
+
+		@EnableFeignClients
+		@Controller
+		public class FeignClientApplication {
+    		
+    		@Autowired
+    		private GreetingClient greetingClient;
+ 
+    		@RequestMapping("/get-greeting")
+    		public String greeting(Model model) {
+        		model.addAttribute("greeting", greetingClient.greeting());
+        		return "greeting-view";
+    		}
+		}
+
+	Compilamos, ejecutamos, cuando el servidor esté corriendo, accedemos a http://localhost:8080/get-greeting y lo que sea que devuelva el método greeting() 
+	que implemente la interfaz GreetingClient, aparecerá.
 
 # Terminología.
 
@@ -686,6 +760,19 @@ Básicamente, lo que debe hacer dicho manejador es:
 
 	
 Links
+
+Spring Cloud
+
+	https://www.baeldung.com/spring-cloud-netflix-eureka
+
+	https://blog.bi-geek.com/arquitecturas-spring-cloud-netflix-eureka/
+
+	https://www.paradigmadigital.com/dev/quien-es-quien-en-la-arquitectura-de-microservicios-spring-cloud-22/
+
+	https://blog.bi-geek.com/arquitecturas-basadas-en-microservicios-spring-cloud-netflix-zuul/
+
+	https://www.adictosaltrabajo.com/2017/09/26/spring-cloud-feign-declarative-rest-client/
+
 
 Competing consumer pattern
 	
@@ -737,8 +824,6 @@ Domain Driven Design
 
 Microservicios
 
-	https://blog.bi-geek.com/arquitecturas-spring-cloud-netflix-eureka/
-
 	https://www.microservices.com
 
 	https://deku.github.io/microservice-architecture-es/
@@ -769,10 +854,6 @@ Crítica 2pc/saga. Se deben leer.
 	https://developers.redhat.com/blog/2018/10/01/patterns-for-distributed-transactions-within-a-microservices-architecture/
 
 Otros
-
-	https://www.paradigmadigital.com/dev/quien-es-quien-en-la-arquitectura-de-microservicios-spring-cloud-22/
-
-	https://blog.bi-geek.com/arquitecturas-basadas-en-microservicios-spring-cloud-netflix-zuul/
 
 	GRIT: Consistent Distributed Transactions across Polyglot Microservices with Multiple Databases
 
