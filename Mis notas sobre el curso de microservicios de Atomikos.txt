@@ -72,13 +72,13 @@ Problemas potenciales al usar una arquitectura distribuida de microservicios con
 Los hay bajo mi punto de vista, leves y graves.
 
 Leves es tratar con la consistencia eventual, es decir, tratar con datos distribuidos que no son consistentes unos con otros. 
-En el peor de los casos, siempre vas a devolver una lectura al cliente, que a lo mejor está un pelín anticuada. 
+En el peor de los casos, siempre vas a devolver una lectura al cliente, que a lo mejor está algo anticuado. 
 Dependiendo del tipo de negocio, puede ser soportable, por ejemplo, no pasaría demasiado si un cliente en Linkedin aún no ha leído la última actualización 
 en su feed de noticias, o en Facebook, o en Twitter. Al fin y al cabo, esto se traduce en saber, cuál es el dato bueno? el de la instancia A? el de la B?.
 Con tiempo, el cliente tendrá la última lectura consensuada y actualizada. AMPLIAR!
 
 Otro leve es tratar con la transaccionalidad distribuida, para ello en la literatura y en la práctica podemos leer que existen dos grandes filosofías para 
-tratar los problemas que aparecen con arquitecturas de datos distribuidas. 
+tratar los problemas que aparecen con arquitecturas de datos distribuidas. Puede que tres, vease GRIT.
 
 A saber, Two commit phase (2cp) y el patrón Saga. 
 
@@ -97,7 +97,9 @@ operaciones para rehacer el estado anterior transaccional. Hacer un rollback dis
 provocar errores de consistencia cuando ocurra el problema de la inconsistencia eventual y en principio tampoco tiene en cuenta el problema de hacer 
 commit en ambos sistemas, el de la cola de mensajes y en la bd. Puede presentar el problema de necesitar mucho tiempo para rehacer el estado anterior 
 al rollback, pues si el sistema es incapaz de transmitir mediante el broker la orden de hacer el rollback inverso, el sistema tendrá ese estado 
-inestable o pendiente de resolver. AMPLIAR.  
+inestable o pendiente de resolver. 
+
+AMPLIAR.AMPLIAR.AMPLIAR.AMPLIAR.AMPLIAR.AMPLIAR.  
 
 ## 2. Microservicios asíncronos.
 
@@ -126,11 +128,11 @@ Basadas en Jmicroservicio:
 
 Soportan colas y topics.
 
-Jmicroservicio basadas en colas. Implica que cada mensaje es entregado a un consumidor, y solo uno. Es escalable de manera natural gracias al patrón Competing Consumer, 
+Jms basadas en colas. Implica que cada mensaje es entregado a un consumidor, y solo uno. Es escalable de manera natural gracias al patrón Competing Consumer, 
 ya que si necesitamos mayor escalabilidad, solo tenemos que añadir mas consumidores adjuntos a una nueva cola y la carga de mensajería se va a distribuir 
 equitativamente entre los distintos consumidores.
 
-Jmicroservicio basadas en topics. No es como los topics de kafka. Un Topic en este contexto significa mensajería basada en productores y consumidores. Los mensajes 
+Jms basadas en topics. No es como los topics de kafka. Un Topic en este contexto significa mensajería basada en productores y consumidores. Los mensajes 
 van a todos los consumidores, esta es la principal diferencia con las colas anteriormente descrita. Significa que los mensajes son potencialmente procesables 
 por tantos consumidores haya subscrito al topic. No hay patrón Competing Consumer actuando. Bajo mi punto de vista, hay que evitar este tipo de implementacion 
 para una arquitectura de microservicios pues asignar el mismo mensaje a varios consumidores implica que los microservicios actuaran sobre el mismo mensaje. 
@@ -142,7 +144,7 @@ Hay dos tipos de subscriptores:
 
 	subscripcion no duradera: No recibirán mensajes, los mensajes se perderán si los productores estan públicando nuevos mensajes.
 
-No Basadas en Jmicroservicio:
+No Basadas en Jms:
 
 	Kafka
 	RabbitMQ
@@ -252,7 +254,7 @@ a la cola de mensajes. Da igual en el orden en el que las pongamos, potencialmen
 
 El verdadero problema cuando tratamos con estos sistemas distribuidos es:
 
-	Enviar un commit a una bd no garantiza que dicho sistema lo vaya a hacer, porque:
+	Enviar un commit a una base de datos no garantiza que dicho sistema lo vaya a hacer, porque:
 
 		si hay un timeout intermedio en la base de datos, ocurrirá un rollback automático,
 
@@ -370,7 +372,7 @@ Básicamente, lo que debe hacer dicho manejador es:
 		El gestor de transacciones, uno decente, debe ser capaz de hacer rollback tanto en su cola de mensajes como en su bd, ya sea porque ha ocurrido un 
 		problema que implica un reinicio o un fallo catastrófico de alguno de los subsistemas. Así mismo, debe tratar de asegurar el commit en ambos subsistemas.
 
-# 2.3.1.1.1. Analizando los fallos del sistema en 2CP.
+# 2.3.1.1.1. Analizando los problemas del sistema en 2CP.
 
 	1. Si hay fallos antes de lanzar transacciones 2cp, hay que hacer rollback en ambos subsistemas, tanto en la cola, como en la bd. 
 	   Recordemos que la peticion se ha hecho en ambos subsistemas y no queremos ni mensajes fantasmas, ni mensajes perdidos, ni posibles mensajes duplicados. 
@@ -800,6 +802,19 @@ Básicamente, lo que debe hacer dicho manejador es:
 
 	Compilamos, ejecutamos, cuando el servidor esté corriendo, accedemos a http://localhost:8080/get-greeting y lo que sea que devuelva el método greeting() 
 	que implemente la interfaz GreetingClient, aparecerá en el fichero html cuando trates de acceder al contenido de la variable greeting.
+
+	5.4. Consul
+
+	AMPLIAR!!!
+
+	https://www.consul.io
+
+	https://www.paradigmadigital.com/dev/spring-cloud-consul-1-2-descubrimiento-microservicios/
+
+	5.5. Spring-Cloud-Config
+
+	AMPLIAR!!!	
+
 
 # Terminología.
 
