@@ -850,6 +850,9 @@ Básicamente, lo que debe hacer dicho manejador es:
 
 	En .Net usaría el DTC (Coordinador de transacciones distribuidas) en lugar de JTA. Para XA, nada cambia.
 
+# ¿Qué es eso del gestor de Transacciones que Atomikos vende?
+
+	https://github.com/atomikos/transactions-essentials
 	
 Links
 
