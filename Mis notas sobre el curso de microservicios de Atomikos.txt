@@ -698,6 +698,9 @@ Básicamente, lo que debe hacer dicho manejador es:
 
 	5.1. Eureka
 
+	Eureka es un servicio basado en REST (Representational State Transfer) que se utiliza principalmente en la nube de AWS para localizar 
+	servicios con el fin de balancear la carga y gestionar los errores a las llamadas de los servidores que contienen un servicio. 
+
 	Eureka es basicamente un servicio corriendo en un servidor de aplicaciones web encargado de gestionar el descubrimiento de las instancias de
 	los nuevos microservicios. 
 	
@@ -805,15 +808,24 @@ Básicamente, lo que debe hacer dicho manejador es:
 
 	5.4. Consul
 
-	AMPLIAR!!!
+	Consul es una herramienta para el descubrimiento y la configuración del servicio. Es distribuido, permitiendo alta disponibilidad y escalabilidad.
 
-	https://www.consul.io
+	Básicamente es una alternativa a Eureka, con algunas mejoras, por ejemplo A diferencia de Eureka, el cluster de Consul tiene un servidor que actúa como 
+	líder y responde las peticiones.
 
-	https://www.paradigmadigital.com/dev/spring-cloud-consul-1-2-descubrimiento-microservicios/
+	En caso de caída se elige uno nuevo y este cambio es transparente para las aplicaciones cliente (si tienen su propio agente Consul cliente configurado 
+	correctamente). Eureka, en cambio, si un servidor se cae, son las aplicaciones cliente las que activamente comunican con el siguiente servidor Eureka 
+	configurado en ellas.
+
+
 
 	5.5. Spring-Cloud-Config
 
 	AMPLIAR!!!	
+
+	https://cloud.spring.io/spring-cloud-config/reference/html/
+
+	Puedo cambiar la configuración sin necesidad de bajar las instancias de spring-cloud-config?
 
 
 # Terminología.
@@ -870,6 +882,18 @@ Spring Cloud
 
 	https://www.adictosaltrabajo.com/2017/09/26/spring-cloud-feign-declarative-rest-client/
 
+Consul
+
+	https://www.consul.io
+
+	https://www.paradigmadigital.com/dev/spring-cloud-consul-1-2-descubrimiento-microservicios/
+
+	https://www.paradigmadigital.com/dev/spring-cloud-consul-2-2-configuracion-centralizada/
+
+	https://www.consul.io/downloads.html
+
+	https://stackshare.io/stackups/consul-vs-eureka
+
 
 Competing consumer pattern
 	
@@ -919,6 +943,7 @@ Domain Driven Design
 
 	https://github.com/ddd-by-examples
 
+
 Microservicios
 
 	https://www.microservices.com
@@ -941,6 +966,7 @@ Patrón Saga
 	https://axoniq.io
 
 	https://medium.com/@ijayakantha/microservices-the-saga-pattern-for-distributed-transactions-c489d0ac0247
+
 
 Crítica 2pc/saga. Se deben leer.
 
