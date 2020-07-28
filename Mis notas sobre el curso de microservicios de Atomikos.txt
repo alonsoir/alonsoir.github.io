@@ -882,6 +882,10 @@ Spring Cloud
 
 	https://www.adictosaltrabajo.com/2017/09/26/spring-cloud-feign-declarative-rest-client/
 
+	https://www.nvisia.com/insights/comparison-of-spring-cloud-with-eureka-vs.-consul
+
+	https://stackshare.io/stackups/consul-vs-eureka
+
 Consul
 
 	https://www.consul.io
@@ -977,6 +981,8 @@ Crítica 2pc/saga. Se deben leer.
 	https://developers.redhat.com/blog/2018/10/01/patterns-for-distributed-transactions-within-a-microservices-architecture/
 
 Otros
+
+	https://defonic.com/?index
 
 	GRIT: Consistent Distributed Transactions across Polyglot Microservices with Multiple Databases
 
