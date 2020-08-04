@@ -773,3 +773,11 @@ https://sparkbyexamples.com/spark/spark-read-write-dataframe-parquet-example/
 
 https://learning.oreilly.com/videos/apache-spark-with/9781787129849/9781787129849-video4_3?autoplay=false
 
+https://www.arcgis.com/apps/opsdashboard/index.html#/bda7594740fd40299423467b48e9ecf6
+
+https://piotrminkowski.com/2018/05/04/reactive-microservices-with-spring-webflux-and-spring-cloud/
+
+https://dzone.com/articles/5-amazing-examples-of-artificial-intelligence-in-a
+
+
+

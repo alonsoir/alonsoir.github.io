@@ -116,6 +116,7 @@ There are several important concepts to deal with asynchronous ways to do micros
 2. Ghost messages. Conversely, we have not been able to commit to the db, but we did commit to the message queue.
 
 3. Duplicate messages. Potentially, it will occur as a result of the above, as a previous commit was made in the queue, if said commit was not deleted, the system could try to commit the message in the queue.
+
 THE MESSENGER POTENTIALLY SENDS INCONSISTENT MESSAGES IN AN ASYNCHRONOUS MICROSERVICE ARCHITECTURE.
 
 Basically, when we deal with asynchronous microservices, we have two services with which it interacts, one is messaging technology, another is the database in which we store the information.
@@ -304,6 +305,7 @@ The orchestrator is informed that the invocation to this set of subsystems has g
 One of the subsystems will have a serious problem that will surely require someone's action. It will probably be a good idea to save in the log those operations that could not be performed and that need compensation.
 
 The transaction manager, a decent one, should be able to rollback both its message queue and its bd, either because a problem has occurred involving a restart or catastrophic failure of one of the subsystems. Everything to try to ensure the commit in both subsystems for each call.
+
 ANALYZING THE PROBLEMS OF THE SYSTEM IN 2CP.
 
 1. If there are failures before launching 2cp transactions, rollback must be made in both subsystems, both in the queue and in the db.
@@ -325,6 +327,7 @@ Remember, when we put invokes to both subsystems in the transactional method, bo
 Pregunta incomoda, a relación del punto 7 descrito anteriormente. 
 ¿Qué pasa si después de haber pasado por los dos primeros puntos, en el que tenemos el ok 
 de los dos sistemas, ocurre una catastrofe que impide realmente hacer commit o rollback? o cuando el gestor de transacciones decida que hay que hacer ROLLBACK en ambos subsistemas y no pueda?
+
 POSIBLE SOLUCIÓN A LOS FALLOS POTENCIALES A 2CP/XA. UNA PROPUESTA.
 
 No sería posible tener lo mejor de ambos mundos? es decir, coger la idea de las Sagas, es decir, un coreógrafo que gestione todas las invocaciones, es decir, el estado de cada microservicio y un gestor de transacciones globales maestro que conozca y gestione a cada gestor de transacciones globales de cada microservicio. 

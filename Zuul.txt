@@ -1,0 +1,87 @@
+Acerca de usar Zuul para crear un edge server, un server que funcione de proxy como entrada para tu arquitectura de software distribuida.
+
+Aplicaciones?
+
+Podemos usar Zuul para poder filtrar peticiones, es decir, si a nuestro servidor proxy llega una peticion para cargar todos los jpgs 
+de una pagina, podremos indicarle a donde tiene que ir para cargar dichos recursos.
+
+Si queremos poder ejecutar una logica de negocio de una arquitectura distribuida de microservicios, Zuul enrutará dicha peticion al servidor
+que contiene dicha lógica de negocio. Usando Ribbon, incluso podrá hacer balanceo de carga entre distintos servidores que soporten dicha
+operativa.
+
+Incluso podremos usar directivas de seguridad para acceder a un recurso u otro. Zuul basicamente es tecnología de filtrado. Intercepta
+la peticion que hacemos a un servidor web, examina la cabecera de dicha petición y te da acceso via programacion para crear un filtro 
+especifico que satisfaga tu necesidad. También tienes ya creados muchos filtros para que solo tengas que usarlos.
+
+	@Component
+	public class CustomZuulFilter extends ZuulFilter {
+	 
+	    @Override
+	    public Object run() {
+	        RequestContext ctx = RequestContext.getCurrentContext();
+	        ctx.addZuulRequestHeader("Test", "TestSample");
+	        return null;
+	    }
+	 
+	    @Override
+	    public boolean shouldFilter() {
+	       return true;
+	    }
+	    // ...
+	}
+
+Este filtro zuul intercepta las peticiones y simplemente añade a la cabecera un objeto "Test" con el contenido "TestSample".
+
+Podremos crear filtros tan complicados como sean necesarios via programación.
+
+Podremos limitar via programatica el número de peticiones a un servidor, algo muy util para proteger los recursos de un sistema ante 
+ataques de denegación de servicio.
+
+Podamos hacer con Zuul crear un servicio de autenticacion de seguridad ad hoc para nuestras necesidades, así como poder delimitar quien 
+accede a que servicios en que momento, poder limitar el numero de peticiones que alguien o algo haya hecho sobre uno de nuestros recursos, 
+podremos integrar hystrix como circuit breaker, podremos integrar Ribbon para tener balanceado de carga, etc...
+
+En el ejemplo anterior, muestro como se puede modificar la respuesta a una peticion por parte de un servicio externo.
+
+Vamos a comprobar el funcionamiento anterior de ese filtro con una clase RestController como la siguiente.
+En ella, comprobamos si en la cabecera de la peticion /foos/{id} donde {id} será algún identificador para algun recurso viene el valor 
+Test, como debería ocurrir ya que tenemos ese filtro programático CustomZuulFilter que actua ante cada petición que le hagamos al 
+servidor.
+
+FooController va a comprobar que en la cabecera aparece esa cabecera Test y recogemos su valor asociado, TestSample.
+
+	@RestController
+	public class FooController {
+ 
+    	@GetMapping("/foos/{id}")
+    	public Foo findById(@PathVariable long id, HttpServletRequest req, HttpServletResponse res) {
+        	if (req.getHeader("Test") != null) {
+            	res.addHeader("Test", req.getHeader("Test"));
+        	}
+        		return new Foo(Long.parseLong(randomNumeric(2)), randomAlphabetic(4));
+    	}
+	}
+
+Ahora, un test para comprobar la funcionalidad:
+	
+	@Test
+	public void whenSendRequest_thenHeaderAdded() {
+    	Response response = RestAssured.get("http://localhost:8080/foos/1");
+ 
+    	assertEquals(200, response.getStatusCode());
+    	assertEquals("TestSample", response.getHeader("Test"));
+	}
+
+
+
+enlaces
+
+	https://howtodoinjava.com/spring-cloud/spring-cloud-api-gateway-zuul/
+
+	https://www.baeldung.com/spring-rest-with-zuul-proxy
+
+	https://github.com/eugenp/tutorials/tree/master/spring-cloud/spring-cloud-zuul
+
+	https://www.baeldung.com/spring-cloud-zuul-rate-limit
+
+	https://www.baeldung.com/zuul-filter-modifying-response-body

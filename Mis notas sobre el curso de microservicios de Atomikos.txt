@@ -1,17 +1,6 @@
 Mis notas sobre el curso de microservicios de Atomikos junto con un análisis.
 
-Agradecimientos 
-
-	Guy Pardon
-
-	Chris Richardson
-
-	Eugen Paraschiv
-
-	Piotr Mińkowski
-
-	Abraham Rodríguez
-
+Es un trabajo en progreso
 
 ## 0. Introducción
 
@@ -993,3 +982,17 @@ Otros
 	https://medium.com/better-programming/observer-vs-pub-sub-pattern-50d3b27f838c
 
 	https://www.google.com/search?client=safari&rls=en&sxsrf=ALeKk02BW8CTyKAQszlaKXx2TVq5R7avwQ%3A1594470113646&ei=4a4JX679JrnVgwezqKbIAg&q=hacer+rollaback+despues+de+hacer+un+commit&oq=hacer+rollaback+despues+de+hacer+un+commit&gs_lcp=CgZwc3ktYWIQAzoECAAQRzoECCEQCjoICAAQCBANEB5QwZkBWImuAWCqsAFoAHACeACAAX6IAaQKkgEEMTUuMZgBAKABAaoBB2d3cy13aXo&sclient=psy-ab&ved=0ahUKEwju8emFmMXqAhW56uAKHTOUCSkQ4dUDCAs&uact=5
+
+
+
+Agradecimientos 
+
+	Guy Pardon
+
+	Chris Richardson
+
+	Eugen Paraschiv
+
+	Piotr Mińkowski
+
+	Abraham Rodríguez
