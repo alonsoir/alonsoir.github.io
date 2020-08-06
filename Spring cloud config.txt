@@ -1,0 +1,19 @@
+Spring cloud config
+
+enlaces
+
+	https://www.baeldung.com/spring-cloud-configuration
+
+	https://medium.com/trendyol-tech/automating-dynamic-config-management-with-spring-cloud-config-bus-a34e15397b15
+
+	https://stackoverflow.com/questions/57578808/spring-cloud-config-fails-to-update-properties-dynamically
+
+	https://stackoverflow.com/questions/51922623/refresh-springboot-configuration-dynamically
+
+	https://www.baeldung.com/spring-reloading-properties
+
+	https://www.google.com/search?client=safari&rls=en&q=can+i+change+dinamically+spring+cloud+config+propertie&ie=UTF-8&oe=UTF-8
+
+	https://fernandoabcampos.wordpress.com/2016/03/16/config-server/
+
+	https://www.google.com/search?client=safari&rls=en&q=spring+cloud+config&ie=UTF-8&oe=UTF-8

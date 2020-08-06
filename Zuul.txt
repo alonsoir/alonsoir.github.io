@@ -1,5 +1,8 @@
 Acerca de usar Zuul para crear un edge server, un server que funcione de proxy como entrada para tu arquitectura de software distribuida.
 
+Está integrado ya con spring-boot, como una dependencia más. Comentar que Pivotal también está manteniendo como alternativa a Zuul 
+Spring Cloud Gateway. Este documento por ahora solo hace referencia a Zuul.
+
 Aplicaciones?
 
 Podemos usar Zuul para poder filtrar peticiones, es decir, si a nuestro servidor proxy llega una peticion para cargar todos los jpgs 
@@ -76,7 +79,12 @@ Ahora, un test para comprobar la funcionalidad:
 
 enlaces
 
-	https://howtodoinjava.com/spring-cloud/spring-cloud-api-gateway-zuul/
+	https://dzone.com/articles/how-to-build-an-api-gateway-with-netflix-zuul-spri
+
+	https://www.programmersought.com/article/11274414773/
+
+	# Buen punto de entrada para crear un edge server
+	https://howtodoinjava.com/spring-cloud/spring-cloud-api-gateway-zuul/ 
 
 	https://www.baeldung.com/spring-rest-with-zuul-proxy
 
