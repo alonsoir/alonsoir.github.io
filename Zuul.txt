@@ -79,6 +79,8 @@ Ahora, un test para comprobar la funcionalidad:
 
 enlaces
 
+	https://github.com/netflix/zuul/
+
 	https://dzone.com/articles/how-to-build-an-api-gateway-with-netflix-zuul-spri
 
 	https://www.programmersought.com/article/11274414773/
