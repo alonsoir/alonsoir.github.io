@@ -1,5 +1,16 @@
 Spring cloud config
 
+Es una libreria que nos sirve para crear una arquitectura cliente servidor para unificar las distintas
+ficheros de propiedadades que pueden necesitar las distintas aplicaciones de nuestra arquitectura.
+
+En vez de tener un fichero properties o yaml en un jar compilado y estático, podemos tener en cada una de 
+nuestras instancias una libreria para acceder en tiempo real a un servidor con dichos properties. 
+
+Incluso podremos refrescar dichas propiedades en tiempo real. No necesitaremos recompilar el jar para modificar
+su fichero properties.
+
+Por un lado tendremos una aplicacion spring-boot con el servidor y por otro lado, tendremos aplicaciones cliente.
+
 enlaces
 
 	https://www.baeldung.com/spring-cloud-configuration
@@ -17,3 +28,4 @@ enlaces
 	https://fernandoabcampos.wordpress.com/2016/03/16/config-server/
 
 	https://www.google.com/search?client=safari&rls=en&q=spring+cloud+config&ie=UTF-8&oe=UTF-8
+

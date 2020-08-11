@@ -1,0 +1,5 @@
+enlaces
+
+	https://www.google.com/search?client=safari&rls=en&q=how+to+decompose+monolithic+services+into+microservices&ie=UTF-8&oe=UTF-8
+
+	https://dzone.com/articles/breaking-a-monolith-into-microservices-best-practi
