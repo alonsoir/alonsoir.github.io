@@ -1,0 +1,35 @@
+Introducción
+proyecto móvil seguro
+1) en principio necesito una red de servidores voip para establecer una comunicación TLS entre dos terminales autentificados en la red.Dichos servidores componen la columna vertebral sobre la cual va a viajar la comunicación TLS entre terminales, tanto llamadas de voz, videollamadas y mensajería.
+2) necesito que esos móviles tengan una capa de seguridad que me permite identificarme ante esta red de servidores. Dichos móviles deben tenerun sistema operativo sobre el que tengamos control para instalar una ROM cocinada que permita dicha autentificación, instalación de software a medida,como el que permitirá la comunicación cifrada así como controles de seguridad adicionales, como autentificación al terminal usando biometría facial y dactilar.Dicho software de biometría vendría proporcionada por una empresa local, de Cáceres, especializados en este tipo de tareas, Mobbeel Solutions, afincados en Extremadura.Conozco al CEO y al jefe de marketing. 
+3) Una vez autentificado, necesito software para establecer llamadas voip encriptadas entre terminales autentificados en dicha red, software para enviarmensajes, tipo telegram o signal, con capacidad para enviar ficheros. Por citar dos ejemplos de software que me permite acceder al código fuente del mismo.No me cierro a esos dos.
+4) Idealmente no querría tener que pasar sobre las redes de telecomunicaciones de los operadores tradicionales. Habría que crear una red descentralizada de nodos con routers antenas de alta ganancia para permitir dicho tráfico cifrado. Los nodos voip descritos en el punto 1 encriptan la información, de maneraque un posible espía solo escucharía o vería información ininteligible, pero podría verla. Si tenemos nuestra propia red descentralizada, los contrarios no podrían ver dicha comunicación,no podrían pincharla. 
+¿Qué necesito para tener un móvil seguro? 
+Para empezar, tiempo y presupuesto para el i+d inicial para crear un producto mínimamente valuable. 
+A saber,
+ 	1) un pc que haga de servidor como el descrito en el punto 1, monitor y teclado.
+ 	2) al menos cuatro terminales, dos basados en Android (Android open source), dos basados en Linux, para poder jugar con ellos e instalar mi software. 	Me conformo con dos para empezar.
+ 	3) una oficina con conexión a internet, una máquina de café, una mesa y una silla cómoda.
+ 	4) un contrato con alta en la seguridad social con un salario acorde y digno para poder mantenerme más una participación futura de la empresa una vez que tengamos algo digno que vender.
+ 	   Mi rol en la empresa sería el de CTO, el CEO sería Jesús y el jefe comercial sería Ismael. Capacidad en un futuro de poder seleccionar a los ingenieros que crea  	   conveniente, por lo menos, dar mi opinión.
+En definitiva, algo de presupuesto y libertad para empezar el i+d y crear el producto mínimo valuable.
+ Hitos a alcanzar
+ 	1) crear la red de servidores voip. En principio, un nodo. 
+ 	2) cocinar el software que correrán en los terminales, a medida.  	 	   A saber, necesito identificarme en la red para permitir la comunicación entre dichos móviles autentificados en la red, realizar llamadas y video llamadas encriptadas, 	   así como envío de mensajes y ficheros.
+ 	3) Averiguar cuantas comunicaciones concurrentes puede realizar con seguridad y calidad de llamada el servidor voip descrito en el punto 1.
+ 	   Es importante porque una vez sepamos cuántas llamadas puede soportar, cuando haya que escalar, es decir, tener más clientes, solo tendremos que poner más servidores iguales 	   con nuestro software. Si deducimos mientras pruebas de estrés que un servidor puede soportar 100 llamadas concurrentes, para soportar a otras 100, hay que poner otro servidor. 	   Es importante este punto, y para ello es posible que tengamos que comprar muchos móviles o buscar una manera de poder emular dichas llamadas.
+ 	4) Realizar el punto 4 descrito anteriormente sería ideal para proporcionar una verdadera comunicación ultrasegura, pues siguiendo los tres primeros puntos no tendríamos control total 	sobre la comunicación punto a punto. Siguiendo los tres pasos, en algún momento pasaremos por un nodo controlado por alguna red externa de telecomunicaciones. Verían tráfico cifrado, únicamente. 	Soy consciente que sería caro desplegar una red de telecomunicaciones así, pero sería lo ideal. No me extenderé más en este punto por ahora.
+ 	5) Eso para empezar, estaré encantado de recibir feedback por vuestra parte, de hecho, lo espero!.
+Un saludo, 
+Alonso.
+enlaces de interés
+	https://source.android.com
+	https://ubunlog.com/category/ubuntu-phone/
+	https://es.wikipedia.org/wiki/Seguridad_de_la_capa_de_transporte
+	https://github.com/signalapp/Signal-Server
+	https://openwrt.org/toh/recommended_routers
+	https://wiki.asterisk.org/wiki/display/AST/Secure+Calling+Tutorial
+	https://www.wired.com/story/encrypt-all-of-the-things/
+	https://www.google.com/search?client=safari&rls=en&sxsrf=ALeKk00BJh0RRypuDiuuQI8xDlQdXRSKEA%3A1597321877640&ei=lTI1X53QJrqSjLsP2Jui-A4&q=signal+app+openwrt&oq=signal+app+openwrt&gs_lcp=CgZwc3ktYWIQAzoECAAQRzoICAAQDRAFEB46CAgAEAgQDRAeUMqaAljUngJg2aYCaABwAXgAgAHuAogBhAWSAQUzLjMtMZgBAKABAaoBB2d3cy13aXrAAQE&sclient=psy-ab&ved=0ahUKEwjd7u7Yl5jrAhU6CWMBHdiNCO8Q4dUDCAs&uact=5
+	https://openwrt.org/docs/guide-user/services/voip/asterisk#security_considerations-- 
+Alonso Isidoro Roman about.me/alonso.isidoro.roman

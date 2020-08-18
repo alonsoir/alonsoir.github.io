@@ -3,6 +3,8 @@ Acerca de usar Zuul para crear un edge server, un server que funcione de proxy c
 Está integrado ya con spring-boot, como una dependencia más. Comentar que Pivotal también está manteniendo como alternativa a Zuul 
 Spring Cloud Gateway. Este documento por ahora solo hace referencia a Zuul.
 
+Competencia? Kong
+
 Aplicaciones?
 
 Podemos usar Zuul para poder filtrar peticiones, es decir, si a nuestro servidor proxy llega una peticion para cargar todos los jpgs 

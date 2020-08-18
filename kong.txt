@@ -1,0 +1,18 @@
+Es otro API gateway, parece que más avanzado y maduro que Zuul.
+
+
+enlaces
+
+	https://docs.konghq.com/install/macos/?_ga=2.268457205.56380542.1597229796-1821681442.1597229796
+
+	https://konghq.com/get-started/#install
+
+	https://konghq.com
+
+	https://stackshare.io/stackups/kong-vs-zuul
+
+	https://www.google.com/search?client=safari&rls=en&sxsrf=ALeKk02JKp4AEuHJk3MBlxKbFK7iQM0iVg%3A1597143586478&ei=InoyX57OHJSY1fAPp5mnoAY&q=kong+security+best+practices&oq=kong+security&gs_lcp=CgZwc3ktYWIQAxgCMgIIADIFCAAQywEyBQgAEMsBMgUIABDLATIFCAAQywEyBQgAEMsBMgYIABAWEB4yBggAEBYQHjIGCAAQFhAeMgYIABAWEB46BAgAEEc6BAgjECc6BQguELEDOgUIABCxAzoICC4QsQMQgwE6BAgAEEM6BwguELEDEEM6BwgAELEDEEM6CAgAELEDEIMBOgIILlD7paQpWOGEpSlgkp6lKWgAcAN4AIABXIgBvAiSAQIxM5gBAKABAaoBB2d3cy13aXrAAQE&sclient=psy-ab
+
+	https://konghq.com/blog/5-best-practices-securing-microservices-scale/
+
+	https://konghq.com/learning-center/api-gateway/building-a-secure-api-gateway
