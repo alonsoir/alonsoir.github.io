@@ -11,6 +11,31 @@
 
 # Things to study
 
+	# how to build a good algorithm for the lottery
+
+		https://lotterycodex.com/lottery-strategy-myths-debunked/
+
+	Kafka
+
+		https://www.confluent.io/blog/build-services-backbone-events/?_ga=2.200884907.404940470.1597322379-1716370968.1597322379
+
+		https://www.confluent.io/blog/building-a-microservices-ecosystem-with-kafka-streams-and-ksql/?_ga=2.260222856.404940470.1597322379-1716370968.1597322379
+
+		#microservices implementation!
+		https://github.com/confluentinc/kafka-streams-examples/tree/5.5.0-post/src/main/java/io/confluent/examples/streams/microservices
+
+		https://docs.confluent.io/current/tutorials/examples/microservices-orders/docs/index.html#tutorial-microservices-orders
+
+		https://docs.confluent.io/current/tutorials/examples/microservices-orders/docs/index.html#tutorial-microservices-orders
+
+	Quantum Theory
+
+		http://members.tripod.com/l_asproni/Atom/quantumtheroy.htm
+		
+	DDD
+
+		https://learning.oreilly.com/videos/domain-driven-design-distilled/9780134593449?autoplay=false
+
 	# Fullstack
 
 		https://www.codeinwp.com/blog/angular-vs-vue-vs-react/
