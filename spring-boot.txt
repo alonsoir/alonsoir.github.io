@@ -1,0 +1,53 @@
+Entrevista para Santander UK
+
+Qué es springboot?
+
+Se puede ver como un conjunto de dependencias estables entre sí que se van a cargar en el contexto de spring siempre que cumplan una serie de condiciones.
+
+Cuales son esas condiciones?
+
+Las expresadas mediante la etiqueta @Conditionals. 
+
+Basicamente spring-boot es una configuracion de un contexto compartido de spring con un monton de etiquetas @Conditionals.
+Una etiqueta de este tipo te va a devolver un true o un false en funcion del codigo que hayas querido usar, por ejemplo, 
+
+Dado el codigo siguiente, se puede apreciar que una etiqueta @IsRelationalDatabaseCondition implementa algo asi:
+
+
+	import org.springframework.context.annotation.Condition;
+	import org.springframework.context.annotation.ConditionContext;
+	import org.springframework.core.type.AnnotatedTypeMetadata;
+
+	public class IsRelationalDatabaseCondition implements Condition {
+
+	    @Override
+	    public boolean matches(ConditionContext context, AnnotatedTypeMetadata metadata) {  // (1)
+	        return oracleJdbcDriverOnClassPath() && databaseUrlSet(context); // (2)
+	    }
+
+	    private boolean databaseUrlSet(ConditionContext context) { // (3)
+	        return context.getEnvironment().containsProperty("spring.datasource.url");
+	    }
+
+	    private boolean oracleJdbcDriverOnClassPath() { // (4)
+	        try {
+	            Class.forName("oracle.jdbc.driver.OracleDriver");
+	            return true;
+	        } catch (ClassNotFoundException e) {
+	            return false;
+	        }
+	    }
+	}
+
+Y la podremos usar tal que asi:
+
+	@Configuration
+	public class ReallyBigCompanySharedContextConfiguration {
+
+	    @Bean
+	    @Conditional(IsRelationalDatabaseCondition.class) // (1)
+	    public ReallyBigCompanyProprietaryFlywayClone flywayClone() {
+	        return new ReallyBigCompanyProprietaryFlywayClone();
+	    }
+
+	}

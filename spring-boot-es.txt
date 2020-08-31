@@ -1,0 +1,71 @@
+Entrevista para Santander UK
+
+Qué es springboot?
+
+Tecnicamente hablando según los ingenieros de Pivotal:
+
+	Spring Boot son sólo pares de clases @Configurations y @Conditions, que crearan clases @Beans para nosotros si se cumplen esas @Conditions.
+
+	Tres de las condiciones más importantes son:
+
+		@ConditionalOnClass. Comprobará si las dependencias o más bien clases específicas de dependencias están cargadas en el classpath.(piense: Tomcat, HikariCP, etc).
+
+		@ConditionalOnProperty. Está esa propiedad descrita en algun fichero de propiedas?
+
+		Condicional sobre el hermano desaparecido. Si el usuario ya especificó el suyo, por ejemplo, DataSource, entonces Spring Boot no intentará crear su autoconfiguración.
+
+No tan tecnicamente hablando Se puede ver como un conjunto de clases o beans, definidas por dependencias en el pom.xml, estables entre sí, que se van a cargar en el contexto de spring 
+siempre que cumplan una serie de condiciones.
+
+Cuales son esas condiciones?
+
+Las expresadas mediante la etiqueta @Conditionals. 
+
+Basicamente spring-boot es una configuracion de un contexto compartido de spring con un monton de etiquetas @Conditionals.
+Una etiqueta de este tipo te va a devolver un true o un false en funcion del codigo que hayas querido usar, por ejemplo, 
+
+Dado el codigo siguiente, se puede apreciar que una etiqueta @IsRelationalDatabaseCondition implementa algo asi:
+
+
+	import org.springframework.context.annotation.Condition;
+	import org.springframework.context.annotation.ConditionContext;
+	import org.springframework.core.type.AnnotatedTypeMetadata;
+
+	public class IsRelationalDatabaseCondition implements Condition {
+
+	    @Override
+	    public boolean matches(ConditionContext context, AnnotatedTypeMetadata metadata) {  // (1)
+	        return oracleJdbcDriverOnClassPath() && databaseUrlSet(context); // (2)
+	    }
+
+	    private boolean databaseUrlSet(ConditionContext context) { // (3)
+	        return context.getEnvironment().containsProperty("spring.datasource.url");
+	    }
+
+	    private boolean oracleJdbcDriverOnClassPath() { // (4)
+	        try {
+	            Class.forName("oracle.jdbc.driver.OracleDriver");
+	            return true;
+	        } catch (ClassNotFoundException e) {
+	            return false;
+	        }
+	    }
+	}
+
+Y la podremos usar tal que asi:
+
+	@Configuration
+	public class ReallyBigCompanySharedContextConfiguration {
+
+	    @Bean
+	    @Conditional(IsRelationalDatabaseCondition.class) // (1)
+	    public ReallyBigCompanyProprietaryFlywayClone flywayClone() {
+	        return new ReallyBigCompanyProprietaryFlywayClone();
+	    }
+
+	}
+
+Spring-boot va a añadir un montón de etiquetas @Conditional por nosotros para hacernos la vida más fácil.
+
+
+

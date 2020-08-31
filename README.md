@@ -10,6 +10,36 @@
 	un libro en Inglés y en Español.
 
 # Things to study
+	# Microservicios
+
+		# Cool project
+		https://medium.com/@marceloh.web/spring-boot-microservices-architecture-using-shared-database-69312a968530
+
+		# Cool project
+		https://github.com/piomin/sample-spring-microservices-transactions
+
+		https://github.com/piomin/course-spring-microservices
+	
+		https://dzone.com/articles/break-a-monolith-to-microservices-12-best-practice?edition=583294&utm_source=Weekly%20Digest&utm_medium=email&utm_campaign=Weekly%20Digest%202020-03-04
+
+		https://microservices.io/patterns/reliability/circuit-breaker.html
+
+		https://kelda.io
+
+		https://www.jaegertracing.io
+
+		https://es.wikipedia.org/wiki/Splunk
+
+		https://dzone.com/articles/10-challenges-of-microservices-and-solutions-tips
+
+		https://dzone.com/articles/microservices-architecture-challenges-of-building
+
+		https://dzone.com/articles/microservice-issues-challenges-and-hurdles
+
+		https://akka.io
+
+		https://dzone.com/microservices-news-tutorials-tools
+
 
 	# how to build a good algorithm for the lottery
 
@@ -87,31 +117,6 @@
 		https://docs.confluent.io/current/quickstart/cloud-quickstart/index.html#ccloud-quick-start
 
 		https://docs.confluent.io/current/quickstart/ce-quickstart.html
-
-	# Microservicios
-
-		# Cool project
-		https://github.com/piomin/sample-spring-microservices-transactions
-	
-		https://dzone.com/articles/break-a-monolith-to-microservices-12-best-practice?edition=583294&utm_source=Weekly%20Digest&utm_medium=email&utm_campaign=Weekly%20Digest%202020-03-04
-
-		https://microservices.io/patterns/reliability/circuit-breaker.html
-
-		https://kelda.io
-
-		https://www.jaegertracing.io
-
-		https://es.wikipedia.org/wiki/Splunk
-
-		https://dzone.com/articles/10-challenges-of-microservices-and-solutions-tips
-
-		https://dzone.com/articles/microservices-architecture-challenges-of-building
-
-		https://dzone.com/articles/microservice-issues-challenges-and-hurdles
-
-		https://akka.io
-
-		https://dzone.com/microservices-news-tutorials-tools
 
 	# reporting spring-boot
 
