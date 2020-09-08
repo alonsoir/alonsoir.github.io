@@ -777,10 +777,11 @@ https://deku.github.io/microservice-architecture-es/
 
 https://microservices.io (Sagas)
 
-
-
 https://docs.microsoft.com/es-es/azure/architecture/patterns/bulkhead
+
 PATRÓN SAGA
+
+https://medium.com/swlh/microservices-architecture-what-is-saga-pattern-and-how-important-is-it-55f56cfedd6b
 
 http://jbossts.blogspot.com/2017/12/saga-implementations-comparison.html
 
@@ -801,10 +802,6 @@ OTROS
 https://defonic.com/?index
 
 GRIT: Consistent Distributed Transactions across Polyglot Microservices with Multiple Databases
-
-
-
-
 
 https://medium.com/better-programming/observer-vs-pub-sub-pattern-50d3b27f838c
 AGRADECIMIENTOS

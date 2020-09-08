@@ -1,0 +1,48 @@
+Plataforma de pago asincrona segura, escalable. 
+
+Como sería?
+
+Si quisieramos que nuestra plataforma de pago pudiera conectarse a distintos operadores, necesitariamos que, una vez autentificados en la plataforma, hicieramos una peticion POST
+sincrona, donde se crearia una peticion de creación de recurso web que identificaría a nuestra petición, y luego usariamos una Fachada para seleccionar a u otro servicio
+que mejor se adapte. Esta sería la unica peticion síncrona de toda la operativa. El resto sería totalmente asíncrono. 
+
+Esa fachada creará una peticion de envio de mensaje a una cola asíncrona, a la que el motor de reglas haya decidido que tenga que encolarse e inmediatamente la fachada devolverá un 
+202 al cliente diciendole que en seguida llegará su confirmación. No mantenemos esperando al sistema de peticiones de manera sincrona. 
+
+Un connsumidor recibirá el mensaje de su cola y creará la invocación asíncrona del servicio que gestionará esta petición. Este consumidor tambien debe gestionar el estado de dicha petición,
+es decir, desde que llega, se preacepta, se acepta, en preparacion, entregada, rechazada, etc. Hay que tener en cuenta que un mismo usuario puede enviar más de una vez la peticion y solo querremos
+procesar una unica vez dicha peticion. Esta fase es crítica y debe estar preparada para gestionar miles de millones de peticiones con un estado. 
+
+Cuando digo miles de millones de estados, me refiero a los miles de millones de peticiones que conllevan una serie de estados, a lo mejor algunos de ellos están controlados por un microservicio,
+otros están controlador por otros, que pueden llegar esas peticiones en un dia como el Black Friday, por ejemplo, donde hay tantisimas personas que se vuelven locas queriendo comprar, 
+aprovechando descuentos. Cada una de esas personas entraran en el sistema y atravesarán por un proceso de cambio de estados, por ejemplo, entre que se preacepta su petición comprobando si tiene saldo, si el item que queremos comprar está en stock, si podemos hacer el cargo en su tarjeta de credito, para finalmente comunicar al cliente el resultado de ese baile de estados.
+
+Una plataforma de pago, por ejemplo una que vaya contra SWIFT, debería tener el mínimo conjunto de estados posibles, mientras menos mejor para ser lo más rápido posible.
+Este servicio debería estar enfocado a hablar con SWIFT de una manera segura, asincrona, multihilo, ligero, escalable y fiable.
+
+Creo que este gestor de estados sería un objeto central que sería invocado, usado por dicho consumidor, sería un objeto centralizado que 
+gestionara el estado por el que atraviesa cada peticion, usando el identificador creado en la petición POST inicial. 
+Cuando este consumidor invoca al servicio que hace el pago y que va informandoa la maquina de estados sobre el punto en el que está, finalmente usará una api rest para comunicar asincronamente al cliente inicial mediante un hook javascript el resultado de la operación.
+
+enlaces
+
+https://medium.com/quintoandar-tech-blog/building-a-microservice-f6e3ea345ea5
+
+https://midu.dev/react-hooks-use-effect-funcionalidad-en-el-ciclo-vida-componentes/
+
+# super+fast+state+management+server+side+java+microservices
+https://www.google.com/search?client=safari&rls=en&sxsrf=ALeKk01msTWwuaQOBEEt9NXld5Zthup7wg%3A1599475615471&ei=nw9WX-ybHMreaqDIhPgP&q=super+fast+state+management+server+side+java+microservices&oq=super+fast+state+management+server+side+java+microservices&gs_lcp=CgZwc3ktYWIQAzoECCMQJzoHCCMQsAIQJ1DijwFY-KMBYLanAWgBcAB4AIABfYgB4gmSAQM5LjSYAQCgAQGqAQdnd3Mtd2l6wAEB&sclient=psy-ab&ved=0ahUKEwis54v_7tbrAhVKrxoKHSAkAf8Q4dUDCAw&uact=5
+
+#SWIFT
+https://medium.com/@scott_95329/managing-state-with-microservices-8a4952627a40
+
+https://github.com/qoomon/banking-swift-messages-java
+
+https://www.prowidesoftware.com
+
+https://stackoverflow.com/questions/994790/reliable-way-to-validate-iban-bic-in-java
+
+https://developer.token.io/bank-integration/
+
+https://www.google.com/search?client=safari&rls=en&q=swift+banks+java&ie=UTF-8&oe=UTF-8
+
