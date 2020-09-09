@@ -71,3 +71,5 @@ Spring-boot is going to add a lot of @Conditional labels for us to make our life
 links
 
 	https://www.marcobehler.com/guides/spring-boot
+
+	https://docs.spring.io/spring-boot/docs/current/reference/html/using-spring-boot.html#using-boot-auto-configuration
