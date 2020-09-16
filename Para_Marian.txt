@@ -1,0 +1,362 @@
+¿Qué novedades trae Java 8? Explica alguna/s de ella/s. 
+
+	Hay muchas novedades, probablemente las más interesantes, para mí, es usar métodos por defecto en las interfaces, abajo del todo en el ejemplo final adjunto una solución de interfaces, junto con un ejemlo de uso con clases abstractas a los que viene a sustituir en parte. 
+
+	Otra novedad es la posibilidad de iterar sobre colecciones a la manera funcional usando el método stream, es decir, podemos ir enlazando funciones para que operen sobre la salida de cada operación. En definitiva, a partir de java8 en adelante, el estilo funcional junto con las lambdas han aterrizado. He usado principalmente el estilo funcional cuando tengo que hacer algo con Apache Spark y scala, y siempre que sea necesario, por motivos de legibilidad o de coherencia con lo producido por los compañeros. 
+	Lo importante es que se pueda entender facilmente sin tener que concatenar muchas funciones, ya que si llegas a encadenar muchas invocaciones, pierdes la legibilidad e incluso la capacidad de depurar fácilmente el código. El estilo imperativo es mucho más fácil de depurar que el funcional. 
+
+	También es muy interesante el uso de una nueva api para manejar el paso del tiempo, java.time, aunque me temo que no será la última implementación.
+
+
+Dada la lista List<Integer> lista = Arrays.asList(1,2,3,4);
+
+Implementa un método en Java 8 que reciba como parámetro dicha lista y devuelva unicamente los números pares.
+
+	List<Integer> lista = Arrays.asList(1,2,3,4);
+
+	public List<Integer> mostrarPares(List<Integer> lista){
+		//collect(Collectors.toList()) crea otra lista partiendo de la original.
+		return lista.stream().filter(num -> num%2==0).collect(Collectors.toList());	
+	}
+
+
+	List<Integer> listaPares = mostrarPares(lista);
+
+	listaPares.forEach(System.out::println);
+
+En qué te fijas a la hora de hacer un code review a un compañero. 
+
+	En la legibilidad y en que esté bien refactorizado, también en que no haya demasiada complejidad logarítmica, que no cree objetos. 
+	Los nombres de las clases y de las variables deben ser explicativos, nada de números mágicos, me gusta que esté documentado, debe explicar que hace.
+	Tiene que haber tests unitarios y de aceptación consensuados con la gente de QA. 
+	Me gusta que los tests unitarios sigan el patrón GIVEN/WHEN/THEN.
+	Si hay que integrar con alguna funcionalidad de terceros, me gusta ver Mockito, porque podremos simular el funcionamiento de esa funcionalidad de terceros
+	cuando tenga que ejecutar dichos tests. En definitiva, aplicar sentido común y coherencia con el codigo producido por el equipo, sin llegar a ser un talibán.
+
+SCRUM. ¿Has trabajado con ello? ¿Cuéntanos en qué consiste y qué eventos recuerdas? 
+
+	Si, he trabajado con proyectos que usan SCRUM. Algunas mejores que otras.
+
+	He vivido varias formas de aplicar SCRUM y Agile, una es consensuar sprints de dos o tres semanas en las que entregamos funcionalidad pactada con el cliente, hacemos reuniones
+	diarias muy rápidas en las que explicamos que hice ayer, que voy a hacer hoy y como creo que debo hacerlo, de manera que a lo mejor tenga que solicitar hacer una sesion de pairing con algún compañero,
+	o compartir ideas para tratar de desatascar sin necesidad de hacer pairing. 
+
+	Cuando he practicado pairing, encontramos que la mejor manera es cuando uno escribe el test, el otro la clase de producción, luego nos cambiamos para la siguiente. Refactorizamos y comentamos cuál es la mejor manera. Otras veces ha sido cuando hay que enseñar a alguien sobre la funcionalidad existente y se ponga al dia. Encontramos que hacer pairing entre personas que aún no se conocen o no se ha creado un vínculo, puede hacer ralentizar con mucho el desarrollo. También encontramos que poner a hacer pairing entre personas muy tímidas o que los dos tengan mucho caracter tampoco es bueno. En definitiva, no se puede forzar a hacer pair programming, debe salir poco a poco y de manera natural.
+
+	Eventos? las reuniones diarias de 10 minutos o menos, los sprints, inicio y fin, junto con las fases de refactorización.
+
+	También he tenido la mala fortuna de vivir a personas que hablaban de un SCRUM agile que producían verguenza ajena cuando te hacían contar cosas íntimas al resto del equipo, a montar piezas de lego, reuniones larguísimas e improductivas. No me gustó ese estilo.
+
+¿Qué modificadores de acceso (o visibilidad) conoces en Java? 
+
+	Sin Espec, es decir, no poner ninguna de las siguientes, public, protected y private. A nivel de clase y de campo de cada clase.
+
+	public: Una clase, una subclase y todo lo que haya en un paquete, puede acceder a esa clase pública.
+
+	protected: las clases que extiendan de una clase que tengan un metodo o un campo protegido, podrán acceder a él, podrán invocarlo.
+
+	private: Se podrá acceder a una clase privada desde una clase declarada en el mismo fichero o a un campo privado desde la misma clase. Nada más.
+
+	Se ve mejor así:
+
+	MODIFICADOR CLASE PACKAGE SUBCLASE TODOS
+
+	public      Sí    Sí      Sí       Sí
+	
+	protected   Sí    Sí      Sí       NO
+
+	Sin Espec   Sí    Sí      NO       NO 
+
+	private     Si    NO      NO       NO
+ 
+
+Diferencias entre una clase abstracta y un interfaz. ¿Cuándo usaráis una u otra?
+
+	Una clase abstracta es una clase con métodos y campos que no implementa alguno o todos sus métodos, porque se espera que una clase extienda dicha clase y sobreescriba la funcionalidad de dicho método.
+	Una clase abstracta solo puede extender a una sola clase abstracta. Una clase normal solo puede extender de una clase abstracta.
+
+	Una interfaz gestiona un contrato acerca de que puede hacer una clase que implemente dicha interfaz, de manera que una clase que implemente dicha interfaz, tiene que especificar el codigo de dichos métodos descritos por dicho contrato. Una interfaz puede extender de varias interfaces, luego, la clase que implemente dicha interfaz, debe especificar código para todos esos metodos descritos en esas interfaces.
+
+	Desde java8, se permite añadir funcionalidad por defecto a métodos de una interfaz, por lo que el uso de uno u otro se ha diluido un poco. En este momento actual, usaría clases abstractas si ellas tuvieran que gestionar algún estado interno, un campo, mientras que las interfaces solo describen métodos, no permiten añadir estado. Esa es la principal diferencia. En el fondo estamos hablando de como gestionar herencia múltiple (mediante interfaces) y polimorfismo (mediante clases abstractas). 
+
+¿Qué es Maven y para qué se usa? Da más de una funcionalidad. 
+
+	Maven es una herramienta para gestionar las fases necesarias a la hora de compilar código, crear un jar, lanzar los tests, desplegar en un sitio remoto el jar, copiar el jar en un repositorio maven público o privado, crear un contenedor docker, subir el contenedor docker a un hub publico o privado, limpiar la compilación previa. En definitiva, poder trabajar con los fuentes para crear un codigo que la maquina virtual pueda ejecutar. Cada dia salen nuevas funcionalidades, he descrito las más usadas en el dia a dia.
+
+¿Qué es Git y para qué se usa? Lista todos los comandos de Git que conozcas. 
+
+	Es una herramienta para gestionar el ciclo de vida del repositorio y su código, te permite guardarlo, crear ramas para crear nuevas features, mezclar de manera segura el codigo de los compañeros en una rama final de produccion y de desarrollo.
+
+	git clone. Clona en tu disco duro un repositorio existente.
+	git checkout. Te permite cambiar de una rama a otra. 
+	git pull. Me traigo los cambios remotos a mi copia local.
+	git fetch. lista los ficheros cambiados en remoto con respecto a tu local. No baja ningun fichero. 
+	git remote. Lista los repositorios remotos.
+	git init. Inicializa la estructura de un nuevo repositorio en tu maquina local.
+	git add. Añade ficheros a tu repositorio para subirlos.
+	git commit. Prepara los ficheros para la subida añadiendo un mensaje descriptivo.
+	git push. Hace la subida al repositorio distribuido.
+	git diff. Muestra las diferencias existentes entre un fichero remoto con respecto a tu fichero local.
+	git status. Muestra el estado de los ficheros de tu repositorio remoto con respecto al local, te dice si falta alguno por añadir al commit.
+	git stash. Permite guardar temporalmente en el espacio de trabajo los cambios actuales con respecto al último commit. Luego podemos traer de nuevo esos cambios a la rama actual.
+	git merge. Permite mezclar distintas ramas en una sola.
+	git rebase. Parecida a la anterior. En mi opinión, a evitar. 
+
+	Quiero extenderme un pelín con respecto a las estrategias de mezclar el codigo con la rama principal. Lo que he encontrado que funciona mejor a la hora de subir mi codigo es lo siguiente:
+	Una vez que tengo claro que mi codigo es correcto, hace lo que tiene que hacer y tal, es identificar y guardar dichas partes de ese codigo en un directorio, guardar esa rama de trabajo que solo yo trabajo, si no puedo hacer merge directamente a master por conflictos, una vez guardadada esa rama feature, por si acaso, me bajo otra vez master y añado el codigo. compilo, ejecuto todo, y luego puedo hacer merge limpiamente con master. Igual no es lo mejor, pero puede haber conflictos con otros compañeros por tener ramas remotas.
+
+
+¿Qué es un mock y por qué lo querrías usar? 
+
+	Es un objeto que emula el funcionamiento de un objeto real que se está desarrollando por otro lado. Normalmente cuando quieres hacer tests unitarios con respecto a librerias de terceros, tu solo puedes saber cuales son las salidas que puede dar, por lo que necesitas saber como interactua tu codigo con respecto a esa futura libreria.
+
+¿Cómo le explicarías a alguien que no sabe lo que es Spring que le puede aportar en sus proyectos? 
+
+	Spring básicamente es un contenedor de clases que se ejecuta en la JVM, que va a gestionar el ciclo de vida de esas clases, es decir, puede que quieras que tu clase sea un singleton, es decir, una única instancia de una clase por contenedor spring o un objeto nuevo. Luego, para gestionar esas clases, la empresa que creó Spring, Pivotal,creó un framework para trabajar con los distintos objetos instanciados por dichas clases. Implementa muchísimas buenas prácticas en forma de buenos patrones de software y facilidad de acceder a bases de datos, motores de eventos, servidores web, clusters, componentes distribuidos...
+
+	Dichos patrones pueden ser Singleton, MVC, Factory, Observer, inyeccion de dependencias, por nombrar unos cuantos.
+
+	Spring es una gran herramienta que permite crear una aplicación java muy rapidamente siguiendo buenas practicas consolidadas y comprobadas por millones de ingenieros de software a lo largo del mundo. Te facilita la vida. 
+
+¿Conoces la diferencia entre Spring y Spring Boot? 
+
+	Spring está descrito anteriormente.
+
+	Qué es Spring Boot?
+
+		Tecnicamente hablando según los ingenieros de Pivotal:
+
+		Spring Boot son sólo pares de clases @Configurations y @Conditions, que crearan clases @Beans para nosotros si se cumplen esas @Conditions.
+
+		Tres de las condiciones más importantes son:
+
+			@ConditionalOnClass. Comprobará si las dependencias o más bien clases específicas de dependencias están cargadas en el classpath.(piense: Tomcat, HikariCP, etc).
+
+			@ConditionalOnProperty. Está esa propiedad descrita en algun fichero de propiedas?
+
+			Condicional sobre el hermano desaparecido. Si el usuario ya especificó el suyo, por ejemplo, DataSource, entonces Spring Boot no intentará crear su autoconfiguración.
+
+		No tan tecnicamente hablando Se puede ver como un conjunto de clases o beans, definidas por dependencias en el pom.xml, estables entre sí, que se van a cargar en el contexto de spring 
+		siempre que cumplan una serie de condiciones.
+
+		Cuales son esas condiciones?
+
+		Las expresadas mediante la etiqueta @Conditionals. 
+
+		Basicamente spring-boot es una configuracion de un contexto compartido de spring con un monton de etiquetas @Conditionals.
+		
+		Una etiqueta de este tipo te va a devolver un true o un false en funcion del codigo que hayas querido usar, por ejemplo, 
+
+		Dado el codigo siguiente, se puede apreciar que una etiqueta @IsRelationalDatabaseCondition implementa algo asi:
+
+
+			import org.springframework.context.annotation.Condition;
+			import org.springframework.context.annotation.ConditionContext;
+			import org.springframework.core.type.AnnotatedTypeMetadata;
+
+			public class IsRelationalDatabaseCondition implements Condition {
+
+			    @Override
+			    public boolean matches(ConditionContext context, AnnotatedTypeMetadata metadata) {  // (1)
+			        return oracleJdbcDriverOnClassPath() && databaseUrlSet(context); // (2)
+			    }
+
+			    private boolean databaseUrlSet(ConditionContext context) { // (3)
+			        return context.getEnvironment().containsProperty("spring.datasource.url");
+			    }
+
+			    private boolean oracleJdbcDriverOnClassPath() { // (4)
+			        try {
+			            Class.forName("oracle.jdbc.driver.OracleDriver");
+			            return true;
+			        } catch (ClassNotFoundException e) {
+			            return false;
+			        }
+			    }
+			}
+
+		Y la podremos usar tal que asi:
+
+			@Configuration
+			public class ReallyBigCompanySharedContextConfiguration {
+
+			    @Bean
+			    @Conditional(IsRelationalDatabaseCondition.class) // (1)
+			    public ReallyBigCompanyProprietaryFlywayClone flywayClone() {
+			        return new ReallyBigCompanyProprietaryFlywayClone();
+			    }
+
+			}
+
+		Spring-boot va a añadir un montón de etiquetas @Conditional por nosotros para hacernos la vida más fácil. 
+
+		Nos va a dar un montón de dependencias estables entre sí para que la creación del software sea lo más fácil posible. 
+		Antes de spring boot, uno tenía que averiguar si una versión de una dependencia es estable con el resto. 
+		Era problemático, por decirlo suavemente.
+
+¿Sabes qué es CQRS? 
+
+	CQRS es un patrón de software que significa Command Query Responsibility Segregation, básicamente un patrón que aboga por enviar, por segregar, las escrituras (commands) a una base de datos y las lecturas a otra base de datos. Se usa sobretodo para tratar de conseguir lo mejor del mundo transaccional ACID con los sistemas distribuidos. 
+	
+	ACID significa atomico, consistente, aislamiento (isolated) y durable. Son las características deseables en una transacción de base de datos. 
+	Muy dificil de conseguir en una base de datos distribuidas, de hecho, tenemos un teorema, llamadao teorema CAP que dice que es imposible tener todas esas características que da un sistema ACID.
+	El teorema CAP dice que de las tres características que tiene un sistema distribuido, consistencia, disponibilidad y tolerancia al particionado, solo podemos tener dos de tres.
+	Un sistema ACID es uno de tipo CA.
+	Hay veces que queremos poder distribuir la carga del sistema para conseguir tener escrituras y lecturas rápidas y confiables entre transacciones.
+
+¿y Event Sourcing? 
+
+FALTA!
+
+Diferencias entre un IaaS y un PaaS. 
+
+
+FALTA!
+
+¿Conoces alguno de cada tipo? 
+
+
+FALTA!
+
+Explica lo que es un Service Mesh, ¿conoces alguno? 
+
+
+FALTA!
+
+Explica qué es TDD y en qué consiste la tringulación 
+
+
+FALTA!
+
+Aplica el patrón Factory con expresiones lamda 
+
+
+FALTA!
+
+Reduce las 3 clases (OldWayPaymentStrategy, CashPaymentStrategy y CreditCardStrategy) en una única clase (PaymentStrategy). No necesitas crear ninguna clase o interfaz más. Además, dime cómo usuarías PaymentStrategy, es decir las diferentes estrategias de pago en la clase Main
+
+public interface OldWayPaymentStrategy { 
+
+	double pay(double amount); 
+
+} 
+
+public class CashPaymentStrategy implements OldWayPaymentStrategy { 
+
+	@Override public double pay(double amount) { 
+		double serviceCharge = 5.00; return amount + serviceCharge; 
+	} 
+} 
+
+public class CreditCardStrategy implements OldWayPaymentStrategy { 
+
+	@Override public double pay(double amount) { 
+
+		double serviceCharge = 5.00; double creditCardFee = 10.00; return amount + serviceCharge + creditCardFee; 
+	} 
+} 
+
+---->MI PROPUESTA
+
+public interface PaymentStrategy { //write here your solution
+
+	public default double payCredit(double amount) { 
+
+		double serviceCharge = 5.00; 
+		double creditCardFee = 10.00; 
+		return amount + serviceCharge + creditCardFee; 
+	} 
+
+	public default double payCash(double amount) { 
+		double serviceCharge = 5.00; 
+		return amount + serviceCharge; 
+	} 
+
+} 
+
+public class Main { 
+
+	private class Payment implements PaymentStrategy{
+
+	} 
+
+	public static void main(String[] args) {
+
+		Payment myPayment = new Payment();
+
+		double byCredit = myPayment.payCredit(2d);
+
+		double byCash = myPayment.payCash(3d);
+
+		System.out.println("byCredit:" + byCredit);
+		System.out.println("byCash:" + byCash);
+	}	 
+
+}
+
+
+Yo haría algo así, usar métodos default en la interfaz, siempre que no tuviera que gestionar un estado a la hora de pagar, entonces tendria que usar clases abstractas y herencia, cada una con el estado que les caracterizara. 
+
+En eso caso, se podria usar luego una clase factoria para crear un objeto u otro para cada pago. 
+Esa factoria sería un Singleton, una única instancia en memoria por maquina virtual o por contenedor de clases.
+
+
+Las clases abstractas que implementen una interfaz PayStrategy con un único metodo pay sin implementar, algo así:
+
+public interface OldWayPaymentStrategy { 
+
+	public double pay(double amount); 
+
+} 
+
+public abstract class Payment implements OldWayPaymentStrategy{
+
+	public abstract double pay(double amount);	
+}
+
+public class CreditPayment extends Payment{
+	
+	private final double serviceCharge; 
+	private final double creditCardFee;
+
+	public CreditPayment(double _serviceCharge,double _creditCardFee){
+		this.serviceCharge=_serviceCharge;
+		this.creditCardFee=_creditCardFee;
+	}
+
+	public double pay(double amount){
+
+		return amount + serviceCharge + creditCardFee;
+	}
+} 
+
+public class CashPayment extends Payment{
+	
+	private final double serviceCharge; 
+
+	public CashPayment(double _serviceCharge){
+		this.serviceCharge=_serviceCharge;
+	}
+
+	public double pay(double amount){
+
+		return amount + serviceCharge; 
+	}
+}
+
+double serviceCharge = 5.00; 
+double creditCardFee = 10.00;
+
+CashPayment cash = new CashPayment(serviceCharge);
+CreditPayment credit = new CreditPayment(serviceCharge, creditCardFee);
+
+double amount = 2.00;
+double cashPayment = cash.pay(amount);
+double creditPayment = credit.pay(amount);
+
+System.out.println("byCredit:" + creditPayment);
+System.out.println("byCash:" + cashPayment);
+
+
+Se puede apreciar que desde que se puede implementar métodos por defecto en las interfaces, las clases abstractas han perdido su razón de ser, a no ser que quieras mantener su estado dentro de su clase abstracta y quieras cambiarlo instanciando un nuevo objeto con nuevos valores para sus campos privados. Al final todo depende de lo que quieras hacer.
+
