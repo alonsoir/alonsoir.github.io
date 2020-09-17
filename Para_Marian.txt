@@ -1,4 +1,8 @@
-¿Qué novedades trae Java 8? Explica alguna/s de ella/s. 
+PREGUNTA 1
+
+	¿Qué novedades trae Java 8? Explica alguna/s de ella/s. 
+
+RESPUESTA 1
 
 	Hay muchas novedades, probablemente las más interesantes, para mí, es usar métodos por defecto en las interfaces, abajo del todo en el ejemplo final adjunto una solución de interfaces, junto con un ejemlo de uso con clases abstractas a los que viene a sustituir en parte. 
 
@@ -8,9 +12,13 @@
 	También es muy interesante el uso de una nueva api para manejar el paso del tiempo, java.time, aunque me temo que no será la última implementación.
 
 
-Dada la lista List<Integer> lista = Arrays.asList(1,2,3,4);
+PREGUNTA 2
 
-Implementa un método en Java 8 que reciba como parámetro dicha lista y devuelva unicamente los números pares.
+	Dada la lista List<Integer> lista = Arrays.asList(1,2,3,4);
+
+	Implementa un método en Java 8 que reciba como parámetro dicha lista y devuelva unicamente los números pares.
+
+RESPUESTA 2
 
 	List<Integer> lista = Arrays.asList(1,2,3,4);
 
@@ -24,18 +32,31 @@ Implementa un método en Java 8 que reciba como parámetro dicha lista y devuelva 
 
 	listaPares.forEach(System.out::println);
 
-En qué te fijas a la hora de hacer un code review a un compañero. 
+PREGUNTA 3
 
-	En la legibilidad y en que esté bien refactorizado, también en que no haya demasiada complejidad logarítmica, que no cree objetos. 
-	Los nombres de las clases y de las variables deben ser explicativos, nada de números mágicos, me gusta que esté documentado, debe explicar que hace.
+	En qué te fijas a la hora de hacer un code review a un compañero. 
+
+RESPUESTA 3
+
+	En la legibilidad y en que esté bien refactorizado, también en que no haya demasiada complejidad logarítmica, que no cree objetos innecesarios, haya demasiadas líneas en los métodos,que procure los principios solid, tenga tests unitarios y de aceptación bien definidos. 
+
+	Los nombres de las clases y de las variables deben ser explicativos, nada de números mágicos, me gusta que esté documentado, debe explicar qué hace, al menos.
+	Personalmente me gusta también que explique como lo hace, pero es algo muy personal. Lo obligatorio es explicar qué hace.
+
 	Tiene que haber tests unitarios y de aceptación consensuados con la gente de QA. 
+	
 	Me gusta que los tests unitarios sigan el patrón GIVEN/WHEN/THEN.
-	Si hay que integrar con alguna funcionalidad de terceros, me gusta ver Mockito, porque podremos simular el funcionamiento de esa funcionalidad de terceros
+	
+	Si hay que integrar con alguna funcionalidad de terceros, me gusta ver Mockito o similar, porque podremos simular el funcionamiento de esa funcionalidad de terceros
 	cuando tenga que ejecutar dichos tests. En definitiva, aplicar sentido común y coherencia con el codigo producido por el equipo, sin llegar a ser un talibán.
 
-SCRUM. ¿Has trabajado con ello? ¿Cuéntanos en qué consiste y qué eventos recuerdas? 
+PREGUNTA 4
+	
+	SCRUM. ¿Has trabajado con ello? ¿Cuéntanos en qué consiste y qué eventos recuerdas? 
 
-	Si, he trabajado con proyectos que usan SCRUM. Algunas mejores que otras.
+RESPUESTA 4
+
+	Si, he trabajado con proyectos que usan SCRUM. Algunas experiencias fueron mejores que otras.
 
 	He vivido varias formas de aplicar SCRUM y Agile, una es consensuar sprints de dos o tres semanas en las que entregamos funcionalidad pactada con el cliente, hacemos reuniones
 	diarias muy rápidas en las que explicamos que hice ayer, que voy a hacer hoy y como creo que debo hacerlo, de manera que a lo mejor tenga que solicitar hacer una sesion de pairing con algún compañero,
@@ -43,11 +64,15 @@ SCRUM. ¿Has trabajado con ello? ¿Cuéntanos en qué consiste y qué eventos recuerd
 
 	Cuando he practicado pairing, encontramos que la mejor manera es cuando uno escribe el test, el otro la clase de producción, luego nos cambiamos para la siguiente. Refactorizamos y comentamos cuál es la mejor manera. Otras veces ha sido cuando hay que enseñar a alguien sobre la funcionalidad existente y se ponga al dia. Encontramos que hacer pairing entre personas que aún no se conocen o no se ha creado un vínculo, puede hacer ralentizar con mucho el desarrollo. También encontramos que poner a hacer pairing entre personas muy tímidas o que los dos tengan mucho caracter tampoco es bueno. En definitiva, no se puede forzar a hacer pair programming, debe salir poco a poco y de manera natural.
 
-	Eventos? las reuniones diarias de 10 minutos o menos, los sprints, inicio y fin, junto con las fases de refactorización.
+	Eventos? las reuniones diarias de 10 minutos o menos, los sprints, inicio y fin con el PO, para consensuar qué tiene prioridad, junto con las fases de refactorización.
 
 	También he tenido la mala fortuna de vivir a personas que hablaban de un SCRUM agile que producían verguenza ajena cuando te hacían contar cosas íntimas al resto del equipo, a montar piezas de lego, reuniones larguísimas e improductivas. No me gustó ese estilo.
 
-¿Qué modificadores de acceso (o visibilidad) conoces en Java? 
+PPREGUNTA 5
+
+	¿Qué modificadores de acceso (o visibilidad) conoces en Java? 
+
+RESPUESTA 5
 
 	Sin Espec, es decir, no poner ninguna de las siguientes, public, protected y private. A nivel de clase y de campo de cada clase.
 
@@ -69,8 +94,10 @@ SCRUM. ¿Has trabajado con ello? ¿Cuéntanos en qué consiste y qué eventos recuerd
 
 	private     Si    NO      NO       NO
  
+PREGUNTA 6 
+	Diferencias entre una clase abstracta y un interfaz. ¿Cuándo usaráis una u otra?
 
-Diferencias entre una clase abstracta y un interfaz. ¿Cuándo usaráis una u otra?
+RESPUESTA 6
 
 	Una clase abstracta es una clase con métodos y campos que no implementa alguno o todos sus métodos, porque se espera que una clase extienda dicha clase y sobreescriba la funcionalidad de dicho método.
 	Una clase abstracta solo puede extender a una sola clase abstracta. Una clase normal solo puede extender de una clase abstracta.
@@ -79,11 +106,19 @@ Diferencias entre una clase abstracta y un interfaz. ¿Cuándo usaráis una u otra?
 
 	Desde java8, se permite añadir funcionalidad por defecto a métodos de una interfaz, por lo que el uso de uno u otro se ha diluido un poco. En este momento actual, usaría clases abstractas si ellas tuvieran que gestionar algún estado interno, un campo, mientras que las interfaces solo describen métodos, no permiten añadir estado. Esa es la principal diferencia. En el fondo estamos hablando de como gestionar herencia múltiple (mediante interfaces) y polimorfismo (mediante clases abstractas). 
 
-¿Qué es Maven y para qué se usa? Da más de una funcionalidad. 
+PREGUNTA 7
+
+	¿Qué es Maven y para qué se usa? Da más de una funcionalidad. 
+
+RESPUESTA 7
 
 	Maven es una herramienta para gestionar las fases necesarias a la hora de compilar código, crear un jar, lanzar los tests, desplegar en un sitio remoto el jar, copiar el jar en un repositorio maven público o privado, crear un contenedor docker, subir el contenedor docker a un hub publico o privado, limpiar la compilación previa. En definitiva, poder trabajar con los fuentes para crear un codigo que la maquina virtual pueda ejecutar. Cada dia salen nuevas funcionalidades, he descrito las más usadas en el dia a dia.
 
-¿Qué es Git y para qué se usa? Lista todos los comandos de Git que conozcas. 
+PREGUNTA 8
+
+	¿Qué es Git y para qué se usa? Lista todos los comandos de Git que conozcas. 
+
+RESPUESTA 8
 
 	Es una herramienta para gestionar el ciclo de vida del repositorio y su código, te permite guardarlo, crear ramas para crear nuevas features, mezclar de manera segura el codigo de los compañeros en una rama final de produccion y de desarrollo.
 
@@ -103,14 +138,21 @@ Diferencias entre una clase abstracta y un interfaz. ¿Cuándo usaráis una u otra?
 	git rebase. Parecida a la anterior. En mi opinión, a evitar. 
 
 	Quiero extenderme un pelín con respecto a las estrategias de mezclar el codigo con la rama principal. Lo que he encontrado que funciona mejor a la hora de subir mi codigo es lo siguiente:
-	Una vez que tengo claro que mi codigo es correcto, hace lo que tiene que hacer y tal, es identificar y guardar dichas partes de ese codigo en un directorio, guardar esa rama de trabajo que solo yo trabajo, si no puedo hacer merge directamente a master por conflictos, una vez guardadada esa rama feature, por si acaso, me bajo otra vez master y añado el codigo. compilo, ejecuto todo, y luego puedo hacer merge limpiamente con master. Igual no es lo mejor, pero puede haber conflictos con otros compañeros por tener ramas remotas.
+	Una vez que tengo claro que mi codigo es correcto, hace lo que tiene que hacer y tal, es identificar y guardar dichas partes de ese codigo en un directorio, guardar mi rama de trabajo, y si no puedo hacer merge directamente a master por conflictos, una vez guardadada esa rama feature, por si acaso, me bajo otra vez master y añado el codigo. compilo, ejecuto todo, y luego puedo hacer merge limpiamente con master. Igual no es la mejor estrategia, pero puede haber conflictos con otros compañeros por tener ramas remotas a la hora de subir mi feature, de hecho, es lo más común.
 
+PREGUNTA 9
 
-¿Qué es un mock y por qué lo querrías usar? 
+	¿Qué es un mock y por qué lo querrías usar? 
+
+RESPUESTA 9
 
 	Es un objeto que emula el funcionamiento de un objeto real que se está desarrollando por otro lado. Normalmente cuando quieres hacer tests unitarios con respecto a librerias de terceros, tu solo puedes saber cuales son las salidas que puede dar, por lo que necesitas saber como interactua tu codigo con respecto a esa futura libreria.
 
-¿Cómo le explicarías a alguien que no sabe lo que es Spring que le puede aportar en sus proyectos? 
+PREGUNTA 10
+
+	¿Cómo le explicarías a alguien que no sabe lo que es Spring que le puede aportar en sus proyectos? 
+
+RESPUESTA 10
 
 	Spring básicamente es un contenedor de clases que se ejecuta en la JVM, que va a gestionar el ciclo de vida de esas clases, es decir, puede que quieras que tu clase sea un singleton, es decir, una única instancia de una clase por contenedor spring o un objeto nuevo. Luego, para gestionar esas clases, la empresa que creó Spring, Pivotal,creó un framework para trabajar con los distintos objetos instanciados por dichas clases. Implementa muchísimas buenas prácticas en forma de buenos patrones de software y facilidad de acceder a bases de datos, motores de eventos, servidores web, clusters, componentes distribuidos...
 
@@ -118,7 +160,11 @@ Diferencias entre una clase abstracta y un interfaz. ¿Cuándo usaráis una u otra?
 
 	Spring es una gran herramienta que permite crear una aplicación java muy rapidamente siguiendo buenas practicas consolidadas y comprobadas por millones de ingenieros de software a lo largo del mundo. Te facilita la vida. 
 
-¿Conoces la diferencia entre Spring y Spring Boot? 
+PREGUNTA 11
+	
+	¿Conoces la diferencia entre Spring y Spring Boot? 
+
+RESPUESTA 11 (larga, lo siento)
 
 	Spring está descrito anteriormente.
 
@@ -143,9 +189,9 @@ Diferencias entre una clase abstracta y un interfaz. ¿Cuándo usaráis una u otra?
 
 		Las expresadas mediante la etiqueta @Conditionals. 
 
-		Basicamente spring-boot es una configuracion de un contexto compartido de spring con un monton de etiquetas @Conditionals.
+		Basicamente spring-boot es una configuracion de un contexto compartido de spring con un monton de etiquetas @Conditionals para cargar en el classpath de spring aquellas dependencias que necesitamos para construir mi aplicación.
 		
-		Una etiqueta de este tipo te va a devolver un true o un false en funcion del codigo que hayas querido usar, por ejemplo, 
+		Una etiqueta de este tipo te va a devolver un true o un false en funcion del codigo que hayas querido usar, por ejemplo: 
 
 		Dado el codigo siguiente, se puede apreciar que una etiqueta @IsRelationalDatabaseCondition implementa algo asi:
 
@@ -194,7 +240,11 @@ Diferencias entre una clase abstracta y un interfaz. ¿Cuándo usaráis una u otra?
 		Antes de spring boot, uno tenía que averiguar si una versión de una dependencia es estable con el resto. 
 		Era problemático, por decirlo suavemente.
 
-¿Sabes qué es CQRS? 
+PREGUNTA 12
+
+	¿Sabes qué es CQRS? 
+
+RESPUESTA 12
 
 	CQRS es un patrón de software que significa Command Query Responsibility Segregation, básicamente un patrón que aboga por enviar, por segregar, las escrituras (commands) a una base de datos y las lecturas a otra base de datos. Se usa sobretodo para tratar de conseguir lo mejor del mundo transaccional ACID con los sistemas distribuidos. 
 	
@@ -202,161 +252,294 @@ Diferencias entre una clase abstracta y un interfaz. ¿Cuándo usaráis una u otra?
 	Muy dificil de conseguir en una base de datos distribuidas, de hecho, tenemos un teorema, llamadao teorema CAP que dice que es imposible tener todas esas características que da un sistema ACID.
 	El teorema CAP dice que de las tres características que tiene un sistema distribuido, consistencia, disponibilidad y tolerancia al particionado, solo podemos tener dos de tres.
 	Un sistema ACID es uno de tipo CA.
-	Hay veces que queremos poder distribuir la carga del sistema para conseguir tener escrituras y lecturas rápidas y confiables entre transacciones.
+	Hay veces que queremos poder distribuir la carga del sistema para conseguir tener escrituras y lecturas rápidas y confiables entre transacciones. 
 
-¿y Event Sourcing? 
+	Para un sistema CQRS, primero tenemos que guardar el dato, el comando, en una base de datos o un cluster dedicado para las escrituras, usando un gestor de comandos. Este cluster de escrituras forma parta del sistema fuente de confiabilidad. 
 
-FALTA!
+	Otra fuente de confiabilidad es el motor de eventos que transportará al gestor de lecturas el comando recien escrito a otro cluster especializado en lecturas. Queremos tratar de conseguir lecturas y escrituras rápidas, de manera que tenemos que seleccionar muy bien las distintas tecnologías. El motor de eventos o broker de mensajería es opcional, se suele añadir para dar confiabilidad al sistema y para momentos en los que necesitemos reconstruir los datos e indices en los distintos clusters. 
 
-Diferencias entre un IaaS y un PaaS. 
+PREGUNTA 13
 
+	¿y Event Sourcing? 
 
-FALTA!
+RESPUESTA 13
 
-¿Conoces alguno de cada tipo? 
+	Lo podemos ver como un patrón de software que sirve para gestionar los estados que emiten y reciben los distintos componentes de una arquitectura distribuida asíncrona. Asíncrono significa que un componente emite un mensaje pero no se queda bloqueado esperando por la respuesta. Asume que es posible que la respuesta tarde, minutos, horas o incluso días.
 
+	Un ejemplo, tenemos 3 componentes, Ordenes, clientes y pagos, cada uno de ellos emite mensajes, eventos a alguien que escuche estos mensajes y estos a su vez pueden emitir otros mensajes por lo que tambien necesitan escuchar esos mensajes y actuar según llegan. 
+	
+	Cada componente necesitará producir y consumir esos mensajes. Puede que querremos que nuestros componentes hablen entre sí o puede que querremos que hablen unicamente con un objeto central orquestador.
 
-FALTA!
+	Se suele usar tecnología de brokers de mensajería, usando el patrón publicador/subscriptor. Se puede ver facilmente como una persona Y que tiene que enviar una carta a una persona X, este la entrega en un buzon, luego llega un cartero que recoge la carta y la entrega a otro sistema, que a su vez se entrega a otro, hasta que llega a la persona X y responde a la persona Y siguiendo un camino a la inversa. La persona Y es productor, la persona X es el consumidor final, mientras que el cartero y el buzon forma parte de la infraestructura del broker, también llamado topic. Hay muchos productos en el mercado, y dependiendo de nuestras necesidades, tenemos que elegir con cuidado cual necesitamos.
 
-Explica lo que es un Service Mesh, ¿conoces alguno? 
+PREGUNTA 14
 
+	Diferencias entre un IaaS y un PaaS. 
 
-FALTA!
+RESPUESTA 14
 
-Explica qué es TDD y en qué consiste la tringulación 
+	IaaS significa Infraestructura como servicio. 
 
+		Significa que un proveedor cloud te da acceso a maquinas remotas donde podrías instalar tu software. Esas máquinas remotas pueden venir totalmente vacías, o como mucho con el sistema operativo de tu elección.
+		Tendrías que instalar y configurar absolutamente todo, desde el software de las máquinas remotas, la configuraciónd de red, enrutamientos, firewalls, gestión de disco duro con sus cuotas, etc...
+		Ideal si quieres gestionar y controlar al detalle tu infraestructura, desde la instalación hasta si quieres escalar añadiendo nuevas máquinas (scale out) o si quieres que las máquinas existentes mejoren sus caracteristicas (scale up).
+	
+	Paas significa Plataforma como servicio.
 
-FALTA!
+		Significa que un proveedor cloud te da acceso a su plataforma cloud. Esa plataforma ya está corriendo sobre sus servidores, con sus servicios. Tu alquilas esos servicios corriendo sobre esa plataforma.
+		Ideal para desarrolladores que solo quieren construir su app para que otros se encarguen de gestionar el hardware donde correrá la app.
 
-Aplica el patrón Factory con expresiones lamda 
+	Si decidimos ir por IaaS, el desarrollador de las aplicaciones se ocupa de todo, desde construir la app, hasta seleccionar el tipo de servidor, el tipo de red, el tipo de disco duro, si lo quieres corriendo en una maquina compartida o dedicada, virtualizada, en contenedor, tienes que gestionar la seguridad, en definitiva, mucho trabajo. 
 
+	Por otra parte, en PaaS podemos gestionar la plataforma donde correrá nuestra app, pero no el servidor fisico donde corre la app. La plataforma oculta muchos detalles para que solo tengamos que preocuparnos de generar nuestra app y subirla a la plataforma.
 
-FALTA!
+PREGUNTA 15
 
-Reduce las 3 clases (OldWayPaymentStrategy, CashPaymentStrategy y CreditCardStrategy) en una única clase (PaymentStrategy). No necesitas crear ninguna clase o interfaz más. Además, dime cómo usuarías PaymentStrategy, es decir las diferentes estrategias de pago en la clase Main
+	¿Conoces alguno de cada tipo? 
 
-public interface OldWayPaymentStrategy { 
+RESPUESTA 15
 
-	double pay(double amount); 
+	Ejemplos de IaaS en el mercado? Amazon Web Service, Azure, Google Cloud...
 
-} 
+	Ejemplos de PaaS en el mercado? Azure, Heroku, Google App Engine...
 
-public class CashPaymentStrategy implements OldWayPaymentStrategy { 
+PREGUNTA 16
 
-	@Override public double pay(double amount) { 
-		double serviceCharge = 5.00; return amount + serviceCharge; 
+	Explica lo que es un Service Mesh, ¿conoces alguno? 
+
+RESPUESTA 16
+
+	Significa servicios de la malla. En un entorno distribuido, necesitamos ciertos componentes del nivel arquitectura interna para asegurar el correcto funcionamiento.
+	
+	Dichos componentes suelen y deben ser:
+
+		Un servicio de descubrimiento y gestion de salud de los otros servicios.
+		Un servicio para enrutamiento y filtrado, asi como gestión de seguridad. Quien accede a que y cuando. El punto de entrada a la app.
+		Un servicio para gestionar repeticiones a la hora de invocar un servicio, cortar las peticiones cuando es obvio que no va a poder responder.
+		Un servicio para gestionar el balanceo de carga entre los distintos servidores.
+
+	Hasta hace muy poco, teníamos distintas tecnologias especializadas para cada uno de esos servicios, por ejemplo, para descubrimiento tenemos Eureka y Consul, para enrutamiento y filtrado tenemos Kong y zuul, nginx, que suelen usar distintos mecanismos para mantener la seguridad, como OAuth. Para gestionar las repeticiones, latencia y tolerancia a fallos se suele usar Hystrix, para el balanceo de carga se suele usar Ribbon. Casi todos pertenecen al stack de spring cloud, salvo Kong, nginx y Consul, aunque estos soportan spring cloud por su cuenta.
+
+	Podemos ver tambien a este servicio en malla como un servicio de enrutamiento y seguimiento de un paquete enviado mediante el servicio de Correos. Hará un seguimiento de las reglas de enrutamiento y dirige dinámicamente el tráfico y la ruta del paquete para acelerar la entrega y asegurar la recepción, es decir, usará todo lo descrito anteriormente para asegurar la entrega del paquete que contiene la información.
+
+	Como pueden ver, hay muchas siglas, muchos componentes distintos, lo que suele dificultar su mantenimiento. Últimamente ha salido Istio para englobar todas estas funcionalidades descritas anteriormente.
+
+	Todos los servicios descritos anteriormente corren sobre un gestor contenedores, como Kubernetes u OpenShift.
+
+PREGUNTA 17
+
+	Explica qué es TDD y en qué consiste la tringulación 
+
+RESPUESTA 17
+
+	TDD significa Test Driven Development, una forma de producir software que aboga por, primero enterarte bien sobre los criterios de aceptación de un caso de uso, para luego escribir un test unitario con los métodos que deben mostrar la funcionalidad de una clase de producción. Deben comprobar lo más exhaustivamente posible dicha funcionalidad. Cuando se ejecuta por primera vez, el test está en rojo, para luego empezar a escribir codigo en la clase de produccion, lo suficiente como para que el test esté en verde, para luego pensar en refactorizar el codigo en la clase de producción, a lo mejor también en el test, de manera que al final tenemos un código de mucha calidad.
+
+	Triangular yo lo conozco más como divide y vencerás, es decir, cuando no tenemos muy claro que tenemos que hacer para resolver nuestro problema, tenemos que dividirlo en los problemas más fundamentales posibles, atacarlos uno a uno, cada uno comprobando su funcionalidad con un test, de manera que cuando vamos resolviendolos uno a uno, tenemos tests que comprueban la funcionalidad de cada pequeño caso.
+	Un problema complejo siempre se compone de muchos problemas simples. Se trata de aplicar el sentido común y el método científico en definitva.
+
+	Se puede usar en parejas haciendo pair programming o en solitario. Personalmente me gusta hacer pair programming cuando se trata de producir un código especialmente dificil o estoy atascado, por lo que una nueva perspectiva o una mente más fresca me puede ayudar. Creo que es necesario que las personas se conozcan un poco previamente para alcanzar a ser más productivos que trabajando uno solo, no se debería imponer.
+
+PREGUNTA 18
+
+	Aplica el patrón Factory con expresiones lamda 
+
+RESPUESTA 18
+
+	El patrón Factoria sirve para crear objetos bajo demanda, es decir, nos piden que creemos un objeto tipo A, pues se instancia con sus parametros y se devuelve, nos piden otro de tipo B, se hace de igual manera. Si queremos ampliar la factoria, tenemos un punto inicial y coherente para crear objetos de una familia.
+
+	Usando una clase factoria con lambdas y métodos estáticos en la interfaz. Parecido a usar métodos default. 
+	Ideal para tener un codigo muy compacto, se podría parametrizar el estado, pero por simplicidad, voy a usar esos posibles parametros como atributos de los metodos estaticos de la interfaz .
+
+		public interface PaymentStrategy { //write here your solution
+
+			public static double payCredit(double amount) { 
+
+				double serviceCharge = 5.00; 
+				double creditCardFee = 10.00; 
+				return amount + serviceCharge + creditCardFee; 
+			} 
+
+			public static double payCash(double amount) { 
+				double serviceCharge = 5.00; 
+				return amount + serviceCharge; 
+			} 
+
+		} 
+
+		public class PaymentFactory {
+
+			public static double calculate (String type, double amount){
+
+				double calculated =0.00;
+				
+				if ("CREDIT".equalsIgnoreCase(type)){
+					calculated =PaymentStrategy.payCredit(amount);
+				}
+
+				if ("CASH".equalsIgnoreCase(type)){
+					calculated =PaymentStrategy.payCash(amount);
+				}
+				return calculated;
+			}
+		}
+
+		// La instancio por simplicidad, pero debería static final
+		PaymentFactory myFactory = new PaymentFactory();
+
+		double amount = 2.00;
+
+		//Se puede usar enumerados en vez de Strings y no tener dos if, pero por motivos de simplicidad y al ser únicamente dos if, los uso.
+		double aCreditPayment = myFactory.calculate("CREDIT",amount);
+
+		double aCashPayment = myFactory.calculate("CASH",amount);
+
+		System.out.println(aCreditPayment);
+		System.out.println(aCashPayment);
+
+PREGUNTA 19
+
+	Reduce las 3 clases (OldWayPaymentStrategy, CashPaymentStrategy y CreditCardStrategy) en una única clase (PaymentStrategy). No necesitas crear ninguna clase o interfaz más. Además, dime cómo usuarías PaymentStrategy, es decir las diferentes estrategias de pago en la clase Main
+
+RESPUESTA 19 (larga y compleja, con mucho código. Lo siento)
+
+	public interface OldWayPaymentStrategy { 
+
+		double pay(double amount); 
+
 	} 
-} 
 
-public class CreditCardStrategy implements OldWayPaymentStrategy { 
+	public class CashPaymentStrategy implements OldWayPaymentStrategy { 
 
-	@Override public double pay(double amount) { 
-
-		double serviceCharge = 5.00; double creditCardFee = 10.00; return amount + serviceCharge + creditCardFee; 
-	} 
-} 
-
----->MI PROPUESTA
-
-public interface PaymentStrategy { //write here your solution
-
-	public default double payCredit(double amount) { 
-
-		double serviceCharge = 5.00; 
-		double creditCardFee = 10.00; 
-		return amount + serviceCharge + creditCardFee; 
+		@Override public double pay(double amount) { 
+			double serviceCharge = 5.00; return amount + serviceCharge; 
+		} 
 	} 
 
-	public default double payCash(double amount) { 
-		double serviceCharge = 5.00; 
-		return amount + serviceCharge; 
+	public class CreditCardStrategy implements OldWayPaymentStrategy { 
+
+		@Override public double pay(double amount) { 
+
+			double serviceCharge = 5.00; double creditCardFee = 10.00; return amount + serviceCharge + creditCardFee; 
+		} 
 	} 
 
-} 
+---->UNA PROPUESTA, muy sencilla, sin usar una clase factoria ni clases abstractas
 
-public class Main { 
+	public interface PaymentStrategy { //write here your solution
 
-	private class Payment implements PaymentStrategy{
+		public default double payCredit(double amount) { 
+
+			double serviceCharge = 5.00; 
+			double creditCardFee = 10.00; 
+			return amount + serviceCharge + creditCardFee; 
+		} 
+
+		public default double payCash(double amount) { 
+			double serviceCharge = 5.00; 
+			return amount + serviceCharge; 
+		} 
 
 	} 
 
-	public static void main(String[] args) {
+	public class Main { 
 
-		Payment myPayment = new Payment();
+		private class Payment implements PaymentStrategy{
 
-		double byCredit = myPayment.payCredit(2d);
+		} 
 
-		double byCash = myPayment.payCash(3d);
+		public static void main(String[] args) {
 
-		System.out.println("byCredit:" + byCredit);
-		System.out.println("byCash:" + byCash);
-	}	 
+			Payment myPayment = new Payment();
 
-}
+			double byCredit = myPayment.payCredit(2d);
+
+			double byCash = myPayment.payCash(3d);
+
+			System.out.println("byCredit:" + byCredit);
+			System.out.println("byCash:" + byCash);
+		}	 
+
+	}
 
 
-Yo haría algo así, usar métodos default en la interfaz, siempre que no tuviera que gestionar un estado a la hora de pagar, entonces tendria que usar clases abstractas y herencia, cada una con el estado que les caracterizara. 
-
-En eso caso, se podria usar luego una clase factoria para crear un objeto u otro para cada pago. 
-Esa factoria sería un Singleton, una única instancia en memoria por maquina virtual o por contenedor de clases.
-
+Siempre que no tuvieramos que gestionar un estado a la hora de pagar, entonces tendríamos varias alternativas, como la descrita en el punto anterior, usar una clase factoria y lambdas,o usar una factoria y clases abstractas y herencia, cada una con el estado que les caracterizara. El estado se puede implementar mediante un constructor o metodos set.
 
 Las clases abstractas que implementen una interfaz PayStrategy con un único metodo pay sin implementar, algo así:
 
-public interface OldWayPaymentStrategy { 
+	public interface OldWayPaymentStrategy { 
 
-	public double pay(double amount); 
+		public double pay(double amount); 
 
-} 
+	} 
 
-public abstract class Payment implements OldWayPaymentStrategy{
+	public abstract class Payment implements OldWayPaymentStrategy{
 
-	public abstract double pay(double amount);	
-}
-
-public class CreditPayment extends Payment{
-	
-	private final double serviceCharge; 
-	private final double creditCardFee;
-
-	public CreditPayment(double _serviceCharge,double _creditCardFee){
-		this.serviceCharge=_serviceCharge;
-		this.creditCardFee=_creditCardFee;
+		public abstract double pay(double amount);	
 	}
 
-	public double pay(double amount){
+	public class CreditPayment extends Payment{
+		
+		private final double serviceCharge; 
+		private final double creditCardFee;
 
-		return amount + serviceCharge + creditCardFee;
+		public CreditPayment(double _serviceCharge,double _creditCardFee){
+			this.serviceCharge=_serviceCharge;
+			this.creditCardFee=_creditCardFee;
+		}
+
+		public double pay(double amount){
+
+			return amount + serviceCharge + creditCardFee;
+		}
+	} 
+
+	public class CashPayment extends Payment{
+		
+		private final double serviceCharge; 
+
+		public CashPayment(double _serviceCharge){
+			this.serviceCharge=_serviceCharge;
+		}
+
+		public double pay(double amount){
+
+			return amount + serviceCharge; 
+		}
 	}
-} 
 
-public class CashPayment extends Payment{
-	
-	private final double serviceCharge; 
+	double serviceCharge = 5.00; 
+	double creditCardFee = 10.00;
 
-	public CashPayment(double _serviceCharge){
-		this.serviceCharge=_serviceCharge;
-	}
+	CashPayment cash = new CashPayment(serviceCharge);
+	CreditPayment credit = new CreditPayment(serviceCharge, creditCardFee);
 
-	public double pay(double amount){
+	double amount = 2.00;
+	double cashPayment = cash.pay(amount);
+	double creditPayment = credit.pay(amount);
 
-		return amount + serviceCharge; 
-	}
-}
-
-double serviceCharge = 5.00; 
-double creditCardFee = 10.00;
-
-CashPayment cash = new CashPayment(serviceCharge);
-CreditPayment credit = new CreditPayment(serviceCharge, creditCardFee);
-
-double amount = 2.00;
-double cashPayment = cash.pay(amount);
-double creditPayment = credit.pay(amount);
-
-System.out.println("byCredit:" + creditPayment);
-System.out.println("byCash:" + cashPayment);
+	System.out.println("byCredit:" + creditPayment);
+	System.out.println("byCash:" + cashPayment);
 
 
-Se puede apreciar que desde que se puede implementar métodos por defecto en las interfaces, las clases abstractas han perdido su razón de ser, a no ser que quieras mantener su estado dentro de su clase abstracta y quieras cambiarlo instanciando un nuevo objeto con nuevos valores para sus campos privados. Al final todo depende de lo que quieras hacer.
+Se puede apreciar que desde que se puede implementar métodos por defecto en las interfaces, las clases abstractas han perdido su razón de ser, a no ser que quieras mantener su estado dentro de su clase abstracta y quieras cambiarlo instanciando un nuevo objeto con nuevos valores para sus campos privados. Al final todo depende de lo que quieras hacer. Hay muchas alternativas a usar, al final siempre digo que hay que usar la más legible y usable, siguiendo buenas practicas consensuadas por el equipo, tratando de tener un estilo coherente.
 
+
+
+La clase Factoria podría crear implementaciones que extiendan de estas clases abstractas.
+
+
+Epílogo y agradecimientos
+
+He respondido a las preguntas de memoria, salvo la parte del concepto del triangulación, que he tenido que buscarlo porque no entendía a que se refería. 
+Confieso que no he leído aún el libro de Beck, está en la lista, pero si conozco el principio del divide y vencerás.
+
+La parte de Spring Boot con respecto a Spring, sus diferencias conceptuales, la tenía escrita de otra vez en la que tuve que responder por una pregunta similar, de ahí que esté bastante detallada, creo.
+En mi blog, aironman2k.wordpress.com, he escrito largo y tendido sobre arquitecturas distribuidas, microservicios, big data, event sourcing, buenas prácticas junto con un montón de ejemplos que me parecen relevantes. 
+
+En mi perfil github.com/alonsoir hay muchos proyectos, muchos de mi puño y letra, otros forkeados porque me parecen relevantes para aprender en concreto. 
+
+Agradecer que me ha gustado la prueba, prefiero esto a escribir mucho código de un problema actual que tenga el cliente. Me he divertido e incluso he asentado más conocimiento porque muchas veces es necesario escribir lo que sabes para aprender mejor.
+
+Gracias por todo, estoy a su disposición.
+
+Alonso
