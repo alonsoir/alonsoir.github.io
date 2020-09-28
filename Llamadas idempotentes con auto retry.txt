@@ -1,0 +1,95 @@
+Llamadas idempotentes con auto retry
+
+La idea es invocar a un método en un do while, de manera que retornaremos un string en caso que podamos hacer la llamada externa. En caso contrario, capturamos la excepcion, la guardamos en una lista y volvemos a ejecutar, mientras tengamos numero de intentos. En caso de que el numero de intentos sea superior al permitido, devolvemos las excepciones para arriba, a ser posible, sin duplicados.
+
+private HttpClient httpClient; // System.Net.Http.HttpClient instance, set in the ButterCMSClient constructor
+
+// ... Code excluded for brevity ...
+
+private string ExecuteSingle(string queryString)
+{
+    try
+    {
+        var response = httpClient.GetAsync(queryString).Result;
+        if (response.IsSuccessStatusCode)
+        {
+            return response.Content.ReadAsStringAsync().Result;
+        }
+        if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+        {
+            throw new InvalidKeyException("No valid API key provided.");
+        }
+        if (response.StatusCode >= System.Net.HttpStatusCode.InternalServerError)
+        {
+            throw new Exception("There is a problem with the ButterCMS service");
+        }
+    }
+    catch (TaskCanceledException taskException)
+    {
+        if (!taskException.CancellationToken.IsCancellationReques‌​ted)
+        {
+            throw new Exception("Timeout expired trying to reach the ButterCMS service.");
+        }
+        throw taskException;
+    }
+    catch (HttpRequestException httpException)
+    {
+        throw httpException;
+    }
+    catch (Exception ex)
+    {
+        throw ex;
+    }
+    return string.Empty;
+}
+
+private class ExceptionEqualityComparer : IEqualityComparer<Exception>
+{
+    public bool Equals(Exception e1, Exception e2)
+    {
+        if (e2 == null && e1 == null)
+            return true;
+        else if (e1 == null | e2 == null)
+            return false;
+        else if (e1.GetType().Name.Equals(e2.GetType().Name) && e1.Message.Equals(e2.Message))
+            return true;
+        else
+            return false;
+    }
+
+    public int GetHashCode(Exception e)
+    {
+        return (e.GetType().Name + e.Message).GetHashCode();
+    }
+}
+
+public string Execute(string queryString)
+{
+    var remainingTries = maxRequestTries;  
+    var exceptions = new List<Exception>();
+
+    do 
+    {
+        --remainingTries;
+        try 
+        {
+            return ExecuteSingle(queryString);
+        }
+        catch (Exception e) 
+        {
+            exceptions.Add(e);
+        }
+    }
+    while (remainingTries > 0)
+
+    var uniqueExceptions = exceptions.Distinct(new ExceptionEqualityComparer());
+
+    if (uniqueExceptions.Count()) == 1)
+        throw uniqueExceptions.First();
+
+    return new AggregateException("Could not process request", uniqueExceptions);
+}
+
+enlaces
+
+https://hackernoon.com/idempotency-apis-and-retries-34b161f64cb4

@@ -1,0 +1,545 @@
+QUESTION 1
+
+What's new in Java 8? Explain some of it / s.
+
+ANSWER 1
+
+There are many novelties, probably the most interesting, for me, is to use default methods in the interfaces, at the bottom in the final example I attach a solution of interfaces, along with an example of use with abstract classes that it comes to replace in part.
+
+Another novelty is the possibility of iterating over collections in the functional way using the stream method, that is, we can link functions so that they operate on the output of each operation. In short, from java8 onwards, functional style along with lambdas have landed. I have mainly used the functional style when I have to do something with Apache Spark and scala, and whenever necessary, for reasons of readability or consistency with what is produced by peers.
+The important thing is that it can be easily understood without having to concatenate many functions, since if you chain many invocations, you lose readability and even the ability to easily debug your code. The imperative style is much easier to debug than the functional.
+
+It is also very interesting to use a new api to handle the passage of time, java.time, although I am afraid it will not be the last implementation.
+
+
+QUESTION 2
+
+Given the list List <Integer> list = Arrays.asList (1,2,3,4);
+
+Implement a method in Java 8 that receives this list as a parameter and returns only the even numbers.
+
+ANSWER 2
+
+List <Integer> list = Arrays.asList (1,2,3,4);
+
+public List <Integer> showPairs (List <Integer> list) {
+// collect (Collectors.toList ()) creates another list from the original.
+return list.stream (). filter (num -> num% 2 == 0) .collect (Collectors.toList ());
+}
+
+
+List <Integer> listPairs = showPairs (list);
+
+listPairs.forEach (System.out :: println);
+
+QUESTION 3
+
+What do you look at when code reviewing a colleague?
+
+ANSWER 3
+
+In readability and in that it is well refactored, also in that there is not too much logarithmic complexity, that it does not create unnecessary objects, there are too many lines in the methods, that it seeks solid principles, has well-defined unit and acceptance tests.
+
+The names of the classes and the variables should be explanatory, no magic numbers, I like that it is documented, it should explain what it does, at least.
+Personally I also like that he explains how he does it, but it is something very personal. The obligatory thing is to explain what it does.
+
+There must be unit and acceptance tests agreed with the QA people.
+
+I like that unit tests follow the GIVEN / WHEN / THEN pattern.
+
+If it is necessary to integrate with any third-party functionality, I like to see Mockito or similar, because we can simulate the operation of that third-party functionality
+when you have to run such tests. In short, apply common sense and consistency with the code produced by the team, without becoming a Taliban.
+
+QUESTION 4
+
+SCRUM. Have you worked with it? Tell us what it consists of and what events do you remember?
+
+ANSWER 4
+
+Yes, I have worked with projects that use SCRUM. Some experiences were better than others.
+
+I have experienced several ways of applying SCRUM and Agile, one is to agree on sprints of two or three weeks in which we deliver functionality agreed with the client, we hold meetings
+Very fast daily in which we explain what I did yesterday, what I am going to do today and how I think I should do it, so that I may have to request to do a pairing session with a partner,
+or share ideas to try to unblock without pairing.
+
+When I have practiced pairing, we find that the best way is when one writes the test, the other the production class, then we switch to the next one. We refactor and discuss the best way. Other times it has been when you have to teach someone about the existing functionality and catch up. We found that pairing between people who don't know each other or a bond has not yet been created can greatly slow down development. We also found that pairing between very shy people or that both have a lot of character is not good either. In short, you cannot force pair programming, it must come out little by little and naturally.
+
+Events? the daily meetings of 10 minutes or less, the sprints, beginning and end with the PO, to agree on what has priority, along with the refactoring phases.
+
+I have also had the misfortune of living with people who spoke of an agile SCRUM who produced embarrassment when they made you tell intimate things to the rest of the team, to assemble pieces of lego, very long and unproductive meetings. I didn't like that style.
+
+QUESTION 5
+
+What access modifiers (or visibility) do you know in Java?
+
+ANSWER 5
+
+Without Spec, that is, do not put any of the following, public, protected and private. At the class and field level of each class.
+
+public: A class, a subclass, and everything in a package can access that public class.
+
+protected: classes that extend from a class that have a method or a protected field, will be able to access it, they will be able to invoke it.
+
+private: A private class can be accessed from a class declared in the same file or a private field from the same class. Nothing else.
+
+It looks better like this:
+
+MODIFIER CLASS PACKAGE SUBCLASS ALL
+
+public Yes Yes Yes Yes
+
+protected Yes Yes Yes NO
+
+No Spec Yes Yes NO NO
+
+private YES NO NO NO
+ 
+QUESTION 6
+Differences between an abstract class and an interface. When will you use one or the other?
+
+ANSWER 6
+
+An abstract class is a class with methods and fields that does not implement some or all of its methods, because a class is expected to extend that class and override the functionality of that method.
+An abstract class can only extend to a single abstract class. A normal class can only extend from an abstract class.
+
+An interface manages a contract about what a class that implements said interface can do, so that a class that implements said interface has to specify the code of said methods described by said contract. An interface can extend from several interfaces, then, the class that implements that interface must specify code for all those methods described in those interfaces.
+
+Since java8, it is allowed to add default functionality to methods of an interface, so the use of one or the other has been diluted a bit. At this moment, I would use abstract classes if they had to manage some internal state, a field, while interfaces only describe methods, they don't allow adding state. That's the main difference. Basically we are talking about how to manage multiple inheritance (through interfaces) and polymorphism (through abstract classes).
+
+QUESTION 7
+
+What is Maven and what is it used for? It gives more than one functionality.
+
+ANSWER 7
+
+Maven is a tool to manage the necessary phases when compiling code, creating a jar, launching the tests, deploying the jar to a remote site, copying the jar to a public or private maven repository, creating a docker container, uploading the docker container to a public or private hub, clean up the previous build. In short, to be able to work with the sources to create a code that the virtual machine can execute. New features come out every day, I have described the most used on a daily basis.
+
+QUESTION 8
+
+What is Git and what is it used for? List all the Git commands you know.
+
+ANSWER 8
+
+It is a tool to manage the life cycle of the repository and its code, it allows you to save it, create branches to create new features, and safely mix the code of your colleagues in a final production and development branch.
+
+git clone. Clone an existing repository to your hard drive.
+git checkout. It allows you to switch from one branch to another.
+git pull. I bring the remote changes to my local copy.
+git fetch. list the files changed remotely with respect to your local. It does not download any file.
+git remote. List the remote repositories.
+git init. Initialize the structure of a new repository on your local machine.
+git add. Add files to your repository to upload them.
+git commit. Prepare the files for uploading by adding a descriptive message.
+git push. Make the upload to the distributed repository.
+git diff. It shows the differences between a remote file and your local file.
+git status. It shows the status of the files in your remote repository with respect to the local one, it tells you if there are any missing to add to the commit.
+git stash. Allows you to temporarily save the current changes with respect to the last commit in the workspace. Then we can bring those changes back to the current branch.
+git merge. It allows mixing different branches into one.
+git rebase. Similar to the previous one. In my opinion, to avoid.
+
+I want to extend a bit about the strategies of mixing the code with the main branch. What I have found works best when uploading my code is the following:
+Once I am clear that my code is correct, it does what it has to do and such, is to identify and save said parts of that code in a directory, save my work branch, and if I cannot merge directly to master due to conflicts Once that feature branch is saved, just in case, I go down master again and add the code. I compile, run everything, and then I can cleanly merge with master. Maybe it is not the best strategy, but there may be conflicts with other colleagues due to having remote branches when uploading my feature, in fact, it is the most common.
+
+QUESTION 9
+
+What is a mock up and why would you want to use it?
+
+ANSWER 9
+
+It is an object that emulates the operation of a real object that is being developed on the other hand. Normally when you want to do unit tests with respect to third party libraries, you can only know what the outputs it can give, so you need to know how your code interacts with respect to that future library.
+
+QUESTION 10
+
+How would you explain to someone who does not know what Spring is that it can contribute to their projects?
+
+ANSWER 10
+
+Spring is basically a container for classes that runs in the JVM, which will manage the life cycle of those classes, that is, you may want your class to be a singleton, that is, a single instance of a class per container spring or a new object. Then, to manage those classes, the company that created Spring, Pivotal, created a framework to work with the different objects instantiated by these classes. It implements many good practices in the form of good software patterns and ease of accessing databases, event engines, web servers, clusters, distributed components ...
+
+Such patterns can be Singleton, MVC, Factory, Observer, Dependency Injection, to name a few.
+
+Spring is a great tool that allows you to create a java application very quickly, following good practices consolidated and proven by millions of software engineers throughout the world. It makes your life easier.
+
+QUESTION 11
+
+Do you know the difference between Spring and Spring Boot?
+
+ANSWER 11 (long, sorry)
+
+Spring is described above.
+
+What is Spring Boot?
+
+Technically speaking according to the Pivotal engineers:
+
+Spring Boot is just pairs of @Configurations and @Conditions classes, which will create @Beans classes for us if those @Conditions are met.
+
+Three of the most important conditions are:
+
+@ConditionalOnClass. It will check if dependencies or rather specific classes of dependencies are loaded in the classpath. (Think: Tomcat, HikariCP, etc).
+
+@ConditionalOnProperty. Is that property described in a property file?
+
+Conditional on the missing brother. If the user already specified theirs, for example DataSource, then Spring Boot will not try to create your autoconfiguration.
+
+Not so technically speaking It can be seen as a set of classes or beans, defined by dependencies in the pom.xml, stable to each other, to be loaded in the context of spring
+provided they meet a series of conditions.
+
+What are those conditions?
+
+Those expressed by the @Conditionals tag.
+
+Basically spring-boot is a configuration of a shared spring context with a lot of @Conditionals tags to load in the spring classpath those dependencies that we need to build my application.
+
+A tag of this type will return a true or a false depending on the code you have wanted to use, for example:
+
+Given the following code, you can see that an @IsRelationalDatabaseCondition tag implements something like this:
+
+
+import org.springframework.context.annotation.Condition;
+import org.springframework.context.annotation.ConditionContext;
+import org.springframework.core.type.AnnotatedTypeMetadata;
+
+public class IsRelationalDatabaseCondition implements Condition {
+
+@Override
+public boolean matches (ConditionContext context, AnnotatedTypeMetadata metadata) {// (1)
+return oracleJdbcDriverOnClassPath () && databaseUrlSet (context); // (two)
+}
+
+private boolean databaseUrlSet (ConditionContext context) {// (3)
+return context.getEnvironment (). containsProperty ("spring.datasource.url");
+}
+
+private boolean oracleJdbcDriverOnClassPath () {// (4)
+try {
+Class.forName ("oracle.jdbc.driver.OracleDriver");
+return true;
+} catch (ClassNotFoundException e) {
+return false;
+}
+}
+}
+
+And we can use it such that:
+
+@Configuration
+public class ReallyBigCompanySharedContextConfiguration {
+
+@Bean
+@Conditional (IsRelationalDatabaseCondition.class) // (1)
+public ReallyBigCompanyProprietaryFlywayClone flywayClone () {
+return new ReallyBigCompanyProprietaryFlywayClone ();
+}
+
+}
+
+Spring-boot is going to add a bunch of @Conditional tags for us to make our lives easier.
+
+It is going to give us a lot of stable dependencies on each other so that creating the software is as easy as possible.
+Before spring boot, one had to find out if one version of a dependency is stable with the rest.
+It was troublesome, to put it mildly.
+
+QUESTION 12
+
+Do you know what CQRS is?
+
+ANSWER 12
+
+CQRS is a software pattern that stands for Command Query Responsibility Segregation, basically a pattern that advocates sending, by segregating, the writes (commands) to a database and the reads to another database. It is used above all to try to get the best of the ACID transactional world with distributed systems.
+
+ACID stands for atomic, consistent, insulating (isolated) and durable. They are the desirable characteristics in a database transaction.
+Very difficult to achieve in a distributed database, in fact, we have a theorem, called the CAP theorem that says that it is impossible to have all those characteristics that an ACID system gives.
+The CAP theorem says that of the three characteristics that a distributed system has, consistency, availability and tolerance to partitioning, we can only have two out of three.
+An ACID system is one of the CA type.
+Sometimes we want to be able to distribute the system load to get fast and reliable reads and writes between transactions.
+
+For a CQRS system, we first have to save the data, the command, in a database or a dedicated cluster for writing, using a command manager. This cluster of writes is part of the reliability source system.
+
+Another source of reliability is the event engine that will transport the newly written command to the read manager to another cluster specialized in readings. We want to try to get fast reads and writes, so we have to select the different technologies very well. The event engine or messaging broker is optional, it is usually added to give reliability to the system and for times when we need to rebuild the data and indexes in the different clusters.
+
+QUESTION 13
+
+And Event Sourcing?
+
+ANSWER 13
+
+We can see it as a software pattern that is used to manage the states emitted and received by the different components of an asynchronous distributed architecture. Asynchronous means that a component issues a message but is not stuck waiting for the response. Assume that the response may take minutes, hours, or even days.
+
+An example, we have 3 components, Orders, customers and payments, each one of them emits messages, events to someone who listens to these messages and these in turn can emit other messages so they also need to listen to those messages and act as they arrive.
+
+Each component will need to produce and consume those messages. We may want our components to talk to each other, or we may want them to talk to only one central orchestrator object.
+
+Messaging broker technology is often used, using the publisher / subscriber pattern. It can be easily seen as a person Y who has to send a letter to a person X, this is delivered in a mailbox, then a postman arrives who picks up the letter and delivers it to another system, which in turn is delivered to another, until it reaches person X and responds to person Y following a path in reverse. Person Y is a producer, person X is the final consumer, while the postman and the mailbox are part of the broker's infrastructure, also called topic. There are many products on the market, and depending on our needs, we have to choose carefully which one we need.
+
+QUESTION 14
+
+Differences between an IaaS and a PaaS.
+
+ANSWER 14
+
+IaaS stands for Infrastructure as a Service.
+
+It means that a cloud provider gives you access to remote machines where you could install your software. Those remote machines can come completely empty, or at most with the operating system of your choice.
+You would have to install and configure absolutely everything, from the software of the remote machines, the network configuration, routing, firewalls, management of the hard disk with its quotas, etc ...
+Ideal if you want to manage and control your infrastructure in detail, from the installation to if you want to scale by adding new machines (scale out) or if you want existing machines to improve their characteristics (scale up).
+
+Paas stands for Platform as a Service.
+
+It means that a cloud provider gives you access to their cloud platform. That platform is already running on its servers, with its services. You rent those services running on that platform.
+Ideal for developers who just want to build their app so that others can manage the hardware where the app will run.
+
+If we decide to go for IaaS, the application developer takes care of everything, from building the app, to selecting the type of server, the type of network, the type of hard disk, if you want it running on a shared or dedicated machine, virtualized, containerized, you have to manage security, in short, a lot of work.
+
+On the other hand, in PaaS we can manage the platform where our app will run, but not the physical server where the app runs. The platform hides many details so that we only have to worry about generating our app and uploading it to the platform.
+
+QUESTION 15
+
+Do you know any of each type?
+
+ANSWER 15
+
+Examples of IaaS on the market? Amazon Web Service, Azure, Google Cloud ...
+
+Examples of PaaS on the market? Azure, Heroku, Google App Engine ...
+
+QUESTION 16
+
+Explain what a Service Mesh is, do you know any?
+
+ANSWER 16
+
+It means mesh services. In a distributed environment, we need certain components of the internal architecture level to ensure correct operation.
+
+These components usually and should be:
+
+A service of discovery and health management of the other services.
+A service for routing and filtering, as well as security management. Who agrees to what and when. The entry point to the app.
+A service to manage repetitions when invoking a service, cutting requests when it is obvious that it will not be able to respond.
+A service to manage load balancing between different servers.
+
+Until very recently, we had different specialized technologies for each of these services, for example, for discovery we have Eureka and Consul, for routing and filtering we have Kong and zuul, nginx, which usually use different mechanisms to maintain security, such as OAuth. To manage repetitions, latency and fault tolerance, Hystrix is ​​usually used, for load balancing Ribbon is usually used. Almost all of them belong to the spring cloud stack, except Kong, nginx, and Consul, although they support spring cloud on their own.
+
+We can also see this mesh service as a routing and tracking service for a package sent through the Post Office service. It will keep track of the routing rules and dynamically direct the traffic and the route of the packet to speed up delivery and ensure reception, that is, it will use everything described above to ensure the delivery of the packet containing the information.
+
+As you can see, there are many acronyms, many different components, which often makes it difficult to maintain. Istio has recently come out to encompass all these functionalities described above.
+
+All the services described above run on a container manager, like Kubernetes or OpenShift.
+
+QUESTION 17
+
+Explain what TDD is and what the triangulation is
+
+ANSWER 17
+
+TDD stands for Test Driven Development, a way of producing software that advocates, first finding out well about the acceptance criteria of a use case, and then writing a unit test with the methods that should show the functionality of a production class. They should check such functionality as thoroughly as possible. When it is run for the first time, the test is in red, and then we start writing code in the production class, enough so that the test is green, and then think about refactoring the code in the production class, to the best also in the test, so that in the end we have a high quality code.
+
+Triangulate, I know more about how to divide and conquer, that is, when we are not very clear about what we have to do to solve our problem, we have to divide it into the most fundamental problems possible, attack them one by one, each one checking its functionality with a test. , so that when we solve them one by one, we have tests that check the functionality of each small case.
+A complex problem is always made up of many simple problems. It's about applying common sense and the scientific method ultimately.
+
+It can be used in pairs doing pair programming or alone. I personally like to pair programming when it comes to producing especially difficult code or I'm stuck, so a new perspective or a fresher mind can help me. I think that it is necessary for people to know each other a little beforehand in order to be more productive than working alone, it should not be imposed.
+
+QUESTION 18
+
+Apply the Factory pattern with lamda expressions
+
+ANSWER 18
+
+The Factoria pattern is used to create objects on demand, that is, they ask us to create an object type A, since it is instantiated with its parameters and returns, they ask us for another type B, it is done in the same way. If we want to expand the factory, we have a consistent starting point to create objects of a family.
+
+Using a factory class with lambdas and static methods in the interface. Similar to using default methods.
+Ideal to have a very compact code, the state could be parameterized, but for simplicity, I will use those possible parameters as attributes of the static methods of the interface.
+
+public interface PaymentStrategy {// write here your solution
+
+public static double payCredit (double amount) {
+
+double serviceCharge = 5.00;
+double creditCardFee = 10.00;
+return amount + serviceCharge + creditCardFee;
+}
+
+public static double payCash (double amount) {
+double serviceCharge = 5.00;
+return amount + serviceCharge;
+}
+
+}
+
+public class PaymentFactory {
+
+public static double calculate (String type, double amount) {
+
+double calculated = 0.00;
+
+if ("CREDIT" .equalsIgnoreCase (type)) {
+calculated = PaymentStrategy.payCredit (amount);
+}
+
+if ("CASH" .equalsIgnoreCase (type)) {
+calculated = PaymentStrategy.payCash (amount);
+}
+return calculated;
+}
+}
+
+// I instantiate it for simplicity, but it should be static final
+PaymentFactory myFactory = new PaymentFactory ();
+
+double amount = 2.00;
+
+// You can use enums instead of Strings and not have two ifs, but for the sake of simplicity and being only two ifs, I use them.
+double aCreditPayment = myFactory.calculate ("CREDIT", amount);
+
+double aCashPayment = myFactory.calculate ("CASH", amount);
+
+System.out.println (aCreditPayment);
+System.out.println (aCashPayment);
+
+QUESTION 19
+
+It reduces the 3 classes (OldWayPaymentStrategy, CashPaymentStrategy and CreditCardStrategy) into a single class (PaymentStrategy). You don't need to create any more classes or interfaces. Also, tell me how you use PaymentStrategy, that is, the different payment strategies in the Main class
+
+ANSWER 19 (long and complex, with a lot of code. Sorry)
+
+public interface OldWayPaymentStrategy {
+
+double pay (double amount);
+
+}
+
+public class CashPaymentStrategy implements OldWayPaymentStrategy {
+
+@Override public double pay (double amount) {
+double serviceCharge = 5.00; return amount + serviceCharge;
+}
+}
+
+public class CreditCardStrategy implements OldWayPaymentStrategy {
+
+@Override public double pay (double amount) {
+
+double serviceCharge = 5.00; double creditCardFee = 10.00; return amount + serviceCharge + creditCardFee;
+}
+}
+
+----> A PROPOSAL, very simple, without using a factory class or abstract classes
+
+public interface PaymentStrategy {// write here your solution
+
+public default double payCredit (double amount) {
+
+double serviceCharge = 5.00;
+double creditCardFee = 10.00;
+return amount + serviceCharge + creditCardFee;
+}
+
+public default double payCash (double amount) {
+double serviceCharge = 5.00;
+return amount + serviceCharge;
+}
+
+}
+
+public class Main {
+
+private class Payment implements PaymentStrategy {
+
+}
+
+public static void main (String [] args) {
+
+Payment myPayment = new Payment ();
+
+double byCredit = myPayment.payCredit (2d);
+
+double byCash = myPayment.payCash (3d);
+
+System.out.println ("byCredit:" + byCredit);
+System.out.println ("byCash:" + byCash);
+}
+
+}
+
+
+As long as we did not have to manage a state when paying, then we would have several alternatives, such as the one described in the previous point, use a factory class and lambdas, or use a factory and abstract classes and inheritance, each with the state that characterize them. The state can be implemented using a constructor or set methods.
+
+Abstract classes that implement a PayStrategy interface with a single unimplemented pay method, something like this:
+
+public interface OldWayPaymentStrategy {
+
+public double pay (double amount);
+
+}
+
+public abstract class Payment implements OldWayPaymentStrategy {
+
+public abstract double pay (double amount);
+}
+
+public class CreditPayment extends Payment {
+
+private final double serviceCharge;
+private final double creditCardFee;
+
+public CreditPayment (double _serviceCharge, double _creditCardFee) {
+this.serviceCharge = _serviceCharge;
+this.creditCardFee = _creditCardFee;
+}
+
+public double pay (double amount) {
+
+return amount + serviceCharge + creditCardFee;
+}
+}
+
+public class CashPayment extends Payment {
+
+private final double serviceCharge;
+
+public CashPayment (double _serviceCharge) {
+this.serviceCharge = _serviceCharge;
+}
+
+public double pay (double amount) {
+
+return amount + serviceCharge;
+}
+}
+
+double serviceCharge = 5.00;
+double creditCardFee = 10.00;
+
+CashPayment cash = new CashPayment (serviceCharge);
+CreditPayment credit = new CreditPayment (serviceCharge, creditCardFee);
+
+double amount = 2.00;
+double cashPayment = cash.pay (amount);
+double creditPayment = credit.pay (amount);
+
+System.out.println ("byCredit:" + creditPayment);
+System.out.println ("byCash:" + cashPayment);
+
+
+You can see that since you can implement default methods in interfaces, abstract classes have lost their reason for being, unless you want to keep their state within their abstract class and want to change it by instantiating a new object with new values ​​for your private fields. In the end it all depends on what you want to do. There are many alternatives to use, in the end I always say that you have to use the most readable and usable one, following good practices agreed by the team, trying to have a coherent style.
+
+
+
+The Factoria class could create implementations that extend from these abstract classes.
+
+
+Epilogue and acknowledgments
+
+I have answered the questions from memory, except for the part of the triangulation concept, which I had to look for because I did not understand what he was referring to.
+I confess that I have not read Beck's book yet, it is on the list, but I do know the divide and rule principle.
+
+The Spring Boot part regarding Spring, its conceptual differences, I had it written again in which I had to answer a similar question, hence it is quite detailed, I think.
+On my blog, aironman2k.wordpress.com, I have written at length about distributed architectures, microservices, big data, event sourcing, best practices along with a ton of examples that seem relevant to me.
+
+In my profile github.com/alonsoir there are many projects, many in my own handwriting, others forked because they seem relevant to me to learn in particular.
+
+Thank you that I liked the test, I prefer this to writing a lot of code for a current problem that the client has. I have had fun and I have even established more knowledge because many times it is necessary to write what you know to learn better.
+
+Thank you for everything, I am at your disposal.
+
+Alonso
