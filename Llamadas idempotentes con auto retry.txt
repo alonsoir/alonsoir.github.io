@@ -93,3 +93,5 @@ public string Execute(string queryString)
 enlaces
 
 https://hackernoon.com/idempotency-apis-and-retries-34b161f64cb4
+
+https://medium.com/airbnb-engineering/avoiding-double-payments-in-a-distributed-payments-system-2981f6b070bb
