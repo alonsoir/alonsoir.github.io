@@ -94,4 +94,57 @@ enlaces
 
 https://hackernoon.com/idempotency-apis-and-retries-34b161f64cb4
 
+
+Qué necesitaría hacer si tuviera que crear una libreria que me asegurara operaciones idempotentes at most once?
+
+Volver a leer este enlace de medium, buscar más información. Esto no es un problema trivial, ya que, el usar una operacion REST idempotente como PUT no es suficiente para conseguir una operacion
+idempotente que se ejecute como mucho una vez en un arquitectura CQRS/ES. 
+
+Un ejemplo, pongamos que queremos una operación que se ejecute una sola vez, por ejemplo sacar dinero del banco. Que implicaría algo asi?
+
+Un usuario autentificado, a través de un cajero, por ejemplo, hace una peticion PUT a un servidor web, a algo llamado ServiceController. 
+
+ServiceController será básicamente un servidor web que acepte peticiones REST, algunas idempotentes para tratar de escribir en el cluster de escritura y dejar preparada la lectura para las operaciones GET.
+
+ServiceController tendrá un ServiceA_Handler para gestionar toda la operativa distribuida entre el cluster de escritura y el de lectura. Usaré motores de eventos para transmitir el mensaje que indiquen
+una operación y estado u otra.
+
+ServiceA_Handler será un manejador que controlará la evolucion de los estados que habrá para que ese servicio permita una operacion idempotente at most once, es decir, quiero que si se vuelve a ejecutar
+una operación identica, el resultado de esa operación sea siempre el mismo, y querré que dicha operacion sea ejecutada como mucho una vez, es decir, la actualizacion del estado tanto en la parte de las escrituras como en la parte de las escrituras se haga una sola vez. 
+
+Creo que algo así podría conseguir transacciones ACID en un entorno distribuido de cada servicio. Necesito que la ejecución de cada parte sea ultra rápida. 
+
+
+ServiceA_Handler recogerá inicialmente el identificador del usuario, y devuelve la respuesta REST del servidor con el identificador del recurso creado. 
+Con esos dos valores, guardaremos el identificador REST con un estado, algo así como inicializado-recurso-rest. 
+
+Hay que contar que toda esta operativa implica invocar a un servidor web, este servidor web tendrá un ServiceAImpl, con capacidad para interactuar con el productor y el consumidor del motor de eventos. ServiceAImpl podrá invocar al gateway de comandos (ServiceA_CommandGW_Producer), pushear el mensaje, recibir el mensaje (ServiceA_CommandGW_Consumer), como el servicio de escritura de comandos está subscrito a ese topic, podrá recibir ese mensaje, deserializarlo, e invocar al repositorio capaz de interactuar con el cluster de escritura, recibir una respuesta de la base de datos, que puede ser que todo ha ido bien, que no ha ido bien, que ha habido una excepcion. En este punto, si algo ha ido mal, el servicio de escritura de comandos tiene que volver a invocar al método un número máximo de veces. Con suerte, en alguna de esas invocaciones se habrá hecho la insercion. Si después de haber intentado N veces escribir en la BD fracasamos, capturamos la excepción, escribiendo en el log. Luego tenemos que invocar a un gateway de mensajeria desde el servicio de escritura de comandos para indicar al ServiceA_Handler el resultado de la escritura, éste actualizará el estado de esta peticion web. Esto describe la parte de escribir en el cluster de escritura, actualizando la máquina de estados adecuadamente.
+
+ServiceA_Gateway
+	-->ServiceA_CommandGW_Producer. Hablan 
+	-->ServiceA_CommandGW_Consumer
+
+Ahora, una vez terminada la parte de la escritura, ServiceA_Handler emitiré un evento para el cluster de lectura indicando que la escritura es exitosa y tengo que actualizar el cluster de lectura y en consecuencia, actualizar las proyecciones para hacer las lecturas. Es decir, usando un ReadGateway, haremos push mediante un ReadGWProducer con el evento de la escritura,
+algo que indique "usuario userID ha sacado tanto dinero de la cuenta XXX con fecha YYY. Saldo actual: ZZZ". Actualizaremos el estado adecuadamente en el ServiceA_Handler, queremos que ServiceA_Handler mantenga un estado mediante una máquina de estados finita. A continuación, en cuanto dicho mensaje sea introducido en el topic, un consumidor REadGWConsumer recibirá dicho mensaje. Este consumidor será parte de la lógica de una proyeccion de lectura, podremos tener tantas proyeccciones de lectura como necesitemos. Al recibir ese mensaje, un Servicio ReadHandler, invocará a algún servicio adecuado que trabajará con ese mensaje para actualizar la base de datos de lecturas. Una vez que todo estos pasos están realizados, y solo en este punto, enviaremos un mensaje al ServiceA_Handler para que actualice la maquina de estados e indique la operacion PUT creada inicialmente que tiene actualizar el estado adecuadamente. De esta manera, si llegara una nueva petición, exactamente igual que la anterior, del mismo usuario, con el mismo mensaje a ejecutar, directamente el CommandHandler podría decidir no hacer nada o hacer algo en funcion de si el CommandGW ha podido enviar el mensaje al topic mediante CommandGWProducer, si el CommandGWConsumer ha recibido el mensaje para escribir en el cluster de escritura...
+
+Releer, dibujar, 
+
+donde están los puntos débiles? 
+
+qué puede fallar? 
+
+cómo evitar que falle? 
+
+Cuáles son los componentes?
+
+ServiceA_Handler
+	---> StateHandler
+
+	---> ServiceA_GW_Handler
+			-->ServiceA_CommandGW_Producer
+			-->ServiceA_CommandGW_Consumer
 https://medium.com/airbnb-engineering/avoiding-double-payments-in-a-distributed-payments-system-2981f6b070bb
+
+https://github.com/iluwatar/java-design-patterns
+
+
