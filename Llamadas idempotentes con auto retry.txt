@@ -143,8 +143,21 @@ ServiceA_Handler
 	---> ServiceA_GW_Handler
 			-->ServiceA_CommandGW_Producer
 			-->ServiceA_CommandGW_Consumer
+
+Links
+
+https://stackoverflow.com/questions/33159703/single-or-multiple-topic-stream-per-aggregate-root-event-in-kafka?noredirect=1&lq=1
+
+https://stackoverflow.com/questions/23453286/how-to-model-bank-transfer-in-cqrs
+
+https://medium.com/memobank/choosing-an-architecture-85750e1e5a03
+
 https://medium.com/airbnb-engineering/avoiding-double-payments-in-a-distributed-payments-system-2981f6b070bb
 
 https://github.com/iluwatar/java-design-patterns
 
+https://www.google.com/search?client=safari&rls=en&q=cqrs/es+banking&ie=UTF-8&oe=UTF-8
 
+https://sylvainleroy.com/2020/09/24/answer-to-the-article-cqrs-is-an-anti-pattern-for-ddd/
+
+http://awesome-scalability.com
