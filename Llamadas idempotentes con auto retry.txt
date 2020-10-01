@@ -1,5 +1,6 @@
 Llamadas idempotentes con auto retry
 
+En la parte del controlador:
 La idea es invocar a un método en un do while, de manera que retornaremos un string en caso que podamos hacer la llamada externa. En caso contrario, capturamos la excepcion, la guardamos en una lista y volvemos a ejecutar, mientras tengamos numero de intentos. En caso de que el numero de intentos sea superior al permitido, devolvemos las excepciones para arriba, a ser posible, sin duplicados.
 
 private HttpClient httpClient; // System.Net.Http.HttpClient instance, set in the ButterCMSClient constructor
