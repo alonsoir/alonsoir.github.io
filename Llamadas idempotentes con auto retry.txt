@@ -263,6 +263,8 @@ Como implemento esta máquina de estados finitos?
 	clave de un hashmap, donde el valor sea el estado actual de la máquina de estados. 
 	Tan simple como eso, aunque, si por ejemplo hubiera que guardar el estado de las peticiones long running en disco... 
 
+	Realmente necesito esta maquina de estados interna para saber el estado de ejecucion del microservicio???
+
 Posibles implementaciones de la máquina de estado:
 
 	https://www.adictosaltrabajo.com/2011/08/12/state-machine/

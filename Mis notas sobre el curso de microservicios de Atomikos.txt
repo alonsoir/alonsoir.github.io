@@ -806,7 +806,11 @@ Básicamente, lo que debe hacer dicho manejador es:
 	correctamente). Eureka, en cambio, si un servidor se cae, son las aplicaciones cliente las que activamente comunican con el siguiente servidor Eureka 
 	configurado en ellas.
 
+	Alternativas a Consul, por ejemplo, Linkerd, Istio
 
+		https://logz.io/blog/istio-linkerd-consul-comparison-service-meshes/
+
+		https://dzone.com/articles/service-mesh-comparison-istio-vs-linkerd
 
 	5.5. Spring-Cloud-Config
 
