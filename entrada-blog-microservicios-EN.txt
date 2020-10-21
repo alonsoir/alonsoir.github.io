@@ -769,6 +769,7 @@ https://www.jrebel.com/blog/popular-java-microservices-frameworks
 DOMAIN DRIVEN DESIGN
 
 https://github.com/ddd-by-examples
+
 MICROSERVICIOS
 
 https://www.microservices.com
@@ -794,6 +795,7 @@ CRÍTICA 2PC/SAGA. SE DEBEN LEER.
 
 https://medium.com/@ijayakantha/microservices-the-saga-pattern-for-distributed-transactions-c489d0ac0247
 
+https://nordicapis.com/microservices-architecture-the-good-the-bad-and-what-you-could-be-doing-better/
 
 
 https://developers.redhat.com/blog/2018/10/01/patterns-for-distributed-transactions-within-a-microservices-architecture/

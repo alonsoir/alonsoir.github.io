@@ -9,6 +9,7 @@ https://github.com/eugenp/tutorials/tree/master/testing-modules/mockito
 https://medium.com/art-of-coding/usage-of-mockito-674db441a334
 
 # microservices
+
 https://medium.com/@scott_95329/managing-state-with-microservices-8a4952627a40
 
 https://medium.com/hackernoon/scaling-microservices-with-message-queues-spring-boot-and-kubernetes-9ba4b0e48bdf

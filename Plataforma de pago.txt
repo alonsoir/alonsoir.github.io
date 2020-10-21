@@ -34,6 +34,7 @@ https://midu.dev/react-hooks-use-effect-funcionalidad-en-el-ciclo-vida-component
 https://www.google.com/search?client=safari&rls=en&sxsrf=ALeKk01msTWwuaQOBEEt9NXld5Zthup7wg%3A1599475615471&ei=nw9WX-ybHMreaqDIhPgP&q=super+fast+state+management+server+side+java+microservices&oq=super+fast+state+management+server+side+java+microservices&gs_lcp=CgZwc3ktYWIQAzoECCMQJzoHCCMQsAIQJ1DijwFY-KMBYLanAWgBcAB4AIABfYgB4gmSAQM5LjSYAQCgAQGqAQdnd3Mtd2l6wAEB&sclient=psy-ab&ved=0ahUKEwis54v_7tbrAhVKrxoKHSAkAf8Q4dUDCAw&uact=5
 
 #SWIFT
+
 https://medium.com/@scott_95329/managing-state-with-microservices-8a4952627a40
 
 https://github.com/qoomon/banking-swift-messages-java

@@ -1,0 +1,6 @@
+Spring security
+
+notas
+
+	Alternativa a spring cloud. Istio JWT (jose)
+	https://www.paradigmadigital.com/dev/securizando-tus-arquitecturas-de-microservicios-con-istio/

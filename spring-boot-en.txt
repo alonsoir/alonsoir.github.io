@@ -68,8 +68,20 @@ And we can use it in such a way:
 Spring-boot is going to add a lot of @Conditional labels for us to make our life easier.
 
 
+What I like most about my job, in the world of software engineering is to solve problems, design, build and deploy engineering solutions. It's really satisfying to deliver software that works and does what it has to do.
+
+Currently I am close to my parents, my family, my nephews. In these uncertain times I think the most sensible thing is to be close to your family and try to take care of them.
+
+
+
 links
 
 	https://www.marcobehler.com/guides/spring-boot
 
 	https://docs.spring.io/spring-boot/docs/current/reference/html/using-spring-boot.html#using-boot-auto-configuration
+
+
+
+Software engineer. Eternal learner.
+
+Laniakea, Cúmulo de Virgo, Grupo Local, Vía Lactea, Sistema Solar, Tierra, Badajoz
