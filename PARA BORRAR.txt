@@ -1,0 +1,29 @@
+...
+2020-11-04 11:41:51.094  WARN 25020 --- [  restartedMain] ConfigServletWebServerApplicationContext : Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'springBootProducerApplication': Unsatisfied dependency expressed through field 'template'; nested exception is org.springframework.beans.factory.NoSuchBeanDefinitionException: No qualifying bean of type 'org.springframework.kafka.core.KafkaTemplate<java.lang.String, java.lang.String>' available: expected at least 1 bean which qualifies as autowire candidate. Dependency annotations: {@org.springframework.beans.factory.annotation.Autowired(required=true)}
+2020-11-04 11:41:51.098  INFO 25020 --- [  restartedMain] o.apache.catalina.core.StandardService   : Stopping service [Tomcat]
+2020-11-04 11:41:51.123  INFO 25020 --- [  restartedMain] ConditionEvaluationReportLoggingListener : 
+
+Error starting ApplicationContext. To display the conditions report re-run your application with 'debug' enabled.
+2020-11-04 11:41:51.354 ERROR 25020 --- [  restartedMain] o.s.b.d.LoggingFailureAnalysisReporter   : 
+
+***************************
+APPLICATION FAILED TO START
+***************************
+
+Description:
+
+Field template in sopra.prototype.soprakafka.SpringBootProducerApplication required a bean of type 'org.springframework.kafka.core.KafkaTemplate' that could not be found.
+
+The injection point has the following annotations:
+	- @org.springframework.beans.factory.annotation.Autowired(required=true)
+
+The following candidates were found but could not be injected:
+	- Bean method 'kafkaTemplate' in 'KafkaAutoConfiguration' not loaded because @ConditionalOnBean (types: org.springframework.kafka.core.KafkaTemplate; SearchStrategy: all) found beans of type 'org.springframework.kafka.core.KafkaTemplate' kafkaTemplate
+
+
+Action:
+
+Consider revisiting the entries above or defining a bean of type 'org.springframework.kafka.core.KafkaTemplate' in your configuration.
+
+
+Process finished with exit code 0

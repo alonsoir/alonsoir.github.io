@@ -1,10 +1,21 @@
-/bin/bash
-export CONFLUENT_HOME=/Users/aironman/confluent-5.3.1
-export PATH=$PATH/$CONFLUENT_HOME 
-export PATH=$PATH/$CONFLUENT_HOME/bin
-export PATH=$PATH:$CONFLUENT_HOME/bin
-curl -L --http1.1 https://cnfl.io/cli | sh -s -- -b /usr/local/bin
-$CONFLUENT_HOME/bin/confluent-hub install --no-prompt confluentinc/kafka-connect-datagen:latest
-export PATH=$PATH/usr/local/bin
+#OJITO que esto para correr en local necesitas una versión específica del JDK. https://docs.confluent.io/current/installation/versions-interoperability.html#java-sys-req
+# Instrucciones por si tuvieras instalado la plataforma Confluent en local. 
+# Actualmente está deprecado en favor de usar Docker para levantar todos los servicios.
+# Ver mejor el fichero how-to-confluent-platform-with-docker.txt
+
+export CONFLUENT_HOME=/Users/aironman/confluent-6.0.0
+export PATH="${CONFLUENT_HOME}/bin:$PATH"
+# instalar origen de fuentes confluent-hub
+brew tap confluentinc/homebrew-confluent-hub-client
+# instalar confluent-hub
+brew cask install confluent-hub-client
+# comprobar que está instalado
+confluent-hub
+# instalar confluent-cli
+curl -L --http1.1 https://cnfl.io/cli | sh -s -- -b $CONFLUENT_HOME/bin
+confluent-hub install --no-prompt confluentinc/kafka-connect-datagen:latest
+# export PATH=$PATH/usr/local/bin
 export JAVA_HOME=/Library/Java/JavaVirtualMachines/adoptopenjdk-8.jdk/Contents/Home/
 export PATH=$PATH/$JAVA_HOME
+# levantar servicios.
+confluent local services start

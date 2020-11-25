@@ -1,0 +1,19 @@
+Hace no mucho, escribí una entrada en la que divagaba sobre los componentes que podría tener un servicio orientado a usar el patrón CQRS/ES para poder dividir las lecturas de las escrituras en distintos clusters dedicados. El caso es que era consciente del tiempo necesario para poder realizar una transacción ACID que tenga que hacer una escritura en el cluster y que el dato leído sea consistente en una lectura.
+
+Repasemos, según la idea anterior, suponemos que alguien quiere escribir, para ello, invoca a una url controlado por algún Edge Server, como puede ser Kong, o Zuul, éste redirecciona a un método de un controller que tiene operaciones de escritura, a saber, métodos marcados por PUT o POST, operaciones idempotentes. El controller tiene inyectado un ServiceHandler que a su vez invocará a un productor kafka, por ejemplo, que deja un mensaje que es consumido por un consumidor de un ServiceCommandGW, éste recoge el mensaje, y con él, un ServiceCommandImpl invoca el método que hace la inserción en el cluster, para luego, un producer del ServiceCommandGW escribe un mensaje en el EventStore persistente, es decir, la agregación. Luego, en el lado de las consultas, tendremos algo parecido, un ServiceQueryHandler, que contiene un ServiceQueryGW y un ServiceQueryImpl. Un consumidor del ServiceQueryGW consume ese mensaje, para que luego ServiceQueryImpl cree la proyección con ese mensaje, dejando la lectura preparada para posteriores peticiones de un servicio especializado en hacer consultas.
+
+Complicado? si, mucho, y además tiene fallos conceptuales. Para empezar, el tiempo de ejecutar todo esto será bastante alto. Hay que pasar multiples mensajes por distintos topics, consumirlos, invocar lógica de base de datos, escribir, hacer commit, enviar un mensaje al topic del EventStore, consumir el mensaje agregado del EventStore, invocar lógica de base de datos para insertar el dato en el cluster de lectura para que la transaccion sea ACID.
+
+Un follón
+
+Otro problema es que ServiceHandler no es consciente en ningún momento de los posibles problemas que puede haber entre medias. Puede fallar el push o el poll en algún topic, puede fallar la inserción en alguno de los clusters, y, aunque podríamos usar la técnica del Dead Letter Queue, no deja de ser una complicación adicional.
+
+Todo este jaleo es para que ServiceHandler sea consciente del estado de dicha transacción entre los distintos clusters, de ahí que piense que es necesario mantener una máquina de estados para saber en qué estado está la transacción.
+
+Una posibilidad. Qué tal usar el patrón Observer? para que ServiceHandler sepa el estado de cada uno de los componentes para las escrituras y las lecturas? ServiceHandler estaría observando algún flag o estados actualizado por ServiceCommandHandler y ServiceQueryHandler, de manera que así evitamos tener que usar engorrosos e innecesarios productores y consumidores entre ServiceHandler y ServiceCommandHandler y ServiceQueryHandler, pero aún necesitaremos un producto en ServiceCommandHandler para escribir la agregación, el evento, en EventStore y un consumidor en ServiceQueryHandler para leer dicha agregación. Creo que sería mucho más rápido y menos complicado.
+
+Lo probaré.
+
+Un saludo.
+
+Alonso

@@ -1,0 +1,19 @@
+Not long ago, I wrote an entry in which I rambled on the components that a service oriented to use the CQRS/ES pattern might have in order to divide the scripture readings into different dedicated clusters. The point is that I was aware of the time needed to be able to perform an ACID transaction that has to do a write on the cluster and that the data read is consistent with a read.
+
+Let's review, according to the previous idea, we suppose that someone wants to write, for that, he invokes a url controlled by some Edge Server, as it can be Kong, or Zuul, this one redirects to a method of a controller that has writing operations, that is, methods marked by PUT or POST, idempotent operations. The controller has a ServiceHandler injected which in turn will invoke a kafka producer, for example, which leaves a message that is consumed by a consumer of a ServiceCommandGW, this picks up the message, and with it, a ServiceCommandImpl invokes the method that makes the insertion in the cluster, then, a producer of the ServiceCommandGW writes a message in the persistent EventStore, that is, the aggregation. Then, on the query side, we have something similar, a ServiceQueryHandler, which contains a ServiceQueryGW and a ServiceQueryImpl. A consumer of the ServiceQueryGW consumes that message, so that later ServiceQueryImpl creates the projection with that message, leaving the reading prepared for later requests from a service specialized in making queries.
+
+Complicated? yes, very, and it also has conceptual flaws. To begin with, the time to execute all this will be quite high. It is necessary to pass multiple messages through different topics, consume them, invoke database logic, write, commit, send a message to the EventStore topic, consume the EventStore added message, invoke database logic to insert the data in the reading cluster so that the transaction is ACID.
+
+A mess
+
+Another problem is that ServiceHandler is never aware of possible problems in between. The push or poll may fail on some topic, the insertion in one of the clusters may fail, and although we could use the Dead Letter Queue technique, this is an additional complication.
+
+All this fuss is so that ServiceHandler is aware of the state of that transaction between the different clusters, so it thinks it is necessary to maintain a state machine to know what state the transaction is in.
+
+One possibility. How about using the Observer? pattern to make ServiceHandler aware of the state of each of the components for writing and reading? ServiceHandler would be observing some flag or states updated by ServiceCommandHandler and ServiceQueryHandler, so we avoid having to use cumbersome and unnecessary producers and consumers between ServiceHandler and ServiceCommandHandler and ServiceQueryHandler, but we would still need a product in ServiceCommandHandler to write the aggregation, the event, in EventStore and a consumer in ServiceQueryHandler to read the aggregation. I think it would be much faster and less complicated.
+
+I will try it out.
+
+Best regards.
+
+Alonso Translated with www.DeepL.com/Translator (free version)
