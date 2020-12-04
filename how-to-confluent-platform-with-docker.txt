@@ -7,13 +7,13 @@ Clonar este repo
 	git clone https://github.com/confluentinc/cp-all-in-one
 
 Yo lo tengo guardado en 
-	/Users/aironman/gitProjects/
+/Users/aironman/gitProjects/cp-all-in-one
 
 Lanza los siguientes comandos:
 
 	cd cp-all-in-one
 	git checkout 6.0.0-post
-	cd cp-all-in-one-community
+	cd cp-all-in-one
 	docker-compose up -d
 
 	docker-compose ps
