@@ -1,15 +1,11 @@
 # alonsoir.github.io
 
 	Hello, basically this is a repository where I leave my notes on what I am learning, and things I want to learn.
-	I am currently gaining more knowledge about the microservices architecture, thinking especially about the issue 
-	of managing distributed transactionality and the different mechanisms that exist to deal with it.
-
-	The file is Mis notas sobre el curso de microservicios de Atomikos.txt
-
-	Está en Español, con la idea de algún dia seguir añadiendo más contenido y puede que algún día sea el germen para
-	un libro en Inglés y en Español.
-
+	
 # Things to study
+
+	# DevOps!!!!
+
 	# Microservicios
 
 		# Cool project
@@ -45,9 +41,9 @@
 
 		https://lotterycodex.com/lottery-strategy-myths-debunked/
 
-	Kafka
+	Kafka. Al día
 
-		https://www.confluent.io/blog/build-services-backbone-events/?_ga=2.200884907.404940470.1597322379-1716370968.1597322379
+		https://www.confluent.io/blog/build-services-backbone-events/?_ga=2.200884907.404940470.1597322379-1716370968.1597322379 DONE!
 
 		https://www.confluent.io/blog/building-a-microservices-ecosystem-with-kafka-streams-and-ksql/?_ga=2.260222856.404940470.1597322379-1716370968.1597322379
 
@@ -110,7 +106,7 @@
 
 		https://istio.io/docs/concepts/what-is-istio/
 
-	# Confluent platform
+	# Confluent platform Al día
 
 		https://docs.confluent.io/current/tutorials/examples/microservices-orders/docs/index.html?utm_source=github&utm_medium=demo&utm_campaign=ch.examples_type.community_content.microservices-orders
 
@@ -122,7 +118,7 @@
 
 		https://www.baeldung.com/birt-reports-spring-boot
 
-	# Spring Web flux (reactive programming)
+	# Spring Web flux (reactive programming) Al día
 
 		https://docs.spring.io/spring/docs/current/spring-framework-reference/web-reactive.html?fbclid=IwAR3GoDur9YEZ9lbELPsHkarsKMCPOcE0KLd_9VNCJkryyMk-psM8ujEnaxI
 
@@ -140,7 +136,7 @@
 
 		http://www.extremeprogramming.org/rules/sequential.html
 	
-	# More Docker...
+	# More Docker... Al día
 
 		https://spring.io/blog/2020/01/27/creating-docker-images-with-spring-boot-2-3-0-m1
 
@@ -158,7 +154,7 @@
 
 	# Apache Spark
 
-		Spark 3.0!!
+		Spark 3.0!! Al día
 
 		https://medium.com/cloudzone/apache-spark-3-0-review-what-the-spark-is-all-about-998844e12b3c
 
