@@ -2,29 +2,40 @@ Entrevista para Santander UK
 
 Qué es springboot?
 
-Tecnicamente hablando según los ingenieros de Pivotal:
+	Tecnicamente hablando según los ingenieros de Pivotal:
 
-	Spring Boot son sólo pares de clases @Configurations y @Conditions, que crearan clases @Beans para nosotros si se cumplen esas @Conditions.
+	Spring Boot son sólo pares de clases @Configurations y @Conditions, 
+	que crearan clases @Beans para nosotros si se cumplen esas @Conditions.
 
 	Tres de las condiciones más importantes son:
 
-		@ConditionalOnClass. Comprobará si las dependencias o más bien clases específicas de dependencias están cargadas en el classpath.(piense: Tomcat, HikariCP, etc).
+		@ConditionalOnClass. Comprobará si las dependencias o más bien clases 
+		específicas de dependencias están cargadas en el classpath.
+		(piense: Tomcat, HikariCP, etc).
 
-		@ConditionalOnProperty. Está esa propiedad descrita en algun fichero de propiedas?
+		@ConditionalOnProperty. Está esa propiedad descrita en algun fichero 
+		de propiedades?
 
-		Condicional sobre el hermano desaparecido. Si el usuario ya especificó el suyo, por ejemplo, DataSource, entonces Spring Boot no intentará crear su autoconfiguración.
+		Condicional sobre el hermano desaparecido. 
+		Si el usuario ya especificó el suyo, por ejemplo, DataSource, 
+		entonces Spring Boot no intentará crear su autoconfiguración.
 
-No tan tecnicamente hablando Se puede ver como un conjunto de clases o beans, definidas por dependencias en el pom.xml, estables entre sí, que se van a cargar en el contexto de spring 
-siempre que cumplan una serie de condiciones.
+		No tan tecnicamente hablando Se puede ver como un conjunto de clases o 
+		beans, definidas por dependencias en el pom.xml, estables entre sí, 
+		que se van a cargar en el contexto de spring siempre que cumplan 
+		una serie de condiciones.
 
 Cuales son esas condiciones?
 
-Las expresadas mediante la etiqueta @Conditionals. 
+	Las expresadas mediante la etiqueta @Conditionals. 
 
-Basicamente spring-boot es una configuracion de un contexto compartido de spring con un monton de etiquetas @Conditionals.
-Una etiqueta de este tipo te va a devolver un true o un false en funcion del codigo que hayas querido usar, por ejemplo, 
+	Basicamente spring-boot es una configuracion de un contexto compartido 
+	de spring con un monton de etiquetas @Conditionals.
+	Una etiqueta de este tipo te va a devolver un true o un false en funcion
+	del codigo que hayas querido usar, por ejemplo: 
 
-Dado el codigo siguiente, se puede apreciar que una etiqueta @IsRelationalDatabaseCondition implementa algo asi:
+	Dado el codigo siguiente, se puede apreciar que una etiqueta 
+	@IsRelationalDatabaseCondition implementa algo asi:
 
 
 	import org.springframework.context.annotation.Condition;

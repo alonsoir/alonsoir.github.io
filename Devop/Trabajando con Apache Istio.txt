@@ -1,76 +1,101 @@
-Trabajando con Apache Istio, mejor con bash en vez de fish
+Qué es apache Istio? 
 
-bash
+	"Istio te permite conectar, asegurar, controlar y observar los microservicios que se ejecutan en tu entorno cloud.
 
-https://istio.io/docs/setup/getting-started/#download
+	Istio ayuda a reducir la complejidad de los despliegues en un entorno distribuido y alivia la tensión de los compañeros DevOps.
+	Es una malla de servicios open source que se superpone de forma transparente a las aplicaciones distribuidas existentes. 
 
-curl -L https://istio.io/downloadIstio | sh -
+	También es una plataforma, que incluye APIs que nos permiten integrar a cualquier plataforma de registro, 
+	o sistemas de telemetría, control de acceso al dato, logging. 
+	Básicamente trata de ayudarnos al permite explotar una arquitectura de microservicios distribuidos, 
+	proporcionando una forma uniforme de securizar, conectar y supervisar dichos microservicios."
 
-cd istio-1.6.0
+En el momento que escribí esta guía de pasos, usaba fish en osx en vez de zsh. 
 
-export PATH=$PWD/bin:$PATH
+	bash
 
-istioctl manifest apply --set profile=demo
+	https://istio.io/docs/setup/getting-started/#download
 
-kubectl label namespace default istio-injection=enabled
+	curl -L https://istio.io/downloadIstio | sh -
 
-kubectl apply -f samples/bookinfo/platform/kube/bookinfo.yaml
+	cd istio-1.6.0
 
-# Una vez que Docker está corriendo, kubernetes está corriendo y puedes lanzar estos docs comandos para comprobar el estado...
-kubectl get services
+	export PATH=$PWD/bin:$PATH
 
-kubectl get pods
+	istioctl manifest apply --set profile=demo
 
-kubectl exec -it $(kubectl get pod -l app=ratings -o jsonpath='{.items[0].metadata.name}') -c ratings -- curl productpage:9080/productpage | grep -o "<title>.*</title>"
+	kubectl label namespace default istio-injection=enabled
 
-kubectl apply -f samples/bookinfo/networking/bookinfo-gateway.yaml
+	kubectl apply -f samples/bookinfo/platform/kube/bookinfo.yaml
 
-istioctl analyze
+Una vez que Docker está corriendo, kubernetes está corriendo y puedes lanzar estos docs comandos para comprobar el estado...
 
-kubectl get svc istio-ingressgateway -n istio-system
+	kubectl get services
 
-# como estás usando Docker for Desktop, debes usar este comando
-export INGRESS_HOST=127.0.0.1
+	kubectl get pods
 
-# Si estuvieras detrás de un kubernetes mas real, debes usar este comando
-export INGRESS_HOST=$(kubectl -n istio-system get service istio-ingressgateway -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
+	kubectl exec -it $(kubectl get pod -l app=ratings -o jsonpath='{.items[0].metadata.name}') -c ratings -- curl productpage:9080/productpage | grep -o "<title>.*</title>"
 
-export INGRESS_PORT=$(kubectl -n istio-system get service istio-ingressgateway -o jsonpath='{.spec.ports[?(@.name=="http2")].port}')
-export SECURE_INGRESS_PORT=$(kubectl -n istio-system get service istio-ingressgateway -o jsonpath='{.spec.ports[?(@.name=="https")].port}')
+	kubectl apply -f samples/bookinfo/networking/bookinfo-gateway.yaml
 
-export GATEWAY_URL=$INGRESS_HOST:$INGRESS_PORT
+	istioctl analyze
 
-echo $GATEWAY_URL
+	kubectl get svc istio-ingressgateway -n istio-system
 
-echo http://$GATEWAY_URL/productpage
+como estás usando Docker for Desktop, debes usar este comando
 
-# En mi portatil me sale esta url, http://127.0.0.1:80/productpage. Chequear que todo está bien.
+	export INGRESS_HOST=127.0.0.1
 
-#admin/admin by default
-istioctl dashboard kiali
+Si estuvieras detrás de un kubernetes mas real, debes usar este comando
 
-kubectl apply -f samples/bookinfo/networking/destination-rule-all.yaml
+	export INGRESS_HOST=$(kubectl -n istio-system get service istio-ingressgateway -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
 
-kubectl get destinationrules -o yaml
+	export INGRESS_PORT=$(kubectl -n istio-system get service istio-ingressgateway -o jsonpath='{.spec.ports[?(@.name=="http2")].port}')
+	export SECURE_INGRESS_PORT=$(kubectl -n istio-system get service istio-ingressgateway -o jsonpath='{.spec.ports[?(@.name=="https")].port}')
 
-# Mas microservicios con los que poder jugar. DaSouzza
-https://github.com/alonsoir/service-mesh-istio
+	export GATEWAY_URL=$INGRESS_HOST:$INGRESS_PORT
 
+	echo $GATEWAY_URL
 
-cd /Users/aironman/gitProjects/service-mesh-istio
+	echo http://$GATEWAY_URL/productpage
 
-kubectl apply -f ./istio/
+En mi portatil me sale esta url, http://127.0.0.1:80/productpage. Chequear que todo está bien.
 
-# para ver si los contenedores están corriendo correctamente 
-kubectl get po -n istio-system -w
+	#admin/admin by default
+	istioctl dashboard kiali
 
-kubectl apply -f ./
+	kubectl apply -f samples/bookinfo/networking/destination-rule-all.yaml
 
-# Grafana
-http://127.0.0.1:31002/?orgId=1
+	kubectl get destinationrules -o yaml
 
-# kiali
-http://127.0.0.1:31000/kiali/
+Mas microservicios con los que poder jugar. DaSouzza
 
-# Jaeger
-http://127.0.0.1:31001/jaeger/search
+	https://github.com/alonsoir/service-mesh-istio
+
+	cd /Users/aironman/gitProjects/service-mesh-istio
+
+	kubectl apply -f ./istio/
+
+para ver si los contenedores están corriendo correctamente 
+
+	kubectl get po -n istio-system -w
+
+	kubectl apply -f ./
+
+Istio te da Grafana, Kiali y Jaeger, las urls de acceso son:
+
+	Grafana
+
+	http://127.0.0.1:31002/?orgId=1
+
+	kiali
+
+	http://127.0.0.1:31000/kiali/
+
+	Jaeger
+
+	http://127.0.0.1:31001/jaeger/search
+
+LINKS
+
+	https://istio.io/latest/docs/concepts/what-is-istio/

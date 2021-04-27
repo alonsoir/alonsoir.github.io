@@ -1,17 +1,23 @@
+Un día del año pasado quise jugar con el framework opencv, basicamente es un framework para trabajar con visión artificial hecho en python.
+ 
+Estos son los comandos que lancé para instalar el framework y para ejecutar algunos ejemplos. Muy potente.
+
 aironman@MacBook-Pro-de-Alonso ~> python3
-Python 3.7.5 (default, Nov  1 2019, 02:16:23) 
-[Clang 11.0.0 (clang-1100.0.33.8)] on darwin
-Type "help", "copyright", "credits" or "license" for more information.
->>> exit
-Use exit() or Ctrl-D (i.e. EOF) to exit
->>> exit()
+  Python 3.7.5 (default, Nov  1 2019, 02:16:23) 
+  [Clang 11.0.0 (clang-1100.0.33.8)] on darwin
+  Type "help", "copyright", "credits" or "license" for more information.
+  >>> exit
+  Use exit() or Ctrl-D (i.e. EOF) to exit
+  >>> exit()
 aironman@MacBook-Pro-de-Alonso ~> which python3
-/usr/local/bin/python3
+
+  /usr/local/bin/python3
+
 aironman@MacBook-Pro-de-Alonso ~> brew install cmake pkg-config
                                   
-==> Downloading https://homebrew.bintray.com/bottles/cmake-3.16.2.catalina.bottle.tar.gz
-==> Downloading from https://akamai.bintray.com/7b/7b7d0cc5ceba524f0bea36285ab0cf5e23afc79b71633018ae504c22a32eaf0a?__gda__=exp=1578503611~hmac=d46e8d639b2c396bb50697d17572a9a5b4bec6d4c9fc904540b96ef30b714a44&response-content-disposition=
-######################################################################## 100.0%
+  ==> Downloading https://homebrew.bintray.com/bottles/cmake-3.16.2.catalina.bottle.tar.gz
+  ==> Downloading from https://akamai.bintray.com/7b/7b7d0cc5ceba524f0bea36285ab0cf5e23afc79b71633018ae504c22a32eaf0a?__gda__=exp=1578503611~hmac=d46e8d639b2c396bb50697d17572a9a5b4bec6d4c9fc904540b96ef30b714a44&response-content-disposition=
+  #######################################################################100.0%
 
 aironman@MacBook-Pro-de-Alonso ~> brew install jpeg libpng libtiff openexr
 aironman@MacBook-Pro-de-Alonso ~> brew install wget
@@ -20,209 +26,238 @@ aironman@MacBook-Pro-de-Alonso ~> sudo rm -rf ~/get-pip.py ~/.cache/pip
 aironman@MacBook-Pro-de-Alonso ~> nano ~/.bash_profile
 aironman@MacBook-Pro-de-Alonso ~> vi ~/.bash_profile
 aironman@MacBook-Pro-de-Alonso ~> source ~/.bash_profile
-#
-# Project home page: http://www.doughellmann.com/projects/virtualenvwrapper/
-#
-#
-# Setup:
-#
-#  1. Create a directory to hold the virtual environments.
-#     (mkdir $HOME/.virtualenvs).
-#  2. Add a line like "export WORKON_HOME=$HOME/.virtualenvs"
-#     to your .bashrc.
-#  3. Add a line like "source /path/to/this/file/virtualenvwrapper.sh"
-#     to your .bashrc.
-#  4. Run: source ~/.bashrc
-#  5. Run: workon
-#  6. A list of environments, empty, is printed.
-#  7. Run: mkvirtualenv temp
-#  8. Run: workon
-#  9. This time, the "temp" environment is included.
-# 10. Run: workon temp
-# 11. The virtual environment is activated.
-#
+
+  #
+  Project home page: http://www.doughellmann.com/projects/virtualenvwrapper/
+  #
+  #
+  Setup:
+  #
+   1. Create a directory to hold the virtual environments.
+      (mkdir $HOME/.virtualenvs).
+   2. Add a line like "export WORKON_HOME=$HOME/.virtualenvs"
+      to your .bashrc.
+   3. Add a line like "source /path/to/this/file/virtualenvwrapper.sh"
+      to your .bashrc.
+   4. Run: source ~/.bashrc
+   5. Run: workon
+   6. A list of environments, empty, is printed.
+   7. Run: mkvirtualenv temp
+   8. Run: workon
+   9. This time, the "temp" environment is included.
+  10. Run: workon temp
+  11. The virtual environment is activated.
+  #
 
 
 aironman@MacBook-Pro-de-Alonso ~> bash
 aironman@MacBook-Pro-de-Alonso ~ % /usr/local/bin/virtualenvwrapper.sh
-/System/Library/Frameworks/Python.framework/Versions/2.7/Resources/Python.app/Contents/MacOS/Python: No module named virtualenvwrapper
-virtualenvwrapper.sh: There was a problem running the initialization hooks.
+  /System/Library/Frameworks/Python.framework/Versions/2.7/Resources/Python.app/Contents/MacOS/Python: No module named virtualenvwrapper
+  virtualenvwrapper.sh: There was a problem running the initialization hooks.
 
-If Python could not import the module virtualenvwrapper.hook_loader,
-check that virtualenvwrapper has been installed for
-VIRTUALENVWRAPPER_PYTHON=/usr/bin/python and that PATH is
-set properly.
+  If Python could not import the module virtualenvwrapper.hook_loader,
+  check that virtualenvwrapper has been installed for
+  VIRTUALENVWRAPPER_PYTHON=/usr/bin/python and that PATH is
+  set properly.
+
 aironman@MacBook-Pro-de-Alonso ~ % export VIRTUALENVWRAPPER_PYTHON=/usr/local/bin/python3
 aironman@MacBook-Pro-de-Alonso ~ % export WORKON_HOME=$HOME/.virtualenvs
 aironman@MacBook-Pro-de-Alonso ~ % source /usr/local/bin/virtualenvwrapper.sh 
 aironman@MacBook-Pro-de-Alonso ~ % mkvirtualenv cv -p python3
-Running virtualenv with interpreter /usr/local/bin/python3
-Already using interpreter /usr/local/opt/python/bin/python3.7
-Using base prefix '/usr/local/Cellar/python/3.7.6_1/Frameworks/Python.framework/Versions/3.7'
-New python executable in /Users/aironman/.virtualenvs/cv/bin/python3.7
-Also creating executable in /Users/aironman/.virtualenvs/cv/bin/python
-Installing setuptools, pip, wheel...
-done.
-virtualenvwrapper.user_scripts creating /Users/aironman/.virtualenvs/cv/bin/predeactivate
-virtualenvwrapper.user_scripts creating /Users/aironman/.virtualenvs/cv/bin/postdeactivate
-virtualenvwrapper.user_scripts creating /Users/aironman/.virtualenvs/cv/bin/preactivate
-virtualenvwrapper.user_scripts creating /Users/aironman/.virtualenvs/cv/bin/postactivate
-virtualenvwrapper.user_scripts creating /Users/aironman/.virtualenvs/cv/bin/get_env_details
-(cv) aironman@MacBook-Pro-de-Alonso ~ % workon cv
-(cv) aironman@MacBook-Pro-de-Alonso ~ % pip install numpy
-Collecting numpy
-  Downloading https://files.pythonhosted.org/packages/2f/5b/2cc2b9285e8b2ca8d2c1e4a2cbf1b12d70a2488ea78170de1909bca725f2/numpy-1.18.1-cp37-cp37m-macosx_10_9_x86_64.whl (15.1MB)
-     |████████████████████████████████| 15.1MB 442kB/s 
-Installing collected packages: numpy
-Successfully installed numpy-1.18.1
-(cv) aironman@MacBook-Pro-de-Alonso ~ % wget -O opencv.zip https://github.com/opencv/opencv/archive/4.0.0.zip
---2020-01-08 18:12:31--  https://github.com/opencv/opencv/archive/4.0.0.zip
-Resolviendo github.com (github.com)... 140.82.118.3
-Conectando con github.com (github.com)[140.82.118.3]:443... conectado.
-Petición HTTP enviada, esperando respuesta... 302 Found
-Localización: https://codeload.github.com/opencv/opencv/zip/4.0.0 [siguiendo]
---2020-01-08 18:12:32--  https://codeload.github.com/opencv/opencv/zip/4.0.0
-Resolviendo codeload.github.com (codeload.github.com)... 140.82.114.9
-Conectando con codeload.github.com (codeload.github.com)[140.82.114.9]:443... conectado.
-Petición HTTP enviada, esperando respuesta... 200 OK
-Longitud: 91053596 (87M) [application/zip]
-Grabando a: “opencv.zip”
+  Running virtualenv with interpreter /usr/local/bin/python3
+  Already using interpreter /usr/local/opt/python/bin/python3.7
+  Using base prefix '/usr/local/Cellar/python/3.7.6_1/Frameworks/Python.framework/Versions/3.7'
+  New python executable in /Users/aironman/.virtualenvs/cv/bin/python3.7
+  Also creating executable in /Users/aironman/.virtualenvs/cv/bin/python
+  Installing setuptools, pip, wheel...
+  done.
+  virtualenvwrapper.user_scripts creating /Users/aironman/.virtualenvs/cv/bin/predeactivate
+  virtualenvwrapper.user_scripts creating /Users/aironman/.virtualenvs/cv/bin/postdeactivate
+  virtualenvwrapper.user_scripts creating /Users/aironman/.virtualenvs/cv/bin/preactivate
+  virtualenvwrapper.user_scripts creating /Users/aironman/.virtualenvs/cv/bin/postactivate
+  virtualenvwrapper.user_scripts creating /Users/aironman/.virtualenvs/cv/bin/get_env_details
+  (cv) aironman@MacBook-Pro-de-Alonso ~ % workon cv
+  (cv) aironman@MacBook-Pro-de-Alonso ~ % pip install numpy
+  Collecting numpy
+    Downloading https://files.pythonhosted.org/packages/2f/5b/2cc2b9285e8b2ca8d2c1e4a2cbf1b12d70a2488ea78170de1909bca725f2/numpy-1.18.1-cp37-cp37m-macosx_10_9_x86_64.whl (15.1MB)
+       |████████████████████████████████| 15.1MB 442kB/s 
+  Installing collected packages: numpy
+  Successfully installed numpy-1.18.1
+  (cv) aironman@MacBook-Pro-de-Alonso ~ % wget -O opencv.zip https://github.com/opencv/opencv/archive/4.0.0.zip
+  --2020-01-08 18:12:31--  https://github.com/opencv/opencv/archive/4.0.0.zip
+  Resolviendo github.com (github.com)... 140.82.118.3
+  Conectando con github.com (github.com)[140.82.118.3]:443... conectado.
+  Petición HTTP enviada, esperando respuesta... 302 Found
+  Localización: https://codeload.github.com/opencv/opencv/zip/4.0.0 [siguiendo]
+  --2020-01-08 18:12:32--  https://codeload.github.com/opencv/opencv/zip/4.0.0
+  Resolviendo codeload.github.com (codeload.github.com)... 140.82.114.9
+  Conectando con codeload.github.com (codeload.github.com)[140.82.114.9]:443... conectado.
+  Petición HTTP enviada, esperando respuesta... 200 OK
+  Longitud: 91053596 (87M) [application/zip]
+  Grabando a: “opencv.zip”
 
-opencv.zip                                                  100%[=========================================================================================================================================>]  86,83M  4,59MB/s    en 26s     
+  opencv.zip                                                  100%[=========================================================================================================================================>]  86,83M  4,59MB/s    en 26s     
 
-2020-01-08 18:12:59 (3,29 MB/s) - “opencv.zip” guardado [91053596/91053596]
+  2020-01-08 18:12:59 (3,29 MB/s) - “opencv.zip” guardado [91053596/91053596]
 
-(cv) aironman@MacBook-Pro-de-Alonso ~ % wget -O opencv_contrib.zip https://github.com/opencv/opencv_contrib/archive/4.0.0.zip
---2020-01-08 18:13:20--  https://github.com/opencv/opencv_contrib/archive/4.0.0.zip
-Resolviendo github.com (github.com)... 140.82.118.4
-Conectando con github.com (github.com)[140.82.118.4]:443... conectado.
-Petición HTTP enviada, esperando respuesta... 302 Found
-Localización: https://codeload.github.com/opencv/opencv_contrib/zip/4.0.0 [siguiendo]
---2020-01-08 18:13:20--  https://codeload.github.com/opencv/opencv_contrib/zip/4.0.0
-Resolviendo codeload.github.com (codeload.github.com)... 140.82.113.9
-Conectando con codeload.github.com (codeload.github.com)[140.82.113.9]:443... conectado.
-Petición HTTP enviada, esperando respuesta... 200 OK
-Longitud: no especificado [application/zip]
-Grabando a: “opencv_contrib.zip”
+  (cv) aironman@MacBook-Pro-de-Alonso ~ % wget -O opencv_contrib.zip https://github.com/opencv/opencv_contrib/archive/4.0.0.zip
+  --2020-01-08 18:13:20--  https://github.com/opencv/opencv_contrib/archive/4.0.0.zip
+  Resolviendo github.com (github.com)... 140.82.118.4
+  Conectando con github.com (github.com)[140.82.118.4]:443... conectado.
+  Petición HTTP enviada, esperando respuesta... 302 Found
+  Localización: https://codeload.github.com/opencv/opencv_contrib/zip/4.0.0 [siguiendo]
+  --2020-01-08 18:13:20--  https://codeload.github.com/opencv/opencv_contrib/zip/4.0.0
+  Resolviendo codeload.github.com (codeload.github.com)... 140.82.113.9
+  Conectando con codeload.github.com (codeload.github.com)[140.82.113.9]:443... conectado.
+  Petición HTTP enviada, esperando respuesta... 200 OK
+  Longitud: no especificado [application/zip]
+  Grabando a: “opencv_contrib.zip”
 
-opencv_contrib.zip                                              [                                                                    <=>                                                                   ]  58,61M  3,77MB/s    en 18s     
+  opencv_contrib.zip                                              [                                                                    <=>                                                                   ]  58,61M  3,77MB/s    en 18s     
 
-2020-01-08 18:13:39 (3,28 MB/s) - “opencv_contrib.zip” guardado [61452686]
+  2020-01-08 18:13:39 (3,28 MB/s) - “opencv_contrib.zip” guardado [61452686]
 
 (cv) aironman@MacBook-Pro-de-Alonso ~ % unzip opencv.zip
-Archive:  opencv.zip
-75ed282b20770a7a9b490102fd2e0b4fa26223e5
-...
+
+  Archive:  opencv.zip
+  75ed282b20770a7a9b490102fd2e0b4fa26223e5
+  ...
 
 (cv) aironman@MacBook-Pro-de-Alonso ~ % unzip opencv_contrib.zip
-Archive:  opencv_contrib.zip
-d511587cf0bc782022db215d20d960afb2e9efe2
-...
-(cv) aironman@MacBook-Pro-de-Alonso ~ % mv opencv-4.0.0 opencv
-(cv) aironman@MacBook-Pro-de-Alonso ~ % mv opencv_contrib-4.0.0 opencv_contrib
-(cv) aironman@MacBook-Pro-de-Alonso ~ % cd ~/opencv
-(cv) aironman@MacBook-Pro-de-Alonso opencv % mkdir build
-(cv) aironman@MacBook-Pro-de-Alonso opencv % cd build 
-(cv) aironman@MacBook-Pro-de-Alonso build % workon cv
-(cv) aironman@MacBook-Pro-de-Alonso build % cmake -D CMAKE_BUILD_TYPE=RELEASE \
-    -D CMAKE_INSTALL_PREFIX=/usr/local \
-    -D OPENCV_EXTRA_MODULES_PATH=~/opencv_contrib/modules \
-    -D PYTHON3_LIBRARY=`python -c 'import subprocess ; import sys ; s = subprocess.check_output("python-config --configdir", shell=True).decode("utf-8").strip() ; (M, m) = sys.version_info[:2] ; print("{}/libpython{}.{}.dylib".format(s, M, m))'` \
-    -D PYTHON3_INCLUDE_DIR=`python -c 'import distutils.sysconfig as s; print(s.get_python_inc())'` \
-    -D PYTHON3_EXECUTABLE=$VIRTUAL_ENV/bin/python \
-    -D BUILD_opencv_python2=OFF \
-    -D BUILD_opencv_python3=ON \
-    -D INSTALL_PYTHON_EXAMPLES=ON \
-    -D INSTALL_C_EXAMPLES=OFF \
-    -D OPENCV_ENABLE_NONFREE=ON \
-    -D BUILD_EXAMPLES=ON ..
-...
 
--- Build files have been written to: /Users/aironman/opencv/build
+  Archive:  opencv_contrib.zip
+  d511587cf0bc782022db215d20d960afb2e9efe2
+  ...
+  (cv) aironman@MacBook-Pro-de-Alonso ~ % mv opencv-4.0.0 opencv
+  (cv) aironman@MacBook-Pro-de-Alonso ~ % mv opencv_contrib-4.0.0 opencv_contrib
+  (cv) aironman@MacBook-Pro-de-Alonso ~ % cd ~/opencv
+  (cv) aironman@MacBook-Pro-de-Alonso opencv % mkdir build
+  (cv) aironman@MacBook-Pro-de-Alonso opencv % cd build 
+  (cv) aironman@MacBook-Pro-de-Alonso build % workon cv
+  (cv) aironman@MacBook-Pro-de-Alonso build % cmake -D CMAKE_BUILD_TYPE=RELEASE \
+      -D CMAKE_INSTALL_PREFIX=/usr/local \
+      -D OPENCV_EXTRA_MODULES_PATH=~/opencv_contrib/modules \
+      -D PYTHON3_LIBRARY=`python -c 'import subprocess ; import sys ; s = subprocess.check_output("python-config --configdir", shell=True).decode("utf-8").strip() ; (M, m) = sys.version_info[:2] ; print("{}/libpython{}.{}.dylib".format(s, M, m))'` \
+      -D PYTHON3_INCLUDE_DIR=`python -c 'import distutils.sysconfig as s; print(s.get_python_inc())'` \
+      -D PYTHON3_EXECUTABLE=$VIRTUAL_ENV/bin/python \
+      -D BUILD_opencv_python2=OFF \
+      -D BUILD_opencv_python3=ON \
+      -D INSTALL_PYTHON_EXAMPLES=ON \
+      -D INSTALL_C_EXAMPLES=OFF \
+      -D OPENCV_ENABLE_NONFREE=ON \
+      -D BUILD_EXAMPLES=ON ..
+  ...
+
+  -- Build files have been written to: /Users/aironman/opencv/build
 (cv) aironman@MacBook-Pro-de-Alonso build % 
 (cv) aironman@MacBook-Pro-de-Alonso build % make
-...
+
+  ...
 
 (cv) aironman@MacBook-Pro-de-Alonso build % sudo make install
-Password:
-...
+  
+  Password:
+  ...
+
 (cv) aironman@MacBook-Pro-de-Alonso build % workon cv
 (cv) aironman@MacBook-Pro-de-Alonso build % python --version
-Python 3.7.6
+
+  Python 3.7.6
+
 (cv) aironman@MacBook-Pro-de-Alonso build % ls /usr/local/python/cv2/python-3.7 
-cv2.cpython-37m-darwin.so
+
+  cv2.cpython-37m-darwin.so
+
 (cv) aironman@MacBook-Pro-de-Alonso build % cd /usr/local/python/cv2/python-3.7 
 (cv) aironman@MacBook-Pro-de-Alonso python-3.7 % sudo mv cv2.cpython-37m-darwin.so cv2.so
 (cv) aironman@MacBook-Pro-de-Alonso python-3.7 % cd ~/.virtualenvs/cv/lib/python3.7/site-packages 
 (cv) aironman@MacBook-Pro-de-Alonso site-packages % ln -s /usr/local/python/cv2/python-3.7/cv2.so cv2.so
 (cv) aironman@MacBook-Pro-de-Alonso site-packages % pip install imutils
-...
-(cv) aironman@MacBook-Pro-de-Alonso site-packages % python
-Python 3.7.6 (default, Dec 30 2019, 19:38:26) 
-[Clang 11.0.0 (clang-1100.0.33.16)] on darwin
-Type "help", "copyright", "credits" or "license" for more information.
->>> import cv2
 
->>> 
->>> cv2.__version
-Traceback (most recent call last):
-  File "<stdin>", line 1, in <module>
-AttributeError: module 'cv2' has no attribute '__version'
->>> cv2.__version__
-'4.0.0'
->>> exit()
+  ...
+
+(cv) aironman@MacBook-Pro-de-Alonso site-packages % python
+  
+  Python 3.7.6 (default, Dec 30 2019, 19:38:26) 
+  [Clang 11.0.0 (clang-1100.0.33.16)] on darwin
+  Type "help", "copyright", "credits" or "license" for more information.
+  >>> import cv2
+
+  >>> 
+  >>> cv2.__version
+  Traceback (most recent call last):
+    File "<stdin>", line 1, in <module>
+  AttributeError: module 'cv2' has no attribute '__version'
+  >>> cv2.__version__
+  '4.0.0'
+  >>> exit()
+
 (cv) aironman@MacBook-Pro-de-Alonso site-packages % unzip document-scanner.zip
-unzip:  cannot find or open document-scanner.zip, document-scanner.zip.zip or document-scanner.zip.ZIP.
+
+  unzip:  cannot find or open document-scanner.zip, document-scanner.zip.zip or document-scanner.zip.ZIP.
+
 (cv) aironman@MacBook-Pro-de-Alonso site-packages % tree
-zsh: command not found: tree
+
+  zsh: command not found: tree
+
 (cv) aironman@MacBook-Pro-de-Alonso site-packages % pwd
-/Users/aironman/.virtualenvs/cv/lib/python3.7/site-packages
-...
+  
+  /Users/aironman/.virtualenvs/cv/lib/python3.7/site-packages
+  ...
+
 cv) aironman@MacBook-Pro-de-Alonso .virtualenvs % which python3
-/Users/aironman/.virtualenvs/cv/bin/python3
+
+  /Users/aironman/.virtualenvs/cv/bin/python3
+
 (cv) aironman@MacBook-Pro-de-Alonso .virtualenvs % cd /Users/aironman/Downloads/opencv-4.2.0/samples/python
 
 (cv) aironman@MacBook-Pro-de-Alonso python % ls
-CMakeLists.txt				deconvolution.py			floodfill.py				lk_track.py				stitching.py
-_coverage.py				demo.py					gabor_threads.py			logpolar.py				stitching_detailed.py
-_doc.py					dft.py					gaussian_mix.py				morphology.py				texture_flow.py
-_run_winpack_demo.cmd			digits.py				grabcut.py				mosse.py				tst_scene_render.py
-asift.py				digits_adjust.py			hist.py					mouse_and_match.py			turing.py
-browse.py				digits_video.py				houghcircles.py				mser.py					tutorial_code
-calibrate.py				dis_opt_flow.py				houghlines.py				opencv_version.py			video.py
-camera_calibration_show_extrinsics.py	distrans.py				inpaint.py				opt_flow.py				video_threaded.py
-camshift.py				edge.py					kalman.py				peopledetect.py				video_v4l2.py
-coherence.py				facedetect.py				kmeans.py				plane_ar.py				watershed.py
-color_histogram.py			feature_homography.py			lappyr.py				plane_tracker.py
-common.py				find_obj.py				letter_recog.py				squares.py
-contours.py				fitline.py				lk_homography.py			stereo_match.py
+  
+  CMakeLists.txt				deconvolution.py			floodfill.py				lk_track.py				stitching.py
+  _coverage.py				demo.py					gabor_threads.py			logpolar.py				stitching_detailed.py
+  _doc.py					dft.py					gaussian_mix.py				morphology.py				texture_flow.py
+  _run_winpack_demo.cmd			digits.py				grabcut.py				mosse.py				tst_scene_render.py
+  asift.py				digits_adjust.py			hist.py					mouse_and_match.py			turing.py
+  browse.py				digits_video.py				houghcircles.py				mser.py					tutorial_code
+  calibrate.py				dis_opt_flow.py				houghlines.py				opencv_version.py			video.py
+  camera_calibration_show_extrinsics.py	distrans.py				inpaint.py				opt_flow.py				video_threaded.py
+  camshift.py				edge.py					kalman.py				peopledetect.py				video_v4l2.py
+  coherence.py				facedetect.py				kmeans.py				plane_ar.py				watershed.py
+  color_histogram.py			feature_homography.py			lappyr.py				plane_tracker.py
+  common.py				find_obj.py				letter_recog.py				squares.py
+  contours.py				fitline.py				lk_homography.py			stereo_match.py
+
+#FINALLY, i got all up and able to run samples!
+
 (cv) aironman@MacBook-Pro-de-Alonso python % python camshift.py 
 
-Camshift tracker
-================
+  Camshift tracker
+  ================
 
-This is a demo that shows mean-shift based tracking
-You select a color objects such as your face and it tracks it.
-This reads from video camera (0 by default, or the camera number the user enters)
+  This is a demo that shows mean-shift based tracking
+  You select a color objects such as your face and it tracks it.
+  This reads from video camera (0 by default, or the camera number the user enters)
 
-[1] http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.14.7673
+  [1] http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.14.7673
 
-Usage:
-------
-    camshift.py [<video source>]
+  Usage:
+  ------
+      camshift.py [<video source>]
 
-    To initialize tracking, select the object with mouse
+      To initialize tracking, select the object with mouse
 
-Keys:
------
-    ESC   - exit
-    b     - toggle back-projected probability visualization
+  Keys:
+  -----
+      ESC   - exit
+      b     - toggle back-projected probability visualization
 
 (cv) aironman@MacBook-Pro-de-Alonso python % python demo.py 
+
 DEPRECATION WARNING: The system version of Tk is deprecated and may be removed in a future release. Please don't rely on it. Set TK_SILENCE_DEPRECATION=1 to suppress this warning.
 2020-01-09 16:36:23.359 python[56641:4530120] CoreText note: Client requested name ".SFNSMono-Regular", it will get Times-Roman rather than the intended font. All system UI font access should be through proper APIs such as CTFontCreateUIFontForLanguage() or +[NSFont systemFontOfSize:].
 2020-01-09 16:36:23.359 python[56641:4530120] CoreText note: Set a breakpoint on CTFontLogSystemFontNameRequest to debug.
 2020-01-09 16:36:23.400 python[56641:4530120] CoreText note: Client requested name ".SF NS Mono", it will get Times-Roman rather than the intended font. All system UI font access should be through proper APIs such as CTFontCreateUIFontForLanguage() or +[NSFont systemFontOfSize:].
+
 running: facedetect.py
 
 face detection using haar cascades
@@ -234,6 +269,7 @@ USAGE:
 [ WARN:0] cv::samples::findFile('data/haarcascades/haarcascade_eye.xml') => '/Users/aironman/Downloads/opencv-4.2.0/samples/python/../../data/haarcascades/haarcascade_eye.xml'
 [ WARN:0] cv::samples::findFile('samples/data/lena.jpg') => '/Users/aironman/Downloads/opencv-4.2.0/samples/python/../../samples/data/lena.jpg'
 Done
+
 running: asift.py
 
 Affine invariant feature-based image matching sample.
@@ -263,6 +299,7 @@ matching ...
 2549.15 ms
 59 / 125  inliers/matched
 ...
+
 (cv) aironman@MacBook-Pro-de-Alonso python % 
 (cv) aironman@MacBook-Pro-de-Alonso python % 
 (cv) aironman@MacBook-Pro-de-Alonso python % exit()
@@ -530,102 +567,102 @@ TDD - Yes we can-2.key
 (cv) bash-3.2$ ls
 jp.png			opencv_tutorial_01.py	opencv_tutorial_02.py	tetris_blocks.png
 (cv) bash-3.2$ cat opencv_tutorial_01.py 
-# USAGE
-# python opencv_tutorial_01.py
+USAGE
+python opencv_tutorial_01.py
 
-# import the necessary packages
+import the necessary packages
 import imutils
 import cv2
 
-# load the input image and show its dimensions, keeping in mind that
-# images are represented as a multi-dimensional NumPy array with
-# shape no. rows (height) x no. columns (width) x no. channels (depth)
+load the input image and show its dimensions, keeping in mind that
+images are represented as a multi-dimensional NumPy array with
+shape no. rows (height) x no. columns (width) x no. channels (depth)
 image = cv2.imread("jp.png")
 (h, w, d) = image.shape
 print("width={}, height={}, depth={}".format(w, h, d))
 
-# display the image to our screen -- we will need to click the window
-# open by OpenCV and press a key on our keyboard to continue execution
+display the image to our screen -- we will need to click the window
+open by OpenCV and press a key on our keyboard to continue execution
 cv2.imshow("Image", image)
 cv2.waitKey(0)
 
-# access the RGB pixel located at x=50, y=100, keepind in mind that
-# OpenCV stores images in BGR order rather than RGB
+access the RGB pixel located at x=50, y=100, keepind in mind that
+OpenCV stores images in BGR order rather than RGB
 (B, G, R) = image[100, 50]
 print("R={}, G={}, B={}".format(R, G, B))
 
-# extract a 100x100 pixel square ROI (Region of Interest) from the
-# input image starting at x=320,y=60 at ending at x=420,y=160
+extract a 100x100 pixel square ROI (Region of Interest) from the
+input image starting at x=320,y=60 at ending at x=420,y=160
 roi = image[60:160, 320:420]
 cv2.imshow("ROI", roi)
 cv2.waitKey(0)
 
-# resize the image to 200x200px, ignoring aspect ratio
+resize the image to 200x200px, ignoring aspect ratio
 resized = cv2.resize(image, (200, 200))
 cv2.imshow("Fixed Resizing", resized)
 cv2.waitKey(0)
 
-# fixed resizing and distort aspect ratio so let's resize the width
-# to be 300px but compute the new height based on the aspect ratio
+fixed resizing and distort aspect ratio so let's resize the width
+to be 300px but compute the new height based on the aspect ratio
 r = 300.0 / w
 dim = (300, int(h * r))
 resized = cv2.resize(image, dim)
 cv2.imshow("Aspect Ratio Resize", resized)
 cv2.waitKey(0)
 
-# manually computing the aspect ratio can be a pain so let's use the
-# imutils library instead
+manually computing the aspect ratio can be a pain so let's use the
+imutils library instead
 resized = imutils.resize(image, width=300)
 cv2.imshow("Imutils Resize", resized)
 cv2.waitKey(0)
 
-# let's rotate an image 45 degrees clockwise using OpenCV by first
-# computing the image center, then constructing the rotation matrix,
-# and then finally applying the affine warp
+let's rotate an image 45 degrees clockwise using OpenCV by first
+computing the image center, then constructing the rotation matrix,
+and then finally applying the affine warp
 center = (w // 2, h // 2)
 M = cv2.getRotationMatrix2D(center, -45, 1.0)
 rotated = cv2.warpAffine(image, M, (w, h))
 cv2.imshow("OpenCV Rotation", rotated)
 cv2.waitKey(0)
 
-# rotation can also be easily accomplished via imutils with less code
+rotation can also be easily accomplished via imutils with less code
 rotated = imutils.rotate(image, -45)
 cv2.imshow("Imutils Rotation", rotated)
 cv2.waitKey(0)
 
-# OpenCV doesn't "care" if our rotated image is clipped after rotation
-# so we can instead use another imutils convenience function to help
-# us out
+OpenCV doesn't "care" if our rotated image is clipped after rotation
+so we can instead use another imutils convenience function to help
+us out
 rotated = imutils.rotate_bound(image, 45)
 cv2.imshow("Imutils Bound Rotation", rotated)
 cv2.waitKey(0)
 
-# apply a Gaussian blur with a 11x11 kernel to the image to smooth it,
-# useful when reducing high frequency noise
+apply a Gaussian blur with a 11x11 kernel to the image to smooth it,
+useful when reducing high frequency noise
 blurred = cv2.GaussianBlur(image, (11, 11), 0)
 cv2.imshow("Blurred", blurred)
 cv2.waitKey(0)
 
-# draw a 2px thick red rectangle surrounding the face
+draw a 2px thick red rectangle surrounding the face
 output = image.copy()
 cv2.rectangle(output, (320, 60), (420, 160), (0, 0, 255), 2)
 cv2.imshow("Rectangle", output)
 cv2.waitKey(0)
 
-# draw a blue 20px (filled in) circle on the image centered at
-# x=300,y=150
+draw a blue 20px (filled in) circle on the image centered at
+x=300,y=150
 output = image.copy()
 cv2.circle(output, (300, 150), 20, (255, 0, 0), -1)
 cv2.imshow("Circle", output)
 cv2.waitKey(0)
 
-# draw a 5px thick red line from x=60,y=20 to x=400,y=200
+draw a 5px thick red line from x=60,y=20 to x=400,y=200
 output = image.copy()
 cv2.line(output, (60, 20), (400, 200), (0, 0, 255), 5)
 cv2.imshow("Line", output)
 cv2.waitKey(0)
 
-# draw green text on the image
+draw green text on the image
 output = image.copy()
 cv2.putText(output, "OpenCV + Jurassic Park!!!", (10, 25), 
 	cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 0), 2)

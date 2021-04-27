@@ -2,7 +2,7 @@ Interview for Santander UK
 
 What is springboot?
 
-Technically speaking, according to Pivotal's engineers:
+	Technically speaking, according to Pivotal's engineers:
 
 	Spring Boot is just pairs of @Configurations and @Conditions classes, which will create @Beans classes for us if those @Conditions are met.
 
@@ -14,15 +14,15 @@ Technically speaking, according to Pivotal's engineers:
 
 		Conditional on the missing sibling. If the user has already specified his own, for example, DataSource, then Spring Boot will not attempt to create its auto-configuration.
 
-Not so technically speaking It can be seen as a set of classes or beans, defined by dependencies in the pom.xml, stable to each other, which are going to be loaded in the context of spring 
-provided that a number of conditions are met.
+	Not so technically speaking It can be seen as a set of classes or beans, defined by dependencies in the pom.xml, stable to each other, which are going to be loaded in the context of spring 
+	provided that a number of conditions are met.
 
 What are those conditions?
 
-Those expressed by the label @Conditionals. 
+	Those expressed by the label @Conditionals. 
 
-Basically spring-boot is a configuration of a shared spring context with a bunch of @Conditionals tags.
-A tag of this type will return a true or false depending on the code you wanted to use, for example, 
+	Basically spring-boot is a configuration of a shared spring context with a bunch of @Conditionals tags.
+	A tag of this type will return a true or false depending on the code you wanted to use, for example, 
 
 Given the following code, you can see that a @IsRelationalDatabaseCondition tag implements something like this:
 
@@ -52,7 +52,7 @@ Given the following code, you can see that a @IsRelationalDatabaseCondition tag 
 	    }
 	}
 
-And we can use it in such a way:
+	And we can use it in such a way:
 
 	@Configuration
 	public class ReallyBigCompanySharedContextConfiguration {
@@ -65,7 +65,7 @@ And we can use it in such a way:
 
 	}
 
-Spring-boot is going to add a lot of @Conditional labels for us to make our life easier.
+	Spring-boot is going to add a lot of @Conditional labels for us to make our life easier.
 
 
 What I like most about my job, in the world of software engineering is to solve problems, design, build and deploy engineering solutions. It's really satisfying to deliver software that works and does what it has to do.

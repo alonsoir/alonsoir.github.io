@@ -1,355 +1,554 @@
-// lets create a shared network between containers.
-docker network create --driver bridge my_ci_network_test
+This guide will describe the effort made to detail the steps to follow to try to set up a rudimentary CI/CD pipeline using tools such as Jenkins, Maven, Git, Docker, Artifactory, Sonar and Ansible, all open source and available to anyone.
+
+I would like to thank David Perez Cabrera (@dperezcabrera) for his assistance with Docker images, as well as my good friend Emerson Castañeda (@emecas) for his patience in discussing this topic.
+
+In the real world, you may want to use real machines from AWS, GCP, or Azure, not containers. 
+We only need that these machines can talk each other and ideally these machines will need to be in high availability. 
+How do you do that is for another post. 
+I used my laptop with osx, and Docker installed because i do not wanted to pay money to AWS, GCP, Azure in this time. 
+
+I am going to create a CI/CD environment with these componentes running in docker containers:
+
+	1) Jenkins/Ansible. DONE!
+
+	2) Ansible/Docker. DONE! 
+
+	3) Sonar. Pending!
+
+	4) Nexus/Artifactory. Pending!
+
+	5) OWASP ZAP (security) Pending! 
+
+The linux images that I use with docker are alpine. Every container will need to update their system, install and configure openssh, configure ansible, etc... 
+
+Lets create a shared network between containers.
+
+```
+	docker network create --driver bridge my_ci_network_test
 	c1c9c5617f0162efc9399d5e4b399936a639743a26ddc28247868afad5d6d9fe
 
-docker network ls
+	docker network ls
 	...
 	NETWORK ID     NAME                               DRIVER    SCOPE
 	c1c9c5617f01   my_ci_network_test                 bridge    local
-## Lets create a Jenkins Docker container
-git clone https://github.com/alonsoir/dockerfiles.git
 
-cd dockerfiles/ic/jenkins
-docker build -t dperezcabrera/jenkins .
+```
 
-## Lets create a docker container with Jenkins. It must be able to connect with Ansible control host, so it will not any need to have installed ansible. I will install openssh capabilities and the same user "ansadmin" than the one installed in 
-docker run -v /var/run/docker.sock:/var/run/docker.sock -ti --name jenkins-alpine-alonsoir --publish 8080:8080 --publish 50000:50000 --network my_ci_network_test dperezcabrera/jenkins
+Lets create a Jenkins Docker container
 
-## lets create a docker container able to run another docker containers, exposing docker.sock to outside. Interactive mode. Root mode.
-## This docker container will contain the Ansible control node host with Docker support. It must have ansible installed.
-docker run -v /var/run/docker.sock:/var/run/docker.sock -ti --name ansible-command-host-with-docker-support --network my_ci_network_test -var docker
+```
+	mkdir my-ci-environment
+	cd my-ci-environment
+	git clone https://github.com/alonsoir/dockerfiles.git
+	cd dockerfiles/ic/jenkins
+	docker build -t dperezcabrera/jenkins .
+```
 
-# Lets figure out what containers are up and running...
-bash-5.0# docker ps
-CONTAINER ID   IMAGE                   COMMAND                  CREATED        STATUS        PORTS                                              NAMES
-9a5c5e668bfb   dperezcabrera/jenkins   "/sbin/tini -- /usr/…"   22 hours ago   Up 22 hours   0.0.0.0:8080->8080/tcp, 0.0.0.0:50000->50000/tcp   jenkins-alpine-alonsoir
-b90dabbc92c5   docker                  "docker-entrypoint.s…"   24 hours ago   Up 24 hours                                                     ansible-command-host-with-docker-support
+Lets create a docker container with Jenkins. It must be able to connect with a Ansible control node container, or, it will have the capability of being an ansible control node,so it will not any need to have installed ansible within Jenkins container if you create another docker container acting as Ansible control node. 
+In this documment, i will install ansible within Jenkins node, so jenkings/ansible-control-node must be able to connect to another docker container running docker service. This container must be able to create images with the binaries and configuration files compiled by Jenkins and provided by Ansible.
 
+I will install openssh capabilities and the same user "ansadmin" and put it in the same group than docker group. 
 
-## Both containers need to be updated, but jenkins will not have any need to have installed ansible. 
-# Connect to both of them doing docker exec -ti container_id bash command and start running these commands.
-apk update
-apk upgrade
+You have to use --hostname in order to rename it internally.
 
-// this will install visudo as well..
-apk add sudo
-// install setup-* scripts. It will install openssh
-apk add alpine-conf
+```
+	docker run -v /var/run/docker.sock:/var/run/docker.sock \ 
+				-ti 										\
+				--name jenkins-alpine-alonsoir 				\
+				--publish 8080:8080 						\ 
+				--publish 50000:50000 						\
+				--hostname jenkins 							\ 
+				--network my_ci_network_test 				\
+				dperezcabrera/jenkins
+```
 
-// Must run
-setup-alpine
+I have to use this command because the above is not running in Terminal...
 
-// Enable the sshd service so that it starts at boot:
-rc-update add sshd
+```
+	docker run -v /var/run/docker.sock:/var/run/docker.sock -ti --name jenkins-alpine-alonsoir --publish 8080:8080 --publish 50000:50000 --hostname jenkins --network my_ci_network_test dperezcabrera/jenkins
+
+```
+
+PRO TIP!
+
+Probably if you run the docker run command and finally at the end of the day, you close Docker daemon, another day you will like to continue working in your demo, so, probably if will happe an exception like this:
+
+```
+	docker: Error response from daemon: Conflict. The container name "/jenkins-alpine-alonsoir" is already in use by container "9a5c5e668bfb0b9e589a4553ded23d61e6b63ad63e43dc71b107adfd9bf3af4a". You have to remove (or rename) that container to be able to reuse that name.
+```
+
+You have to run this command to recover the same state of previous container. I do not want to reuse the name, i want to reuse the previous state of the container!
+
+```
+	docker start jenkins-alpine-alonsoir || docker run -v /var/run/docker.sock:/var/run/docker.sock -ti --name jenkins-alpine-alonsoir --publish 8080:8080 --publish 50000:50000 --hostname jenkins --network my_ci_network_test dperezcabrera/jenkins
+
+```
+
+TIP: 
+
+You may wonder why I run the container using /var/run/docker.sock. The reason is that I want to have this file exposed by making the sock file of the host machine.
+
+Lets create a docker container able to run another docker containers, exposing docker.sock to outside. Interactive mode. Root mode.
+This docker container will contain the Ansible control node host with Docker support. It must have ansible installed.
+
+```
+	docker run -v /var/run/docker.sock:/var/run/docker.sock \
+				-ti \
+				--name ansible-command-host-with-docker-support \
+				--hostname ansible-command-host \
+				--network my_ci_network_test -var \
+				docker
+```
+
+Or use this command if the contanier is already created
+
+```
+	docker start ansible-command-host-with-docker-support || docker run -v /var/run/docker.sock:/var/run/docker.sock -ti --name ansible-command-host-with-docker-support --hostname ansible-command-host --network my_ci_network_test -var docker
+```
+
+Lets figure out what containers are up and running...
+
+```
+	docker ps
+	
+	CONTAINER ID   IMAGE                   COMMAND                  CREATED        STATUS        PORTS                                              NAMES
+	9a5c5e668bfb   dperezcabrera/jenkins   "/sbin/tini -- /usr/…"   22 hours ago   Up 22 hours   0.0.0.0:8080->8080/tcp, 0.0.0.0:50000->50000/tcp   jenkins-alpine-alonsoir
+	b90dabbc92c5   docker                  "docker-entrypoint.s…"   24 hours ago   Up 24 hours                                                     ansible-command-host-with-docker-support
+
+```
+
+Both containers need to be updated, but jenkins will not have any need to have installed ansible. 
+
+Now, Maybe it would be a good idea to have the next commands in a Dockerfile, in production. I will print them for learning purposes.
+
+Connect to both of them doing docker exec -ti container_id bash command and start running these commands.
+
+```
+	apk update
+	apk upgrade
+```
+
+this will install visudo as well..
+
+```
+	apk add sudo
+
+```
+install setup-* scripts. It will install openssh
+
+```
+	apk add alpine-conf
+
+```
+
+Must run this command in order to configure alpine linux image. 
+
+```
+	setup-alpine
+```
+
+Enable the sshd service so that it starts at boot:
+
+```
+	rc-update add sshd
+
+```
+
+```
 	* rc-update: sshd already installed in runlevel `default'; skipping
 
-//List services to verify sshd is enabled
-rc-status
+```
+
+List services to verify sshd is enabled
+```
+	rc-status
+```
+
+```
 	Runlevel: default
 	 sshd                                                                                                                                                                                                                            [  started  ]
 	 chronyd                                                                                                                                                                                                                         [  stopped  ]
 	Dynamic Runlevel: hotplugged
 	Dynamic Runlevel: needed/wanted
 	Dynamic Runlevel: manual
+```
 
+Start the sshd service immediately, create configuration files, create dockeradmin user:
 
-//Start the sshd service immediately and create configuration files:
+```
+	/etc/init.d/sshd start
+```
 
-/etc/init.d/sshd start
-
+```
 	* WARNING: sshd has already been started
 
-/etc/init.d/sshd status
+	/etc/init.d/sshd status
  	
  	* status: started
+```
 
+```
+	adduser dockeradmin
+	passwd dockeradmin
+```
 
+Create a new user for ansible administration & grant admin access to the user (on Control node and Managed host)
 
-adduser dockeradmin
-passwd dockeradmin
+```
+	adduser ansadmin
+	passwd ansadmin
+```
 
-// Create a new user for ansible administration & grant admin access to the user (on Control node and Managed host)
+You can run ```visudo``` or edit /etc/sudoers file
 
-adduser ansadmin
-passwd ansadmin
+```
+	ansadmin ALL=(ALL) NOPASSWD: ALL
+	dockeradmin ALL=(ALL) NOPASSWD: ALL 
+```
 
-visudo
+Using key-based authentication is advised. If you are still at the learning stage use password-based authentication (on Control node and Managed host)
+sed command replaces "PasswordAuthentication no to yes" without editing file 
 
-// or edit /etc/sudoers file
+```
+	sed -ie 's/PasswordAuthentication no/PasswordAuthentication yes/' /etc/ssh/sshd_config
+	/etc/init.d/sshd restart
+```
 
-## Uncomment to allow any user to run sudo if they know the password
-## of the user they are running the command as (root by default).
-# Defaults targetpw  # Ask for the password of the target user
-# ALL ALL=(ALL) ALL  # WARNING: only use this together with 'Defaults targetpw'
-ansadmin ALL=(ALL) NOPASSWD: ALL
-dockeradmin ALL=(ALL) NOPASSWD: ALL 
+Install Ansible in ansible-command-host-with-docker-support node...
+```
+	apk add ansible
+```
 
-# Using key-based authentication is advised. If you are still at the learning stage use password-based authentication (on Control node and Managed host)
-# sed command replaces "PasswordAuthentication no to yes" without editing file 
-sed -ie 's/PasswordAuthentication no/PasswordAuthentication yes/' /etc/ssh/sshd_config
-/etc/init.d/sshd restart
+NOT SURE!, Generate a SSH key for the managed node. It's recommended to use a key which is protected with a password.
 
-# Install Ansible in ansible-command-host-with-docker-support node...
+```
+ssh-keygen -t ed25519
 
-apk add ansible
+```
 
-# NOT SURE!, Generate a SSH key for the managed node. It's recommended to use a key which is protected with a password.
+In Jenkins node, change to ansadmin user
 
-# ssh-keygen -t ed25519
+```
+	su - ansadmin
+```
 
-# In Jenkins node, change to ansadmin user
-su - ansadmin
+generate ssh keys
 
-# generate ssh keys
-ssh-keygen
+```
+	ssh-keygen
+```
 
-# copy the key to ansible server. You have to figure out which ip is running docker inspect network network-ID
+copy the key to ansible server. You have to figure out which ip is running docker inspect network network-ID
 
-% docker network ls 
-NETWORK ID     NAME                               DRIVER    SCOPE
-c1c9c5617f01   my_ci_network_test                 bridge    local
-% docker inspect network c1c9c5617f01
-[
-    {
-        "Name": "my_ci_network_test",
-        "Id": "c1c9c5617f0162efc9399d5e4b399936a639743a26ddc28247868afad5d6d9fe",
-        "Created": "2021-04-19T09:41:02.870769323Z",
-        "Scope": "local",
-        "Driver": "bridge",
-        "EnableIPv6": false,
-        "IPAM": {
-            "Driver": "default",
-            "Options": {},
-            "Config": [
-                {
-                    "Subnet": "172.25.0.0/16",
-                    "Gateway": "172.25.0.1"
-                }
-            ]
-        },
-        "Internal": false,
-        "Attachable": false,
-        "Ingress": false,
-        "ConfigFrom": {
-            "Network": ""
-        },
-        "ConfigOnly": false,
-        "Containers": {
-            "9a5c5e668bfb0b9e589a4553ded23d61e6b63ad63e43dc71b107adfd9bf3af4a": {
-                "Name": "jenkins-alpine-alonsoir",
-                "EndpointID": "d140f7e8fb50a3eb2f8845ce76f92d9bd402628b6fd18c721fe1c368cbfd7b56",
-                "MacAddress": "02:42:ac:19:00:03",
-                "IPv4Address": "172.25.0.3/16",
-                "IPv6Address": ""
-            },
-            "b90dabbc92c5950ec02716008be30ade86a5043a007a9cd911b1b2267081d787": {
-                "Name": "ansible-command-host-with-docker-support",
-                "EndpointID": "0c962c401268d08e06cdb98304fe226b2ff490de8a58709da0f6ee25f8106954",
-                "MacAddress": "02:42:ac:19:00:02",
-                "IPv4Address": "172.25.0.2/16",
-                "IPv6Address": ""
-            }
-        },
-        "Options": {},
-        "Labels": {}
-    }
-]
+```
+	% docker network ls 
+	NETWORK ID     NAME                               DRIVER    SCOPE
+	c1c9c5617f01   my_ci_network_test                 bridge    local
+	% docker inspect network c1c9c5617f01
+	[
+		...
+	        "Containers": {
+	            "9a5c5e668bfb0b9e589a4553ded23d61e6b63ad63e43dc71b107adfd9bf3af4a": {
+	                "Name": "jenkins-alpine-alonsoir",
+	                "EndpointID": "d140f7e8fb50a3eb2f8845ce76f92d9bd402628b6fd18c721fe1c368cbfd7b56",
+	                "MacAddress": "02:42:ac:19:00:03",
+	                "IPv4Address": "172.25.0.3/16",
+	                "IPv6Address": ""
+	            },
+	            "b90dabbc92c5950ec02716008be30ade86a5043a007a9cd911b1b2267081d787": {
+	                "Name": "ansible-command-host-with-docker-support",
+	                "EndpointID": "0c962c401268d08e06cdb98304fe226b2ff490de8a58709da0f6ee25f8106954",
+	                "MacAddress": "02:42:ac:19:00:02",
+	                "IPv4Address": "172.25.0.2/16",
+	                "IPv6Address": ""
+	            }
+	        },
+	        "Options": {},
+	        "Labels": {}
+	    }
+	]
+```
 
-# In my case, i have to copy the key to 172.25.0.2 
-ssh-copy-id ansadmin@172.25.0.2
+In my case, i have to copy the key to 172.25.0.2 
 
-# Do the same in the ansible-command-host-with-docker-support container, log in, change to ansadmin, ssh-keygen, copy the generated key to jenkins
+```
+	ssh-copy-id ansadmin@172.25.0.2
+```
 
-# run this command in ansible-command-host-with-docker-support container to communicate with Jenkins container, as ansadmin user.
+Do the same in the ansible-command-host-with-docker-support container, log in, change to ansadmin, ssh-keygen, copy the generated key to jenkins
 
-b90dabbc92c5:~$ ansible all -m ping
-[WARNING]: Platform linux on host 172.25.0.3 is using the discovered Python interpreter at /usr/bin/python3, but future installation of another Python interpreter could change the meaning of that path. See
-https://docs.ansible.com/ansible/2.10/reference_appendices/interpreter_discovery.html for more information.
-172.25.0.3 | SUCCESS => {
-    "ansible_facts": {
-        "discovered_interpreter_python": "/usr/bin/python3"
-    },
-    "changed": false,
-    "ping": "pong"
-}
+run this command in ansible-command-host-with-docker-support container to communicate with Jenkins container, as ansadmin user.
+```
+...
+	b90dabbc92c5:~$ ansible all -m ping
+	[WARNING]: Platform linux on host 172.25.0.3 is using the discovered Python interpreter at /usr/bin/python3, but future installation of another Python interpreter could change the meaning of that path. See
+	https://docs.ansible.com/ansible/2.10/reference_appendices/interpreter_discovery.html for more information.
+	172.25.0.3 | SUCCESS => {
+	    "ansible_facts": {
+	        "discovered_interpreter_python": "/usr/bin/python3"
+	    },
+	    "changed": false,
+	    "ping": "pong"
+	}
+...
+```
 
-# If you do not see this message, you see one like this:
+Possible troubleshooting
+If you do not see this above message, but you see one like this:
+```
+...
+	[WARNING]: No python interpreters found for host 172.25.0.3 (tried ['/usr/bin/python', 'python3.7', 'python3.6', 'python3.5', 'python2.7', 'python2.6', '/usr/libexec/platform-python', '/usr/bin/python3', 'python'])
+	172.25.0.3 | FAILED! => {
+	    "ansible_facts": {
+	        "discovered_interpreter_python": "/usr/bin/python"
+	    },
+	    "changed": false,
+	    "module_stderr": "Shared connection to 172.25.0.3 closed.\r\n",
+	    "module_stdout": "/bin/sh: /usr/bin/python: not found\r\n",
+	    "msg": "The module failed to execute correctly, you probably need to set the interpreter.\nSee stdout/stderr for the exact error",
+	    "rc": 127
+	}
+...
+```
 
-[WARNING]: No python interpreters found for host 172.25.0.3 (tried ['/usr/bin/python', 'python3.7', 'python3.6', 'python3.5', 'python2.7', 'python2.6', '/usr/libexec/platform-python', '/usr/bin/python3', 'python'])
-172.25.0.3 | FAILED! => {
-    "ansible_facts": {
-        "discovered_interpreter_python": "/usr/bin/python"
-    },
-    "changed": false,
-    "module_stderr": "Shared connection to 172.25.0.3 closed.\r\n",
-    "module_stdout": "/bin/sh: /usr/bin/python: not found\r\n",
-    "msg": "The module failed to execute correctly, you probably need to set the interpreter.\nSee stdout/stderr for the exact error",
-    "rc": 127
-}
+You have to install python3 in Jenkins container. 
 
-# You have to install python3 in Jenkins container. 
+```
+	apk add python3
+```
 
-apk add python3
-
-# In this momment, ansible command host can communicate with Jenkins host container. In this momment, do i have to communicate both containers through ansible?
-# DO I HAVE TO INSTALL Ansible in Jenkins container node?
+In this momment, ansible command host can communicate with Jenkins host container. In this momment, do i have to communicate both containers through ansible?
+DO I HAVE TO INSTALL Ansible in Jenkins container node? 
+I m not sure, so in the time of writing this, i decided to do it. Ansible command node with docker support can communicate with Jenkins node server.
 
 ...
 
-# TIP. Maybe you have to change the names of containers because whatever reason.
-# docker rename ACTUAL_CONTAINER NEW_CONTAINER_NAME
+TIP. Maybe you have to change the names of containers. 
+	
+	You can rename the name of the container using the next command.
 
-% docker network ls
-NETWORK ID     NAME                               DRIVER    SCOPE
-c1c9c5617f01   my_ci_network_test                 bridge    local
-aironman@MacBook-Pro-de-Alonso jenkins % docker network inspect my_ci_network_test
-[
-    {
-        "Name": "my_ci_network_test",
-        "Id": "c1c9c5617f0162efc9399d5e4b399936a639743a26ddc28247868afad5d6d9fe",
-        "Created": "2021-04-19T09:41:02.870769323Z",
-        "Scope": "local",
-        "Driver": "bridge",
-        "EnableIPv6": false,
-        "IPAM": {
-            "Driver": "default",
-            "Options": {},
-            "Config": [
-                {
-                    "Subnet": "172.25.0.0/16",
-                    "Gateway": "172.25.0.1"
-                }
-            ]
-        },
-        "Internal": false,
-        "Attachable": false,
-        "Ingress": false,
-        "ConfigFrom": {
-            "Network": ""
-        },
-        "ConfigOnly": false,
-        "Containers": {
-            "9a5c5e668bfb0b9e589a4553ded23d61e6b63ad63e43dc71b107adfd9bf3af4a": {
-                "Name": "jenkins-alpine-alonsoir",
-                "EndpointID": "d140f7e8fb50a3eb2f8845ce76f92d9bd402628b6fd18c721fe1c368cbfd7b56",
-                "MacAddress": "02:42:ac:19:00:03",
-                "IPv4Address": "172.25.0.3/16",
-                "IPv6Address": ""
-            },
-            "b90dabbc92c5950ec02716008be30ade86a5043a007a9cd911b1b2267081d787": {
-                "Name": "ansible-command-host-with-docker-support",
-                "EndpointID": "0c962c401268d08e06cdb98304fe226b2ff490de8a58709da0f6ee25f8106954",
-                "MacAddress": "02:42:ac:19:00:02",
-                "IPv4Address": "172.25.0.2/16",
-                "IPv6Address": ""
-            }
-        },
-        "Options": {},
-        "Labels": {}
-    }
-]
+```
+	docker rename ACTUAL_CONTAINER NEW_CONTAINER_NAME
 
-# both containers are up and running.
+	% docker network ls
+	NETWORK ID     NAME                               DRIVER    SCOPE
+	c1c9c5617f01   my_ci_network_test                 bridge    local
+	aironman@MacBook-Pro-de-Alonso jenkins % docker network inspect my_ci_network_test
+	[
+	    ...
+	        "Containers": {
+	            "9a5c5e668bfb0b9e589a4553ded23d61e6b63ad63e43dc71b107adfd9bf3af4a": {
+	                "Name": "jenkins-alpine-alonsoir",
+	                "EndpointID": "d140f7e8fb50a3eb2f8845ce76f92d9bd402628b6fd18c721fe1c368cbfd7b56",
+	                "MacAddress": "02:42:ac:19:00:03",
+	                "IPv4Address": "172.25.0.3/16",
+	                "IPv6Address": ""
+	            },
+	            "b90dabbc92c5950ec02716008be30ade86a5043a007a9cd911b1b2267081d787": {
+	                "Name": "ansible-command-host-with-docker-support",
+	                "EndpointID": "0c962c401268d08e06cdb98304fe226b2ff490de8a58709da0f6ee25f8106954",
+	                "MacAddress": "02:42:ac:19:00:02",
+	                "IPv4Address": "172.25.0.2/16",
+	                "IPv6Address": ""
+	            }
+	        },
+	        "Options": {},
+	        "Labels": {}
+	    }
+	]
+```
 
-# PRO TIP!!! 
-# As you do with your code, it is a good idea to save the state of your containers. If you dont do it, you will loose all of these changes.
+Both containers are up and running in the same network, openssh is up and running, we can configure Jenkins 
+to create docker images invoking ansible playbooks.
 
-% docker container ls
-CONTAINER ID   IMAGE                   COMMAND                  CREATED        STATUS        PORTS                                              NAMES
-9a5c5e668bfb   dperezcabrera/jenkins   "/sbin/tini -- /usr/…"   23 hours ago   Up 23 hours   0.0.0.0:8080->8080/tcp, 0.0.0.0:50000->50000/tcp   jenkins-alpine-alonsoir
-b90dabbc92c5   docker                  "docker-entrypoint.s…"   26 hours ago   Up 26 hours                                                      ansible-command-host-with-docker-support
+Deploy on a docker container using Ansible
+*Jenkins Job name:* `Deploy_on_Container_using_ansible`
 
-% docker container commit --author "Alonso Isidoro Román. <alonsoir@gmail.com>" --message "Update Jenkins node with latest config like ssh" 9a5c5e668bfb
-sha256:e1a0260212b1344a9f8c6ee8c5b27b34b1517e56a063eba9e277d68782550822
+Pre-requisites
 
-% docker container commit --author "Alonso Isidoro Román. <alonsoir@gmail.com>" --message "Updated ansible command host node with latests config." b90dabbc92c5
-sha256:9e29a62e08b0deb9548feb1e235ab2109f95f17ba00cae4568d514e85a50e3e8
+1. Jenkins server 
+2. Docker-host server. In my case, i have used the same container for Docker-host and ansible server. 
+3. Ansible server
+4. `Dockerfile` under *`/opt/docker`* on Ansible server. 
 
-% docker container ls
-CONTAINER ID   IMAGE                   COMMAND                  CREATED        STATUS        PORTS                                              NAMES
-9a5c5e668bfb   dperezcabrera/jenkins   "/sbin/tini -- /usr/…"   23 hours ago   Up 23 hours   0.0.0.0:8080->8080/tcp, 0.0.0.0:50000->50000/tcp   jenkins-alpine-alonsoir
-b90dabbc92c5   docker                  "docker-entrypoint.s…"   26 hours ago   Up 26 hours                                                      ansible-command-host-with-docker-support
+```
+	   # Pull tomcat latest image from dockerhub 
+	   From tomcat
+	   # Maintainer
+	   MAINTAINER "AR Shankar" 
 
-# Check out the last ones! image_id 9e29a62e08b0 and e1a0260212b1. Those are my images!
-% docker image ls 
-REPOSITORY                                  TAG           IMAGE ID       CREATED              SIZE
-<none>                                      <none>        9e29a62e08b0   12 seconds ago       654MB
-<none>                                      <none>        e1a0260212b1   About a minute ago   981MB
-dperezcabrera/jenkins                       latest        faceff5bbe30   23 hours ago         796MB
-jenkins_container_test                      latest        8547c700812c   4 days ago           860MB
-sharp_herschel                              latest        cc609805861c   4 days ago           374MB
-strange_leaky                               latest        764e15d2ce7b   4 days ago           572MB
-ansible_managed_host                        latest        20f16712ad4b   4 days ago           649MB
-strange_leakey                              latest        008145dc834d   5 days ago           571MB
-mywebapp_updated                            latest        577addc79202   7 days ago           374MB
-docker                                      latest        a1319e25e503   7 days ago           246MB
-jenkinsci/blueocean                         latest        bb76468aab7e   13 days ago          745MB
-postgres                                    9.6           1ceb7d7a7c95   5 weeks ago          200MB
-spark-submit                                latest        cfa2f1fd31a8   6 weeks ago          1.61GB
-spark-worker                                latest        f72f4739d843   6 weeks ago          1.61GB
-spark-master                                latest        e5ce10ac2b62   6 weeks ago          1.61GB
-spark-base                                  latest        cf76dd98eb72   6 weeks ago          1.61GB
-cassandra                                   3             9ea2636247a5   6 weeks ago          402MB
-rabbitmq                                    <none>        9bf8366c13b5   6 weeks ago          156MB
-mysql                                       <none>        d54bd1054823   7 weeks ago          449MB
-postgres                                    latest        1f0815c1cb6e   2 months ago         314MB
-cnfldemos/cp-server-connect-datagen         0.4.0-6.1.0   020d28a7c4a3   2 months ago         1.84GB
-confluentinc/ksqldb-examples                6.1.0         476dfa28f42c   2 months ago         753MB
-confluentinc/cp-ksqldb-server               6.1.0         422bc8ea1d2b   2 months ago         1.13GB
-confluentinc/cp-ksqldb-cli                  6.1.0         c172d6a70ffb   2 months ago         792MB
-confluentinc/cp-schema-registry             6.1.0         df94a7c57275   2 months ago         1.44GB
-confluentinc/cp-enterprise-control-center   6.1.0         f5e3ecc0d80f   2 months ago         1.03GB
-confluentinc/cp-server                      6.1.0         c7b3b213cc88   2 months ago         1.38GB
-confluentinc/cp-kafka-rest                  6.1.0         ef04f0aa8df3   2 months ago         1.4GB
-confluentinc/cp-zookeeper                   6.1.0         d46cb4700220   2 months ago         726MB
-wurstmeister/kafka                          latest        cc59b78d943f   3 months ago         438MB
-wurstmeister/zookeeper                      latest        3f43f72cb283   2 years ago          510MB
-bobrik/socat                                latest        e617a56c238e   5 years ago          6.95MB
+	   # copy war file on to container 
+	   COPY ./webapp.war /usr/local/tomcat/webapps
+```
 
-% docker ps     
-CONTAINER ID   IMAGE                   COMMAND                  CREATED        STATUS        PORTS                                              NAMES
-9a5c5e668bfb   dperezcabrera/jenkins   "/sbin/tini -- /usr/…"   23 hours ago   Up 23 hours   0.0.0.0:8080->8080/tcp, 0.0.0.0:50000->50000/tcp   jenkins-alpine-alonsoir
-b90dabbc92c5   docker                  "docker-entrypoint.s…"   26 hours ago   Up 26 hours                                                      ansible-command-host-with-docker-support
+5. `/opt/docker/hosts` file with the ips where you want to deploy.  
 
-# RUNNING These commands you will have the changes already saved. I thought that it will not work, but i suspect it worked because i have downloaded these images in my local hub
+Important! /opt/docker directory must be in control, user and group, by ansadmin user.
 
-% docker commit 9a5c5e668bfb dperezcabrera/jenkins
-sha256:fe50bb2c4fa59b9670f1176f45aa2558b4b3dfaff311b09878d35f23b8395dcf
+6. Create `create-docker-image.yml` unser *`/opt/docker`* on Ansible server. This is an ansible playbook example.
 
-% docker commit b90dabbc92c5 docker
-sha256:c0d26d736f6810b33a26ef8a34adb31b09cd5ef4fbba41d4777b86d086038cba
+```
+   ---
+   - hosts: all
+     #ansadmin doesn't need root access to create an image
+     become: true 
+
+     tasks:
+     - name: building docker image
+       command: "docker build -t simple-devops-image ." 
+       args:
+         chdir: /opt/docker
+```
+
+7 . Create `create-docker-image.yml` under *`/opt/docker`* on Ansible server 
+
+```
+   ---
+   - hosts: all
+     become: true
+
+     tasks:
+     - name: creating docker image using docker command
+       command: docker run -d --name simple-devops-container -p 8080:8080 simple-devops-image
+```
+
+Integration between Ansible-control-node and Jenkins
+
+Now we are basically going to run the ansible-playbook command over ssh in ansible/docker-host server.
+
+Install "publish Over SSH"
+ - `Manage Jenkins` > `Manage Plugins` > `Available` > `Publish over SSH`
+
+Enable connection between Ansible-control-node and Jenkins
+
+- `Manage Jenkins` > `Configure System` > `Publish Over SSH` > `SSH Servers` 
+
+	- SSH Servers:
+                - Name: `ansible-server`
+		- Hostname:`<ServerIP>`
+		- username: `ansadmin`
+               
+       -  `Advanced` > chose `Use password authentication, or use a different key`
+		 - password: `*******`
+ 
+Steps to create "Deploy_on_Container_using_ansible" Jenkin job
+From Jenkins home page select "New Item"
+   - Enter an item name: `Deploy_on_Container_using_ansible`
+     - Copy from: `Deploy_on_Container`
+     
+   - *Source Code Management:*
+      - Repository: `https://github.com/yankils/hello-world.git`
+      - Branches to build : `*/master`  
+   - *Poll SCM* :      - `* * * *` 		*--> Ok, not a good idea in production. This means any day, any hour, any minute, every second jenkins will poll for changes...*
+
+   - *Build:*
+     - Root POM:`pom.xml`
+     - Goals and options: `clean install package` *--> Not tested, but probably will work with clean install phases...*
+
+ - *Post-build Actions*
+   - Send build artifacts over SSH
+     - *SSH Publishers*
+      - SSH Server Name: `ansible-server`
+       - `Transfers` >  `Transfer set`
+            - Source files: `webapp/target/*.war`
+	       - Remove prefix: `webapp/target`
+	       - Remote directory: `//opt//docker`   	*-> weird, why double slashes?*
+	       - Exec command: 
+                ```sh 
+                ansible-playbook -i /opt/docker/hosts /opt/docker/create-docker-image.yml;
+                ```
+
+Save and run the job now.
+
+PRO TIPS
+
+Probably it is a good idea to limit where you want to deploy the containers using --limit in above ansible-playbook command. 
+
+As you do with your code, it is a good idea to save the state of your containers. If you dont do it, you will loose all of these changes.
+
+	% docker container ls
+	CONTAINER ID   IMAGE                   COMMAND                  CREATED        STATUS        PORTS                                              NAMES
+	9a5c5e668bfb   dperezcabrera/jenkins   "/sbin/tini -- /usr/…"   23 hours ago   Up 23 hours   0.0.0.0:8080->8080/tcp, 0.0.0.0:50000->50000/tcp   jenkins-alpine-alonsoir
+	b90dabbc92c5   docker                  "docker-entrypoint.s…"   26 hours ago   Up 26 hours                                                      ansible-command-host-with-docker-support
+
+	% docker container commit --author "Alonso Isidoro Román. <alonsoir@gmail.com>" --message "Update Jenkins node with latest config like ssh" 9a5c5e668bfb
+	sha256:e1a0260212b1344a9f8c6ee8c5b27b34b1517e56a063eba9e277d68782550822
+
+	% docker container commit --author "Alonso Isidoro Román. <alonsoir@gmail.com>" --message "Updated ansible command host node with latests config." b90dabbc92c5
+	sha256:9e29a62e08b0deb9548feb1e235ab2109f95f17ba00cae4568d514e85a50e3e8
+
+	% docker container ls
+	CONTAINER ID   IMAGE                   COMMAND                  CREATED        STATUS        PORTS                                              NAMES
+	9a5c5e668bfb   dperezcabrera/jenkins   "/sbin/tini -- /usr/…"   23 hours ago   Up 23 hours   0.0.0.0:8080->8080/tcp, 0.0.0.0:50000->50000/tcp   jenkins-alpine-alonsoir
+	b90dabbc92c5   docker                  "docker-entrypoint.s…"   26 hours ago   Up 26 hours                                                      ansible-command-host-with-docker-support
+
+	Check out the last ones! image_id 9e29a62e08b0 and e1a0260212b1. Those are my images!
+	% docker image ls 
+	REPOSITORY                                  TAG           IMAGE ID       CREATED              SIZE
+	<none>                                      <none>        9e29a62e08b0   12 seconds ago       654MB
+	<none>                                      <none>        e1a0260212b1   About a minute ago   981MB
+	...
+
+	% docker ps     
+	CONTAINER ID   IMAGE                   COMMAND                  CREATED        STATUS        PORTS                                              NAMES
+	9a5c5e668bfb   dperezcabrera/jenkins   "/sbin/tini -- /usr/…"   23 hours ago   Up 23 hours   0.0.0.0:8080->8080/tcp, 0.0.0.0:50000->50000/tcp   jenkins-alpine-alonsoir
+	b90dabbc92c5   docker                  "docker-entrypoint.s…"   26 hours ago   Up 26 hours                                                      ansible-command-host-with-docker-support
 
 
-# LINKS
-
-https://docs.ansible.com/ansible/latest/network/getting_started/basic_concepts.html
-
-https://wiki.alpinelinux.org/wiki/Ansible
-
-https://docs.docker.com/engine/reference/commandline/commit/
-
-https://docs.docker.com/engine/reference/commandline/container_commit/
-
-https://carbon.now.sh
-
-https://dockertips.com/algo_sobre_redes
-
-https://devops4solutions.medium.com/ci-cd-with-jenkins-and-ansible-e9163d4a6e82
-
-https://www.udemy.com/course/valaxy-devops/learn/lecture/15774634#questions/14589906
-
-https://appfleet.com/blog/integrating-ansible-and-docker-in-ci-cd-process-using-jenkins-job/
-
-https://github.com/alonsoir/dockerfiles
-
-https://wiki.alpinelinux.org/wiki/Setting_up_a_ssh-server
-
-https://wiki.alpinelinux.org/wiki/Alpine_setup_scripts#setup-sshd
-
-https://github.com/alonsoir/Simple-DevOps-Project/blob/master/Ansible/Ansible_install_on_RHEL.MD
-
-https://github.com/alonsoir/hello-world
-
-https://github.com/alonsoir/dockerfiles/tree/master/ic/jenkins
+RUNNING These commands you will have the changes already saved. I thought that it will not work, but i suspect it worked because i have downloaded these images in my local hub
 
 
+	% docker commit 9a5c5e668bfb dperezcabrera/jenkins
+	sha256:fe50bb2c4fa59b9670f1176f45aa2558b4b3dfaff311b09878d35f23b8395dcf
+
+	% docker commit b90dabbc92c5 docker
+	sha256:c0d26d736f6810b33a26ef8a34adb31b09cd5ef4fbba41d4777b86d086038cba
+
+Probably, there will be another better way to save the state of containers instead of doing commit...
+
+
+LINKS
+
+	https://medium.com/cloudadventure/security-in-a-ci-cd-pipeline-876ed8541fa4
+
+	https://github.com/alonsoir/Simple-DevOps-Project/blob/master/Jenkins_Jobs/Deploy_on_Container_using_Ansible.MD
+
+	https://wiki.alpinelinux.org/wiki/Alpine_setup_scripts#setup-sshd
+
+	https://cheatsheetseries.owasp.org/index.html
+
+	https://devops4solutions.medium.com/ci-cd-with-jenkins-and-ansible-e9163d4a6e82
+
+	https://appfleet.com/blog/integrating-ansible-and-docker-in-ci-cd-process-using-jenkins-job/
+
+	https://docs.ansible.com/ansible/latest/network/getting_started/basic_concepts.html
+
+	https://wiki.alpinelinux.org/wiki/Ansible
+
+	https://docs.docker.com/engine/reference/commandline/commit/
+
+	https://docs.docker.com/engine/reference/commandline/container_commit/
+
+	https://carbon.now.sh
+
+	https://dockertips.com/algo_sobre_redes
+
+	https://devops4solutions.medium.com/ci-cd-with-jenkins-and-ansible-e9163d4a6e82
+
+	https://www.udemy.com/course/valaxy-devops/learn/lecture/15774634questions/14589906
+
+	https://appfleet.com/blog/integrating-ansible-and-docker-in-ci-cd-process-using-jenkins-job/
+
+	https://github.com/alonsoir/dockerfiles
+
+	https://wiki.alpinelinux.org/wiki/Setting_up_a_ssh-server
+
+	https://wiki.alpinelinux.org/wiki/Alpine_setup_scriptssetup-sshd
+
+	https://github.com/alonsoir/Simple-DevOps-Project/blob/master/Ansible/Ansible_install_on_RHEL.MD
+
+	https://github.com/alonsoir/hello-world
+
+	https://github.com/alonsoir/dockerfiles/tree/master/ic/jenkins
+
+	http://jpetazzo.github.io/2015/09/03/do-not-use-docker-in-docker-for-ci/
