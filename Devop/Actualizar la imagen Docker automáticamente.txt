@@ -1,0 +1,80 @@
+Imagina que tus compañeros estan desarrollando algo que finalmente llega a ser un contenedor, 
+le llamaremos ubuntu ;) y quieres tener siempre la última versión desplegada en tu anfitrion Docker, 
+pues, podríamos hacer algo así:
+
+Crea un fichero cron.sh con este contenido:
+
+	#!/bin/sh
+	if grep -Fqe "Image is up to date" << EOF
+	`docker pull ubuntu:latest`
+	EOF
+	then
+	    echo "no update, just do cleaning"
+	    docker system prune --force
+	else
+	    echo "newest exist, recompose!"
+	    cd /path/to/your/compose/file
+	    docker-compose down --volumes
+	    docker-compose up -d
+	fi
+
+Déjalo en algún lugar que te mole:
+
+	$HOME/.docker/cron.sh
+
+Crea la tarea en cron:
+
+	cron -e
+
+Pon algo así:
+
+	0 * * * * sh $HOME/.docker/cron.sh
+
+Ahora puedes pensar que no usas Docker host, que usas ficheros yml en tu kubernetes, openshift, lo que sea, 
+pues cambias la parte del else para lanzar los comandos kubectl que veas necesarios.
+
+Obviamente, para que esto funcione, los compañeros de desarrollo tienen que subir la versión del contenedor, 
+creando un nuevo tag. Se ve la idea, no? vamos a ir periódicamente a preguntar al docker registry si hay una nueva versión del contenedor. 
+
+Si no lo hay, yo, que soy un poco bestia, me estoy cargando los contenedores e imágenes!. No lo hagas en el mundo real, simplemente indica que no hay nada que actualizar.
+
+Imagine that your colleagues are developing something that eventually becomes a container, 
+we'll call it ubuntu ;) and you want to always have the latest version deployed on your Docker host, 
+well, we could do something like this:
+
+Create a cron.sh file with this content:
+
+	#!/bin/sh
+	if grep -Fqe "Image is up to date" << EOF
+	`docker pull ubuntu:latest`
+	EOF
+	then
+	    echo "no update, just do cleaning"
+	    docker system prune --force
+	else
+	    echo "newest exist, recompose!"
+	    cd /path/to/your/compose/file
+	    docker-compose down --volumes
+	    docker-compose up -d
+	fi
+
+Drop it somewhere you like:
+
+	$HOME/.docker/cron.sh
+
+Create the task in cron:
+
+	cron -e
+
+Put something like this:
+
+	0 * * * * * sh $HOME/.docker/cron.sh
+
+Now you can think that you don't use Docker host, you use yml files in your kubernetes, openshift, whatever, 
+so you change the else part to launch the kubectl commands that you see necessary.
+
+Obviously, for this to work, the development folks have to upload the container version, 
+creating a new tag. You can see the idea, right? let's go periodically to ask the docker registry if there is a new version of the container. 
+
+If there isn't, I, being a bit of a beast, am loading the containers and images! Don't do it in the real world, just indicate that there is nothing to update.
+

@@ -19,6 +19,8 @@ I am going to create a CI/CD environment with these componentes running in docke
 
 	5) OWASP ZAP (security) Pending! 
 
+	6) Prometheus (Dashboard) Pending!
+
 The linux images that I use with docker are alpine. Every container will need to update their system, install and configure openssh, configure ansible, etc... 
 
 Lets create a shared network between containers.
@@ -508,6 +510,12 @@ Probably, there will be another better way to save the state of containers inste
 
 
 LINKS
+
+	https://www.youtube.com/channel/UC_evcfxhjjui5hChhLE08tQ
+
+	https://www.theserverside.com/video/How-to-use-the-Jenkins-multi-configuration-project
+
+	https://plugins.jenkins.io/prometheus/
 
 	https://medium.com/cloudadventure/security-in-a-ci-cd-pipeline-876ed8541fa4
 
