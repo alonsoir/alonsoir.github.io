@@ -1,12 +1,11 @@
-Imagina que tus compañeros estan desarrollando algo que finalmente llega a ser un contenedor, 
-le llamaremos ubuntu ;) y quieres tener siempre la última versión desplegada en tu anfitrion Docker, 
-pues, podríamos hacer algo así:
+Imagina que tus compañeros estan desarrollando algo que finalmente llega a ser un contenedor docker,
+le llamaremos docker101tutorial, alojada en tu docker registry privado y quieres tener siempre la última versión desplegada en tu anfitrion Docker, pues, podríamos hacer algo así:
 
 Crea un fichero cron.sh con este contenido:
 
 	#!/bin/sh
 	if grep -Fqe "Image is up to date" << EOF
-	`docker pull ubuntu:latest`
+	`docker pull aironman/docker101tutorial:latest`
 	EOF
 	then
 	    echo "no update, just do cleaning"
@@ -17,36 +16,28 @@ Crea un fichero cron.sh con este contenido:
 	    docker-compose down --volumes
 	    docker-compose up -d
 	fi
-
 Déjalo en algún lugar que te mole:
 
 	$HOME/.docker/cron.sh
-
 Crea la tarea en cron:
 
 	cron -e
-
 Pon algo así:
 
-	0 * * * * sh $HOME/.docker/cron.sh
+	0 0 8 1/1 * ? * sh $HOME/.docker/cron.sh
 
-Ahora puedes pensar que no usas Docker host, que usas ficheros yml en tu kubernetes, openshift, lo que sea, 
-pues cambias la parte del else para lanzar los comandos kubectl que veas necesarios.
+Tengo ya memoria de pez para estas cosas, ya que nunca me acuerdo del orden de ese patrón, por lo que al final acabo usando cosas asi para calcular la expresion cron. 
 
-Obviamente, para que esto funcione, los compañeros de desarrollo tienen que subir la versión del contenedor, 
-creando un nuevo tag. Se ve la idea, no? vamos a ir periódicamente a preguntar al docker registry si hay una nueva versión del contenedor. 
+Esta significa, ejecuta el script cron.sh a las 08:00 cada día.
 
-Si no lo hay, yo, que soy un poco bestia, me estoy cargando los contenedores e imágenes!. No lo hagas en el mundo real, simplemente indica que no hay nada que actualizar.
-
-Imagine that your colleagues are developing something that eventually becomes a container, 
-we'll call it ubuntu ;) and you want to always have the latest version deployed on your Docker host, 
-well, we could do something like this:
+Imagine that your colleagues are developing something that eventually becomes a docker container,
+we'll call it docker101tutorial, hosted in your private docker registry and you want to always have the latest version deployed on your Docker host, well, we could do something like this:
 
 Create a cron.sh file with this content:
 
 	#!/bin/sh
 	if grep -Fqe "Image is up to date" << EOF
-	`docker pull ubuntu:latest`
+	`docker pull aironman/docker101tutorial:latest`
 	EOF
 	then
 	    echo "no update, just do cleaning"
@@ -68,13 +59,16 @@ Create the task in cron:
 
 Put something like this:
 
-	0 * * * * * sh $HOME/.docker/cron.sh
+	0 0 8 1/1 * ? * sh $HOME/.docker/cron.sh
 
-Now you can think that you don't use Docker host, you use yml files in your kubernetes, openshift, whatever, 
+I have a fish memory for these things, as I can never remember the order of that pattern, so I end up using things like this to calculate the cron expression. This means, run the cron.sh script at 08:00 every day.
+
+Now you can think that you don't use Docker host, you use yml files in your kubernetes, openshift, whatever,
 so you change the else part to launch the kubectl commands that you see necessary.
 
-Obviously, for this to work, the development folks have to upload the container version, 
-creating a new tag. You can see the idea, right? let's go periodically to ask the docker registry if there is a new version of the container. 
+Obviously, for this to work, the development folks have to upload the container version,
+creating a new tag. You can see the idea, right? let's go periodically to ask the docker registry if there is a new version of the container.
 
-If there isn't, I, being a bit of a beast, am loading the containers and images! Don't do it in the real world, just indicate that there is nothing to update.
+If there isn't, I, who am a bit of a beast and have my laptop full of images and containers, am loading in this script ALL the containers and images hosted on my hard drive. Don't do it in the real world, it simply indicates that there is nothing to update.
 
+To Crom!
