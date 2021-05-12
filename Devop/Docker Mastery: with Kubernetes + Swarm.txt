@@ -1,8 +1,8 @@
-Docker Mastery: with Kubernetes + Swarm
+Docker Mastery: with Kubernetes + Swarm. A lot of commands and cool docker stuff.
 
-# Creating and Using Containers Like a Boss
+Creating and Using Containers Like a Boss
 
-## Check Our Docker Install and Config
+# Check Our Docker Install and Config
 
 	docker version
 
@@ -14,7 +14,7 @@ Docker Mastery: with Kubernetes + Swarm
 
 	docker run
 
-	## Starting a Nginx Web Server
+	# Starting a Nginx Web Server
 
 	docker container run --publish 80:80 nginx
 
@@ -50,7 +50,7 @@ Docker Mastery: with Kubernetes + Swarm
 
 	docker container ls -a
 
-	## Container VS. VM: It's Just a Process
+	# Container VS. VM: It's Just a Process
 
 	docker run --name mongo -d mongo
 
@@ -70,7 +70,7 @@ Docker Mastery: with Kubernetes + Swarm
 
 	docker top mongo
 
-## Assignment Answers: Manage Multiple Containers
+# Assignment Answers: Manage Multiple Containers
 
 	docker container run -d -p 3306:3306 --name db -e MYSQL_RANDOM_ROOT_PASSWORD=yes MYSQL_RANDOM_ROOT_PASSWORD
 
@@ -98,7 +98,7 @@ Docker Mastery: with Kubernetes + Swarm
 
 	docker image ls
 
-## What's Going On In Containers: CLI Process Monitoring
+# What's Going On In Containers: CLI Process Monitoring
 
 	docker container run -d --name nginx nginx
 
@@ -118,7 +118,7 @@ Docker Mastery: with Kubernetes + Swarm
 
 	docker container ls
 
-## Getting a Shell Inside Containers: No Need for SSH
+# Getting a Shell Inside Containers: No Need for SSH
 
 	docker container run -help
 
@@ -152,7 +152,7 @@ Docker Mastery: with Kubernetes + Swarm
 
 	docker container run -it alpine sh
 
-## Docker Networks: Concepts for Private and Public Comms in Containers
+# Docker Networks: Concepts for Private and Public Comms in Containers
 
 	docker container run -p 80:80 --name webhost -d nginx
 
@@ -160,7 +160,7 @@ Docker Mastery: with Kubernetes + Swarm
 
 	docker container inspect --format '{{ .NetworkSettings.IPAddress }}' webhost
 
-## Docker Networks: CLI Management of Virtual Networks
+# Docker Networks: CLI Management of Virtual Networks
 
 	docker network ls
 
@@ -188,7 +188,7 @@ Docker Mastery: with Kubernetes + Swarm
 
 	docker container inspect
 
-## Docker Networks: DNS and How Containers Find Each Other
+# Docker Networks: DNS and How Containers Find Each Other
 
 	docker container ls
 
@@ -206,7 +206,7 @@ Docker Mastery: with Kubernetes + Swarm
 
 	docker container create --help
 
-## Assignment Answers: Using Containers for CLI Testing
+# Assignment Answers: Using Containers for CLI Testing
 
 	docker container run --rm -it centos:7 bash
 
@@ -216,7 +216,7 @@ Docker Mastery: with Kubernetes + Swarm
 
 	docker ps -a
 
-## Assignment Answers: DNS Round Robin Testing
+# Assignment Answers: DNS Round Robin Testing
 
 	docker network create dude
 
@@ -231,3 +231,4 @@ Docker Mastery: with Kubernetes + Swarm
 	docker container ls
 
 	docker container rm -f TAB COMPLETION
+
