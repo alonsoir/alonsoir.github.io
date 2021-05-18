@@ -5,12 +5,13 @@ export LC_ALL=en_US.UTF-8
 ZSH_THEME="random"
 autoload -U promptinit; promptinit
 export UPDATE_ZSH_DAYS=1
-
+eval $(thefuck --alias)
 source "$HOME/.sdkman/bin/sdkman-init.sh"
 source $HOME/.oh-my-git/prompt.sh
 source "$HOME/.antigen/antigen.zsh"
 source $ZSH/oh-my-zsh.sh
 
+# source ~/.zshrc
 
 antigen use oh-my-zsh
 antigen bundle arialdomartini/oh-my-git
@@ -33,6 +34,8 @@ plugins=(
   common-aliases
   copyfile
 )
+
+
 
 
 # My useful aliases
