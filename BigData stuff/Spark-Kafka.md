@@ -1,35 +1,29 @@
-# Proyecto RiskShield.
-
-	/Users/aironman/gitProjects/sopra/RiskShield
-
-	Básicamente es un motor de fraudes, hay que reescribir uno existente usando tecnología big data.
-
 	Probablemente los libros de Jacek son la mejor ayuda.
 	https://jaceklaskowski.gitbooks.io/mastering-spark-sql/content/spark-sql.html
 
-##  Conceptos básicos sobre Kafka. 
+##  Conceptos básicos sobre Kafka.
 
 	Video chulo de Oscar:
-	
+
 		https://youtu.be/vrnU-KVYbSo
 
-	KSQLDB habla del concepto de tabla en kafka, a la que puedes acceder operando a la manera SQL, pero más que una tabla, es un snapshot sobre un topic, es decir, es como sacarle una foto a ese topic, y puedes acceder a esos datos a la manera SQL. 
+	KSQLDB habla del concepto de tabla en kafka, a la que puedes acceder operando a la manera SQL, pero más que una tabla, es un snapshot sobre un topic, es decir, es como sacarle una foto a ese topic, y puedes acceder a esos datos a la manera SQL.
 
 	El uso de la partition key es vital para conseguir consumir los mensajes en el orden en el que se produjeron. Mensajes que tengan el mismo partition key, iran a la misma particion dentro de ese topic y podrán ser consumidos en el orden en el que se produjeron. Vital en muchísimos entornos.
 
-	Como asegurar un adecuado rebalanceo usando un partition Key? 
+	Como asegurar un adecuado rebalanceo usando un partition Key?
 
-	Esta es una pregunta que hay que resolver. 
+	Esta es una pregunta que hay que resolver.
 	Hay que procurar crear tambien consumer groups, de manera que así, los consumidores asignados a esos grupos consuman los mensajes asignados por sus partition key.
 
-	Tienes que mirar schema registry, avro, spark, spark-sql. 
+	Tienes que mirar schema registry, avro, spark, spark-sql.
 
-	Asumiendo que los mensajes que llegan al kafka de ING sigan un orden y sea absolutamente imperativo procesarlos en orden,
-	como trata ING el problema sobre procesar mensajes problemáticos ordenados? tiene alguna solución ya implementada, probada y aceptada a nivel global?
+	Asumiendo que los mensajes que llegan al kafka de  sigan un orden y sea absolutamente imperativo procesarlos en orden,
+	como trata puto banco el problema sobre procesar mensajes problemáticos ordenados? tiene alguna solución ya implementada, probada y aceptada a nivel global?
 
 		No, cada squad se lo guisa y se lo come.
 
-	Hay alguna solución basada en usar consumidores con listas stash? 
+	Hay alguna solución basada en usar consumidores con listas stash?
 	https://medium.com/datadriveninvestor/if-youre-using-kafka-with-your-microservices-you-re-probably-handling-retries-wrong-8492890899fa
 
 ## Schema registry
@@ -88,7 +82,7 @@
 
 	mvn exec:java -Dexec.mainClass=io.confluent.examples.clients.basicavro.ProducerExample -Dexec.args="$HOME/.confluent/java.config"
 
-## Avro Consumer full example. Ojo, no te vale levantar el típico consumidor kafka para poder "ver" los mensajes. Necesitas algo así. 
+## Avro Consumer full example. Ojo, no te vale levantar el típico consumidor kafka para poder "ver" los mensajes. Necesitas algo así.
 	https://github.com/confluentinc/examples/blob/6.0.0-post/clients/avro/src/main/java/io/confluent/examples/clients/basicavro/ConsumerExample.java
 
 	mvn exec:java -Dexec.mainClass=io.confluent.examples.clients.basicavro.ConsumerExample -Dexec.args="$HOME/.confluent/java.config"
@@ -140,7 +134,7 @@
 	Para refrescarlo, voy a mirar de nuevo las guias de structured streaming y sql. Me bajo el repositorio para poder los mismo ejemplos de la guia oficial.
 
 	https://github.com/apache/spark.git
-	
+
 	https://spark.apache.org
 
 	https://dzone.com/articles/apache-spark-in-a-nutshell
@@ -320,8 +314,6 @@
 	// Primitive types and case classes can be also defined as
 	// implicit val stringIntMapEncoder: Encoder[Map[String, Any]] = ExpressionEncoder()
 
-	// row.getValuesMap[T] retrieves multiple columns at once into a Map[String, T]
+	// row.getValuesMap[T] retrieves multiple columns at once into a Map[Strputo banco, T]
 	teenagersDF.map(teenager => teenager.getValuesMap[Any](List("name", "age"))).collect()
 	// Array(Map("name" -> "Justin", "age" -> 19))
-
-

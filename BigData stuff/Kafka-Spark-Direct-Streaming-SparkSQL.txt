@@ -7,29 +7,29 @@
 	Probablemente los libros de Jacek son la mejor ayuda.
 	https://jaceklaskowski.gitbooks.io/mastering-spark-sql/content/spark-sql.html
 
-##  Conceptos básicos sobre Kafka. 
+##  Conceptos básicos sobre Kafka.
 
 	Video chulo de Oscar:
-	
+
 		https://youtu.be/vrnU-KVYbSo
 
-	KSQLDB habla del concepto de tabla en kafka, a la que puedes acceder operando a la manera SQL, pero más que una tabla, es un snapshot sobre un topic, es decir, es como sacarle una foto a ese topic, y puedes acceder a esos datos a la manera SQL. 
+	KSQLDB habla del concepto de tabla en kafka, a la que puedes acceder operando a la manera SQL, pero más que una tabla, es un snapshot sobre un topic, es decir, es como sacarle una foto a ese topic, y puedes acceder a esos datos a la manera SQL.
 
 	El uso de la partition key es vital para conseguir consumir los mensajes en el orden en el que se produjeron. Mensajes que tengan el mismo partition key, iran a la misma particion dentro de ese topic y podrán ser consumidos en el orden en el que se produjeron. Vital en muchísimos entornos.
 
-	Como asegurar un adecuado rebalanceo usando un partition Key? 
+	Como asegurar un adecuado rebalanceo usando un partition Key?
 
-	Esta es una pregunta que hay que resolver. 
+	Esta es una pregunta que hay que resolver.
 	Hay que procurar crear tambien consumer groups, de manera que así, los consumidores asignados a esos grupos consuman los mensajes asignados por sus partition key.
 
-	Tienes que mirar schema registry, avro, spark, spark-sql. 
+	Tienes que mirar schema registry, avro, spark, spark-sql.
 
-	Asumiendo que los mensajes que llegan al kafka de ING sigan un orden y sea absolutamente imperativo procesarlos en orden,
-	como trata ING el problema sobre procesar mensajes problemáticos ordenados? tiene alguna solución ya implementada, probada y aceptada a nivel global?
+	Asumiendo que los mensajes que llegan al kafka de puto banco sigan un orden y sea absolutamente imperativo procesarlos en orden,
+	como trata puto banco el problema sobre procesar mensajes problemáticos ordenados? tiene alguna solución ya implementada, probada y aceptada a nivel global?
 
 		No, cada squad se lo guisa y se lo come.
 
-	Hay alguna solución basada en usar consumidores con listas stash? 
+	Hay alguna solución basada en usar consumidores con listas stash?
 	https://medium.com/datadriveninvestor/if-youre-using-kafka-with-your-microservices-you-re-probably-handling-retries-wrong-8492890899fa
 
 ## Schema registry
@@ -88,7 +88,7 @@
 
 	mvn exec:java -Dexec.mainClass=io.confluent.examples.clients.basicavro.ProducerExample -Dexec.args="$HOME/.confluent/java.config"
 
-## Avro Consumer full example. Ojo, no te vale levantar el típico consumidor kafka para poder "ver" los mensajes. Necesitas algo así. 
+## Avro Consumer full example. Ojo, no te vale levantar el típico consumidor kafka para poder "ver" los mensajes. Necesitas algo así.
 	https://github.com/confluentinc/examples/blob/6.0.0-post/clients/avro/src/main/java/io/confluent/examples/clients/basicavro/ConsumerExample.java
 
 	mvn exec:java -Dexec.mainClass=io.confluent.examples.clients.basicavro.ConsumerExample -Dexec.args="$HOME/.confluent/java.config"
@@ -140,7 +140,7 @@
 	Para refrescarlo, voy a mirar de nuevo las guias de structured streaming y sql. Me bajo el repositorio para poder los mismo ejemplos de la guia oficial.
 
 	https://github.com/apache/spark.git
-	
+
 	https://spark.apache.org
 
 	https://dzone.com/articles/apache-spark-in-a-nutshell
@@ -328,10 +328,10 @@
 
 	Vamos a suponer que la demo para el proyecto RiskShield implica hacer una carga de datos en una bd MariaDB usando sparkSQL.
 
-# Primero 
+# Primero
 
 necesito el driver jdbc de MariaDB en el classpath de spark. En mi caso, lo tengo en:
-	
+
 		/Users/aironman/.m2/repository/org/mariadb/jdbc/mariadb-java-client/2.4.4
 
 
@@ -343,17 +343,17 @@ necesito el driver jdbc de MariaDB en el classpath de spark. En mi caso, lo teng
 		# or autostart it (optional if above dont apply)
 		brew services start mariadb
 
-		# 
+		#
 		mariadb-secure-installation
 
 		#log in as your user
 		mysql
 
-		#Or log in as root 
+		#Or log in as root
 		mysql -u root -p
 
 		#password is set as root
-	
+
 	Tengo una base de datos llamada commands, que contiene una tabla user_data:
 
 		MariaDB [commands]> show databases;
@@ -387,7 +387,7 @@ necesito el driver jdbc de MariaDB en el classpath de spark. En mi caso, lo teng
 arranco la spark-shell. --packages descargará el jar de maven central. --driver-class-path es necesario para que no de una excepción a la hora de cargar una tabla en un Dataframe.
 
 	spark-shell --driver-class-path org.mariadb.jdbc:mariadb-java-client:2.4.4 --packages org.mariadb.jdbc:mariadb-java-client:2.4.4
-	
+
 En mi caso, estoy trabajando con Spark 3.0.1 y MariaDB 10.5.8-MariaDB Homebrew
 
 Si todo ha ido bien, comprobamos que tenemos el jar cargado:
@@ -464,7 +464,7 @@ https://docs.databricks.com/data/data-sources/sql-databases.html#step-1-check-th
 # Uniendo Spark, kafka y MariaDB.
 
 Necesitas esta dependencia como mínimo si vas a trabajar con maven.
-	
+
 	groupId = org.apache.spark
 	artifactId = spark-sql-kafka-0-10_2.12
 	version = 3.0.1
@@ -502,7 +502,7 @@ val messages = df.selectExpr("cast (value as string) AS Content")
 
 messages.writeStream.outputMode(“append”).format(“console”).option(“truncate”, false).option("checkpointLocation", "/tmp").trigger(Trigger.ProcessingTime("1 second")).start().awaitTermination()
 
-TROUBLESHOOTING
+TROUBLESHOOTputo banco
 
 	1) Al lanzar la spark-shell, ojito, que no puede haber espacios en el packages, separados por comas.
 
@@ -510,12 +510,11 @@ TROUBLESHOOTING
 
 		val df = spark.readStream.format("kafka").option("kafka.bootstrap.servers", "localhost:9092").option("subscribe", "transactions").load()
 
-	3) 
- 
+	3)
+
 
 	org.apache.spark.sql.AnalysisException: checkpointLocation must be specified either through option("checkpointLocation", ...) or SparkSession.conf.set("spark.sql.streaming.checkpointLocation", ...);
 
 https://spark.apache.org/docs/latest/structured-streaming-kafka-integration.html
 
 https://spark.apache.org/docs/latest/submitting-applications.html
-
