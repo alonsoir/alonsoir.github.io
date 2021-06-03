@@ -1,3 +1,5 @@
+Tienes que pasar denuevo el ep 66 Creating a three node swarm cluster.
+
 Docker Mastery: with Kubernetes + Swarm. A lot of commands and cool docker stuff.
 
 Creating and Using Containers Like a Boss
@@ -231,4 +233,26 @@ Creating and Using Containers Like a Boss
 	docker container ls
 
 	docker container rm -f TAB COMPLETION
+
+# Creating a swarm of three nodes in my laptop
+
+	docker-machine create node1
+
+	docker-machine create node2
+
+	docker-machine create node3
+
+# login in a node from a swarm
+
+	docker-machine env node1
+
+	docker-machine env node2
+
+	docker-machine env node3
+
+# Initialize manager in node1
+
+	docker-machine env node1
+
+	docker swarm init 
 

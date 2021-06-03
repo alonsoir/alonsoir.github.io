@@ -1,0 +1,163 @@
+Draft architectural proposal for Visage.
+
+Initial hypothesis
+
+A batch architecture (lambda) and a purely streaming architecture (kappa) so that the different consumers of this aggregated information can consume it in an efficient, consistent and highly scalable way.
+information can consume it efficiently, consistently and at the same time be a highly scalable system that can grow and shrink according to demand.
+according to demand.
+
+2. Who is the source of data to the system?
+
+	2.1 Sourcers (yellow). 
+
+		Recruiters looking for candidates to fill positions in companies. Three types, silver, gold, internal.
+		They upload a search profile of the candidate(s) to fill those positions. 
+
+		WHAT EXACTLY IS A SEARCH PROFILE? KEYWORDS?
+
+		WHAT DOES IT MEAN THAT THERE ARE THREE TYPES OF RECRUITERS FROM AN OPERATIONAL AND DATA ENTRY POINT OF VIEW?
+
+		ARE THEY MY END CUSTOMERS? OR THE COMPANIES THEY WORK FOR?
+
+		They enter the information through an app. 
+
+		WHAT KIND OF INFORMATION SHOULD I KEEP FROM RECRUITERS?
+
+	2.2 Customers (network).
+
+		Customers who need to recruit qualified personnel for their companies. Recruiters are looking for these profiles.
+
+		They enter the information through an app.
+
+		WHAT KIND OF INFORMATION SHOULD I KEEP?
+
+		ARE THEY MY END CUSTOMERS?
+
+	2.3 Candidates (blue).
+
+		They represent the qualified personnel that the Customers (network) want to hire after going through the validation process
+		validation process along with the keyword input from the sources (yellow).
+
+		DO THEY GIVE ME THE INFORMATION OR DO I HAVE TO GET IT FROM SOMEWHERE ELSE? FROM LINKEDIN? HOW DOES THE SOURCE INFORMATION COME? 
+		STRUCTURED? SEMI-STRUCTURED?
+
+		HOW DO I NEED TO TRANSFORM THIS INFORMATION FOR THE DATA SCIENTISTS? 
+		THEY WILL TELL ME, PROBABLY UNSTRUCTURED INFORMATION IN CSV FORMAT, OR PARQUET. TO BE DEFINED.
+
+3. 	Who will consume the information that my system will generate?
+
+	I think there are two types, one for my potential clients, the recruiters (yellow) and the clients (network),
+	and the other for visage's internal use, for internal employees.
+
+	3.1 The recruiters (yellow) should receive recommendations on the best possible candidates given the keywords or the preliminary report they give us to find the right candidates.
+		report they give us to find the best candidates. 
+
+		Through the sourcer App.
+
+	3.2 Customers (network).
+
+		WHAT IS THE DIFFERENCE BETWEEN THE INFORMATION THAT THE RED CLIENT RECEIVES AND THE INFORMATION THAT THE RECRUITER RECEIVES?
+
+		THE RECRUITER RECEIVES A REPORT WITH INFORMATION ON THE BEST CANDIDATES, SOMETHING THAT THE CLIENT WILL ULTIMATELY RECEIVE?
+
+		SHOULDN'T THE RECRUITER BE THE ONE WHO FINALLY PRESENTS A SUMMARY OF THE BEST CANDIDATES TO PRESENT TO HIS CLIENTS?
+
+		Through the customer App.
+
+	3.3 Visage employees come in three types:
+
+		3.3.1 customer success employees (cs): 
+
+				monitor that the end customer has been provided with the right information about the candidates to fill their 
+				positions. They monitor whether they have hired the right person, whether they are happy with their performance, etc...
+
+				WHAT DO THEY DO? CALL THEM, SURVEY THEM AFTER SOME TIME TO KNOW IF THEY ARE HAPPY OR NOT WITH THE CANDIDATES DELIVERED?
+				WHAT SHOULD YOU KEEP? IS ANYONE ELSE GOING TO CONSUME THIS GENERATED INFORMATION?
+
+				Through the Back Office App and Tableau.
+
+		3.3.2 operations (ops):
+
+				They monitor the performance of recruiters. 
+
+				HOW DO THEY DO THIS? IT SEEMS TO BE INTIMATELY RELATED TO THE INFORMATION COLLECTED FROM THE cs.
+				What should I do with this information? is it going to be consumed by anyone else besides the operators?
+
+				Through the Back Office App and Tableau.
+
+		3.3.3 ENGINEERING TEAM (eng/devops):
+
+				They are going to use all the information provided by the different stakeholders to make it land the system, process it and 
+				make it available to the other actors of the platform. 
+
+				Here I include the data scientists who are going to train and create the different models to allow the ranking of candidates, the data engineers who are going to create and maintain the different ETL components in charge of capturing the information that the other actors enter into the system through their corresponding apps, the software engineers in charge of the mobile app or the web interface provided by Visage for the recruiters (yellow), customers(red) and candidates (blue) actors to enter their relevant information. 
+
+				There is also the DevOps team, in charge of operating and maintaining the different systems of the Hadoop/Spark cluster, the Kafka cluster, creating and maintaining the CI/CD pipeline, making sure the platform is working properly. Later on, I explain the reasons for selecting these components.
+
+	4. ANALYSIS
+
+	I need an architecture that allows me to introduce the raw information from the different actors to a scalable Hadoop system, where the raw information lands in a staging phase in an optimized format, such as AVRO or PROTOBUF, and then go through different phases of transformation to be defined to end up in PARQUET files, ideal for data scientists when they have to create their data models. 
+
+	This initial information will come from structured data sources (sql databases), semi-structured (json files) and maybe unstructured (csv files).
+
+	The operational model information that the data scientists generate, the candidate ratings, will end up in a scalable database specialized in reads and writes (Cassandra). In this way, the information with the rankings will always be available. 
+
+	For further scalability, once we have the information landed in the cluster, it has gone through the staging phase, it has been processed to be saved in parquet format, the data scientists have generated a model after training it, we can have a cluster for writes and another one for reads following the CQRS (Command Query Responsibility Segregation) pattern. At the time of writing the new ratings, they go to the write cluster, once we have the commit of that database, which I will call source of truth, it will be written to the read database for consumption by the different actors. Why have two separate databases? The reason is that there will probably be many more writes with the new ratings in the system than reads, so by having them separate, you can provide the necessary nodes for writes, always on demand and intelligent and automated monitoring by probes in Kubernetes, as well as for reads.
+
+	Such an architecture is perfectly adaptable for a pure batch configuration as for a streaming version (kappa), even in an intermediate version (lambda), the difference here is to solve this question:
+
+	 Do we need to process and land the information on our platform as soon as it is produced at source (streaming) or can we capture it and start processing it in batch processes at a certain time? 
+
+	If streaming, both kappa and lambda, the apps must be adapted to be delivered to a Producer/Consumer type messaging cluster, where the information ends up in a Kafka topic, one kafka consumer per topic listens to that information, collects it, encrypts it and is sent to the raw hadoop cluster, once there, the message is decrypted, It can be one line, two, two hundred lines, it is added to a file in AVRO/PROTOBUF format optimized for the size, and it is stored in a part of the Hadoop/Spark cluster, in the staging part, for further processing, in short, to transform that raw information to the format requested by the data scientists. 
+
+	In my experience, it is usually in PARQUET format. They usually need the information of the different types of AVRO files, they will select the different columns of these AVRO files to generate PARQUET files optimized to make queries on columns.
+
+	 The need to configure and select the topic kafka according to volumetry, priority according to type of client, etc... would be studied. 
+
+	If it is a batch process, the information provided by the apps ends up in databases in an asynchronous way, that is to say, when it is produced, it ends up in it, and then at a certain time using cron, connect to that database, make the queries that have to be made, create the csv file with the result, compress it, encrypt it and bring the information to the hadoop/spark cluster, where we receive that file, decrypt it, decompress it, and create its AVRO/PROTOBUF version.
+
+	The difference between one and the other is the speed at which it will potentially be available to the various consumers of our information, our recruiters and their clients looking for suitable candidates. The sooner we have the information, the sooner it reaches the data scientists so that new models can be trained and the information generated by those models ends up in the operational databases, which will be used to create the various reports that will be provided to the various clients. 
+
+	What we are talking about is creating a scalable asynchronous architecture, which will consume information from different data sources, process it and finally deliver reports to our customers. On the one hand, we will be in charge of scanning the social networks with the different potential candidates, always under what the LOPD dictates or similar to what exists in other countries, we will detect what they are good at, if they are working or not, we will train and generate a ranking with the candidates. That will be the hard part on a day-to-day basis, and that requires a batch or streaming approach, pure or mixed, to generate that information. 
+
+While the recruiters arrive with their needs to search for candidates, as we already have the potential rankings previously calculated, we will be able to deliver those reports to them. Subsequently, we will be capturing the business information that we will establish with the clients.
+
+
+A batch approach. 
+
+Since we already have apps to collect information from the different actors that will bring us the data, or that scan the social networks to bring the information and store it in their local databases, we have to launch cron processes that will launch the necessary queries to the databases of these apps, generate the new files, encrypt them, leave them in an FTP and at a certain time the copy of these files is ordered in the Hadoop Data File System of the hadoop/spark cluster. There they arrive in compressed and encrypted csv format to the LANDING directory, are decrypted, decompressed and left in the STAGING directory of the HDFS. 
+
+Once the candidate data are in the STAGING phase, these files are taken and converted into AVRO/OCR/PROTOBUF, they are left in the HDFS RAW directory, once we have these AVRO/OCR/PROTOBUF files, the processes begin to transform them into the PARQUET files that the data scientists need. The phases to enrich the data using all the information we have from the previous phase begin.  Once those parquet files are processed, they are copied to the ENRICHMENT directories.
+
+The idea is to provide the information needed by the data scientists to train and create the models that will be used to generate rankings.
+
+A streaming proposal.
+
+As in the previous proposal, it is about sending the data to the cluster, to the landing zone as soon as possible, using Producer/Consumer technology. Either these apps are modified to send the data (Push to topic), or consumer processes connect to the databases of these apps to bring me the data and make it land, aggregate, enrich.
+
+Technological proposal.
+
+The cluster will be managed by Kubernetes, managing Docker containers, on AWS/ES infrastructure. 
+
+We will have CI/CD, continuous integration, continuous delivery, using github/gitlab with private repositories, 
+with a continuous integration service such as Jenkins, Hudson, which will be responsible for taking the source code, compile it, run their tests, both ETL tasks necessary to extract the information, as the code used by data scientists to generate their models, and then create images labeled Docker, where then through Ansible/Chef, we will automatically create the necessary Docker containers to be deployed in Kubernetes in different existing environments, at least there should be test/development environment and production environment. We will have sonarqube nodes or equivalent to the language used by data scientists, such as data engineers to ensure the quality of the code produced, as well as nodes that are responsible for periodically checking the security problems of the dependencies in the form of library that use the different applications. We will comply with OWASP standards.
+
+In principle, if there are already data scientists, they will already be using a programming language. I would conform to that. 
+Whether it is python, scala, R, java and they work with notebooks, we will have to make sure that their work always ends up regularly in github/gitlab, have unit tests, follow good practices.
+
+5. Doubts, questions that cross my mind.
+
+All the ones I have capitalized above, I leave them there for context.
+
+The current data scientists, how do they generate the models? use Spark-ml with python?
+
+
+In the graphic file I include more detail on what I have in my head, especially for the raw data landing part, enrichment, training, ranking model creation, periodic extraction of those rankings to be stored in a document environment, so as to generate the reports on demand for our customers. 
+
+This way we have a platform that is working 24x7, waiting for our customers to come and ask us for quality reports based on the most advanced machine learning/deep learning techniques together with advanced information management and processing mechanisms.
+
+
+I am at your disposal for doubts, I hope I have helped you and let me tell you that I have had fun thinking about this solution and it would be nice to lead the project to create such a platform.
+
+
+
