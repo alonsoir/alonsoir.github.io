@@ -1,4 +1,6 @@
-### 👋 &nbsp; Hi there, I'm Alonso
+### 👋 &nbsp; Hi there, I'm Alonso. I use this repo to save some files like my cv, some files like my zshrc and antigen config,
+, [udemy certifications](https://github.com/alonsoir/alonsoir.github.io/tree/master/certs), and i lot of info of my interests.
+Probably you can know me a bit more with this info. 
 
 ### 👨🏻‍💻 &nbsp; About Me
 
@@ -31,10 +33,3 @@
 - 📱 &nbsp; Android | iOS.
 
 <h3> 🤝🏻 Connect with Me </h3>
-
-<!--[![Website Badge](https://img.shields.io/badge/www.alvaroalbiach.com--lightgrey?style=flat&logo=Google-Chrome&logoColor=white&link=https://www.alvaroalbiach.com)](https://www.alvaroalbiach.com/)-->
-[https://img.shields.io/twitter/follow/alonso_isidoro?style=social](https://twitter.com/alonso_Isidoro)
-[![Linkedin Badge](https://img.shields.io/badge/Alonso%20Isidoro%20Román--blue?style=flat&logo=Linkedin&logoColor=white&link=https://www.linkedin.com/in/alonso-isidoro-roman-8ab57445/)](https://www.linkedin.com/in/alonso-isidoro-roman-8ab57445/)
-[![Gmail Badge](https://img.shields.io/badge/alonsoir@gmail.com--red?style=flat&logo=gmail&logoColor=white&link=mailto:alonsoir@gmail.com)](mailto:alonsoir@gmail.com)
-[Spanish CV](https://github.com/alonsoir/alonsoir.github.io/blob/master/CV/Mi%20CV%20En%20Español%20para%20SOPRA%20A3%202.pdf)
-[English CV](https://github.com/alonsoir/alonsoir.github.io/blob/master/CV/resume%20Alonso%20Isidoro%20Román%20Feb%202020-riga.pdf)
