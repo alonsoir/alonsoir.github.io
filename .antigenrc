@@ -1,0 +1,28 @@
+# Load oh-my-zsh library.
+antigen use oh-my-zsh
+
+# Syntax highlighting bundle.
+antigen bundle zsh-users/zsh-syntax-highlighting
+
+# Load bundles from the default repo (oh-my-zsh).
+antigen bundle git
+antigen bundle command-not-found
+antigen bundle docker
+antigen bundle osx
+antigen bundle boss-docker
+# antigen bundle boss-git
+antigen bundle autoupdate-antigen
+antigen bundle autoupdate-oh-my-zsh-plugins
+antigen bundle betterbrew
+
+# Load bundles from external repos.
+antigen bundle zsh-users/zsh-completions
+antigen bundle zsh-users/zsh-autosuggestions
+antigen bundle zsh-users/zsh-syntax-highlighting
+
+# Select theme.
+antigen theme spaceship-prompt/spaceship-prompt
+# antigen theme robbyrussell
+
+# Tell Antigen that you're done.
+antigen apply

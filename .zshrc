@@ -1,8 +1,9 @@
 export ZSH="/Users/aironman/.oh-my-zsh"
 export PATH="$HOME/.sdkman/bin:$PATH"
-export LC_ALL=en_US.UTF-8
+export LC_ALL=es_ES.UTF-8 man
+# en_US.UTF-8
 # Use random theme
-ZSH_THEME="random"
+ZSH_THEME="spaceship"
 autoload -U promptinit; promptinit
 export UPDATE_ZSH_DAYS=1
 
@@ -30,11 +31,12 @@ source "$HOME/.antigen/antigen.zsh"
 source $ZSH/oh-my-zsh.sh
 
 # source ~/.zshrc
+antigen init ~/.antigenrc
 
-antigen use oh-my-zsh
-antigen bundle arialdomartini/oh-my-git
-antigen theme arialdomartini/oh-my-git-themes oppa-lana-style
-antigen apply
+# antigen use oh-my-zsh
+# antigen bundle arialdomartini/oh-my-git
+# antigen theme arialdomartini/oh-my-git-themes arialdo-granzestyle
+# antigen apply
 
 # This function is to show what alias i am running.
 # https://stackoverflow.com/questions/9299402/echo-all-aliases-in-zsh
@@ -59,6 +61,7 @@ zle -N accept-line _-accept-line
 # alias jira="cd ~/Documents/project/gitjira-cli"
 # alias prlist='go run *.go pr -s "2019-10-01" -o -c > ~/Documents/project/pr.txt'
 # alias c="clear"
+alias gp="cd /Users/aironman/gitProjects"
 alias q="exit"
 alias zsh="vim ~/.zshrc"
 alias ohmyzsh="vim ~/.oh-my-zsh"
@@ -97,3 +100,7 @@ bindkey -v
 # Set bigfade ZSH as a prompt
 autoload -U promptinit; promptinit
 prompt bigfade
+
+# Set Spaceship ZSH as a prompt
+autoload -U promptinit; promptinit
+prompt spaceship
