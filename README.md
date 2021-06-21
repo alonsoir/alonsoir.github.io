@@ -1,6 +1,5 @@
-### 👋 &nbsp; Hi there, I'm Alonso. I use this repo to save some files like my cv, some files like my zshrc and antigen config,
-, [udemy certifications](https://github.com/alonsoir/alonsoir.github.io/tree/master/certs), and i lot of info of my interests.
-Probably you can know me a bit more with this info. 
+### 👋 &nbsp; Hi there, I'm Alonso. I use this repo to save some files like my cv, some files like my [zshrc](https://github.com/alonsoir/alonsoir.github.io/blob/master/.zshrc) and [antigenrc](https://github.com/alonsoir/alonsoir.github.io/blob/master/.antigenrc) config files, [udemy certifications](https://github.com/alonsoir/alonsoir.github.io/tree/master/certs), and i lot of info of my interests.
+
 
 ### 👨🏻‍💻 &nbsp; About Me
 
