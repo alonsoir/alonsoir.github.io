@@ -1,0 +1,167 @@
+# I am going to create my own registry server.
+
+docker-compose-healthcheck on  master on 🐳 v20.10.6
+➜ docker container run --name registry -p 5000:5000 -d registry
+Unable to find image 'registry:latest' locally
+latest: Pulling from library/registry
+ddad3d7c1e96: Already exists
+6eda6749503f: Pull complete
+363ab70c2143: Pull complete
+5b94580856e6: Pull complete
+12008541203a: Pull complete
+Digest: sha256:aba2bfe9f0cff1ac0618ec4a54bfefb2e685bbac67c8ebaf3b6405929b3e616f
+Status: Downloaded newer image for registry:latest
+c9097934959de7bcf19056a3b86f6398a44baeb7236699dd696d60bf953066c9
+
+# Just checking it
+
+docker-compose-healthcheck on  master on 🐳 v20.10.6 took 6s
+➜ docker container ls
+CONTAINER ID   IMAGE             COMMAND                  CREATED              STATUS                  PORTS                                                                                                                          NAMES
+c9097934959d   registry          "/entrypoint.sh /etc…"   About a minute ago   Up About a minute       0.0.0.0:5000->5000/tcp, :::5000->5000/tcp                                                                                      registry
+
+# I am going to simulate the work of creating an image, build a container from it and upload it to my own registry.
+docker-compose-healthcheck on  master on 🐳 v20.10.6 took 2s
+➜ docker run hello-world
+Unable to find image 'hello-world:latest' locally
+latest: Pulling from library/hello-world
+b8dfde127a29: Pull complete
+Digest: sha256:9f6ad537c5132bcce57f7a0a20e317228d382c3cd61edae14650eec68b2b345c
+Status: Downloaded newer image for hello-world:latest
+
+Hello from Docker!
+...
+
+# I have to tag it in my registry, running in 127.0.0.1:5000
+docker-compose-healthcheck on  master on 🐳 v20.10.6 took 4s
+➜ docker tag hello-world 127.0.0.1:5000/hello-world
+
+
+docker-compose-healthcheck on  master on 🐳 v20.10.6
+➜ docker image ls
+REPOSITORY                           TAG       IMAGE ID       CREATED         SIZE
+...
+registry                             latest    1fd8e1b0bb7e   2 months ago    26.2MB
+127.0.0.1:5000/hello-world           latest    d1165f221234   3 months ago    13.3kB
+hello-world                          latest    d1165f221234   3 months ago    13.3kB
+...
+
+# Upload my image to my local registry
+docker-compose-healthcheck on  master on 🐳 v20.10.6
+➜ docker push 127.0.0.1:5000/hello-world:latest
+The push refers to repository [127.0.0.1:5000/hello-world]
+f22b99068db9: Pushed
+latest: digest: sha256:1b26826f602946860c279fce658f31050cff2c596583af237d971f4629b57792 size: 525
+
+# Removing from my hd before i pull it from local registry
+
+docker-compose-healthcheck on  master on 🐳 v20.10.6
+➜ docker image remove hello-world
+Untagged: hello-world:latest
+Untagged: hello-world@sha256:9f6ad537c5132bcce57f7a0a20e317228d382c3cd61edae14650eec68b2b345c
+
+# pulling container from local registry
+docker-compose-healthcheck on  master on 🐳 v20.10.6
+➜ docker pull 127.0.0.1:5000/hello-world
+Using default tag: latest
+latest: Pulling from hello-world
+b8dfde127a29: Pull complete
+Digest: sha256:1b26826f602946860c279fce658f31050cff2c596583af237d971f4629b57792
+Status: Downloaded newer image for 127.0.0.1:5000/hello-world:latest
+127.0.0.1:5000/hello-world:latest
+
+# I am going to use a volume, first i am going to kill and remove previous registry.
+docker-compose-healthcheck on  master on 🐳 v20.10.6
+➜ docker container kill registry
+registry
+
+docker-compose-healthcheck on  master on 🐳 v20.10.6 took 2s
+➜ docker container rm registry
+registry
+
+# I am going to create the registry using that folder, registry-data
+
+➜ cd udemy-docker-mastery/registry-sample-1
+udemy-docker-mastery/registry-sample-1 on  main [!]
+➜ ll
+Executing ls -lh
+total 8
+-rw-r--r--  1 aironman  staff   329B  4 may 11:33 README.md
+drwxr-xr-x  3 aironman  staff    96B  4 may 11:33 registry-data
+
+# Running registry and using that folder.
+
+udemy-docker-mastery/registry-sample-1 on  main [!]
+➜ docker container run --name registry -p 5000:5000 -d -v $(pwd)/registry-data:/var/lib/registry registry
+3762854f17ec0b8a5501a47df3cc85273b76d5bf420a06f34382aaa4d14173a3
+
+# Pushing an image to my local registry.
+
+udemy-docker-mastery/registry-sample-1 on  main [!]
+➜ docker push 127.0.0.1:5000/hello-world:latest
+The push refers to repository [127.0.0.1:5000/hello-world]
+f22b99068db9: Pushed
+latest: digest: sha256:1b26826f602946860c279fce658f31050cff2c596583af237d971f4629b57792 size: 525
+
+# Just checking!
+udemy-docker-mastery/registry-sample-1 on  main [!] took 14s
+➜ tree registry-data
+registry-data
+└── docker
+    └── registry
+        └── v2
+            ├── blobs
+            │   └── sha256
+            │       ├── 1b
+            │       │   └── 1b26826f602946860c279fce658f31050cff2c596583af237d971f4629b57792
+            │       │       └── data
+            │       ├── 20
+            │       │   └── 2075ac87b043415d35bb6351b4a59df19b8ad154e578f7048335feeb02d0f759
+            │       │       └── data
+            │       ├── 48
+            │       │   └── 48b5124b2768d2b917edcb640435044a97967015485e812545546cbed5cf0233
+            │       │       └── data
+            │       ├── 98
+            │       │   └── 983bfa07a342e316f08afd066894505088de985d46a9af743920aa9cafd17e7a
+            │       │       └── data
+            │       ├── b8
+            │       │   └── b8dfde127a2919ff59ad3fd4a0776de178a555a76fff77a506e128aea3ed41e3
+            │       │       └── data
+            │       └── d1
+            │           └── d1165f2212346b2bab48cb01c1e39ee8ad1be46b87873d9ca7a4e434980a7726
+            │               └── data
+            └── repositories
+                └── hello-world
+                    ├── _layers
+                    │   └── sha256
+                    │       ├── 48b5124b2768d2b917edcb640435044a97967015485e812545546cbed5cf0233
+                    │       │   └── link
+                    │       ├── 983bfa07a342e316f08afd066894505088de985d46a9af743920aa9cafd17e7a
+                    │       │   └── link
+                    │       ├── b8dfde127a2919ff59ad3fd4a0776de178a555a76fff77a506e128aea3ed41e3
+                    │       │   └── link
+                    │       └── d1165f2212346b2bab48cb01c1e39ee8ad1be46b87873d9ca7a4e434980a7726
+                    │           └── link
+                    ├── _manifests
+                    │   ├── revisions
+                    │   │   └── sha256
+                    │   │       ├── 1b26826f602946860c279fce658f31050cff2c596583af237d971f4629b57792
+                    │   │       │   └── link
+                    │   │       └── 2075ac87b043415d35bb6351b4a59df19b8ad154e578f7048335feeb02d0f759
+                    │   │           └── link
+                    │   └── tags
+                    │       └── latest
+                    │           ├── current
+                    │           │   └── link
+                    │           └── index
+                    │               └── sha256
+                    │                   ├── 1b26826f602946860c279fce658f31050cff2c596583af237d971f4629b57792
+                    │                   │   └── link
+                    │                   └── 2075ac87b043415d35bb6351b4a59df19b8ad154e578f7048335feeb02d0f759
+                    │                       └── link
+                    └── _uploads
+
+38 directories, 15 files
+
+udemy-docker-mastery/registry-sample-1 on  main [!]
+➜
