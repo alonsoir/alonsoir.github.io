@@ -1,0 +1,18 @@
+1) Cómo se creó la imagen que pones en el FROM. ¿Quién lo hizo?
+2) Verificar que no se modificó después de su creación. Compruebas el SHA?
+3) Verificar el contenido de la imagen. Usa el software que necesites, nada más.
+No añadas más entradas de vulnerabilidades.
+4) Escanear en busca de vulnerabilidades de seguridad.
+5) Ejecutar con el usuario adecuado, nada del root.
+6) Usar variables de entorno para pasar el password.
+Nada de ponerlo en el Dockerfile.
+7) Usar herramientas como Clair, Bayan, que realizan un análisis estático del
+contenido de los contenedores.
+
+https://github.com/banyanops/collector
+
+https://github.com/docker/docker-bench-security
+
+https://github.com/quay/clair
+
+https://dzone.com/articles/docker-container-anti-patterns
