@@ -2,7 +2,7 @@ export ZSH="/Users/aironman/.oh-my-zsh"
 export PATH="$HOME/.sdkman/bin:$PATH"
 export LC_ALL=es_ES.UTF-8 man
 # en_US.UTF-8
-# Use random theme
+# Use random theme, or spaceship theme...
 ZSH_THEME="spaceship"
 autoload -U promptinit; promptinit
 export UPDATE_ZSH_DAYS=1
@@ -66,7 +66,7 @@ alias q="exit"
 alias zsh="vim ~/.zshrc"
 alias ohmyzsh="vim ~/.oh-my-zsh"
 alias vimrc='vim ~/.vimrc'
-alias szsh="source ~/.zshrc"
+# alias szsh="source ~/.zshrc"
 # alias p="cd ~/document/project/Personal\ Projects"
 # alias berm="bundle exec rake db:migrate"
 # alias bec="bundle exec rails c"
