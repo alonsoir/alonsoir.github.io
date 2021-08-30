@@ -2,7 +2,7 @@ export ZSH="/Users/aironman/.oh-my-zsh"
 export PATH="$HOME/.sdkman/bin:$PATH"
 export LC_ALL=es_ES.UTF-8 man
 # en_US.UTF-8
-# Use random theme, or spaceship theme...
+# Use random theme
 ZSH_THEME="spaceship"
 autoload -U promptinit; promptinit
 export UPDATE_ZSH_DAYS=1
@@ -28,9 +28,6 @@ eval $(thefuck --alias)
 source "$HOME/.sdkman/bin/sdkman-init.sh"
 source $HOME/.oh-my-git/prompt.sh
 source "$HOME/.antigen/antigen.zsh"
-source $ZSH/oh-my-zsh.sh
-
-# source ~/.zshrc
 antigen init ~/.antigenrc
 
 # antigen use oh-my-zsh
@@ -60,13 +57,16 @@ zle -N accept-line _-accept-line
 # My useful aliases
 # alias jira="cd ~/Documents/project/gitjira-cli"
 # alias prlist='go run *.go pr -s "2019-10-01" -o -c > ~/Documents/project/pr.txt'
-# alias c="clear"
-alias gp="cd /Users/aironman/gitProjects"
+alias c="clear"
+alias k="kubectl"
+alias gp="cd /Users/aironman/git"
+alias gs="git status"
+alias gc="git commit"
 alias q="exit"
 alias zsh="vim ~/.zshrc"
 alias ohmyzsh="vim ~/.oh-my-zsh"
 alias vimrc='vim ~/.vimrc'
-# alias szsh="source ~/.zshrc"
+alias szsh="source ~/.zshrc"
 # alias p="cd ~/document/project/Personal\ Projects"
 # alias berm="bundle exec rake db:migrate"
 # alias bec="bundle exec rails c"
@@ -98,9 +98,11 @@ bindkey -v
 
 
 # Set bigfade ZSH as a prompt
-autoload -U promptinit; promptinit
-prompt bigfade
+# autoload -U promptinit; promptinit
+# prompt bigfade
 
 # Set Spaceship ZSH as a prompt
 autoload -U promptinit; promptinit
-prompt spaceship
+prompt clint
+
+neofetch
