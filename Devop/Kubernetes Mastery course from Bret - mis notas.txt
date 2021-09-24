@@ -1,0 +1,12 @@
+Conceptos k8s
+
+Pod:
+
+Un conjunto de uno o más contenedores accesibles a través de una direccion IP.
+Esa direccion IP sirve para acceder al Pod, nunca a los contenedores por si, de hecho,
+los contenedores no son accesibles directamente.
+
+Un Pod es la unidad más pequeña en un cluster k8s.
+
+Los contenedores de un pod comparten localhost y pueden compartir entre ellos
+volumenes de datos.
