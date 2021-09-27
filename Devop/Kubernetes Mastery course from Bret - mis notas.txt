@@ -1,6 +1,65 @@
-Conceptos k8s
+Conceptos k8s.
 
-Pod:
+https://slides.kubernetesmastery.com/#63
+
+0. Start the cluster (with minikube)
+
+  minikube start --wait=false
+
+Comprobamos que está todo ok:
+
+  kubectl cluster-info
+  kubect get nodes
+
+1. How to Deploy Containers in k8s
+
+With a running Kubernetes cluster, containers can now be deployed.
+
+Using kubectl run, it allows containers to be deployed onto the cluster -
+
+  kubectl create deployment first-deployment --image=katacoda/docker-http-server
+
+The status of the deployment can be discovered via the running Pods -
+
+  kubectl get pods
+
+Once the container is running it can be exposed via different networking options, depending on requirements.
+One possible solution is NodePort, that provides a dynamic port to a container.
+
+  kubectl expose deployment first-deployment --port=80 --type=NodePort
+
+The command below finds the allocated port and executes a HTTP request.
+
+  export PORT=$(kubectl get svc first-deployment -o go-template='{{range.spec.ports}}{{if .nodePort}}{{.nodePort}}{{"\n"}}{{end}}{{end}}')
+
+  echo "Accessing host01:$PORT"
+
+  curl host01:$PORT
+
+The result is the container that processed the request.
+
+2. Dashboard
+
+Enable the dashboard using Minikube with the command minikube addons enable dashboard
+
+Make the Kubernetes Dashboard available by deploying the following YAML definition.
+This should only be used on Katacoda. Busca el equivalente de Bret para abrir el
+dashboard.
+
+kubectl apply -f /opt/kubernetes-dashboard.yaml
+
+The Kubernetes dashboard allows you to view your applications in a UI.
+In this deployment, the dashboard has been made available on port 30000 but may take a while to start.
+
+To see the progress of the Dashboard starting, watch the Pods within the kube-system namespace using
+
+  kubectl get pods -n kubernetes-dashboard -w
+
+Once running, the URL to the dashboard is
+
+  https://2886795282-30000-kitek05.environments.katacoda.com/
+
+3. Pod:
 
 Un conjunto de uno o más contenedores accesibles a través de una direccion IP.
 Esa direccion IP sirve para acceder al Pod, nunca a los contenedores por si, de hecho,
@@ -10,3 +69,597 @@ Un Pod es la unidad más pequeña en un cluster k8s.
 
 Los contenedores de un pod comparten localhost y pueden compartir entre ellos
 volumenes de datos.
+
+4. shpod:
+
+For a consistent Kubernetes experience You can use shpod for examples
+
+shpod provides a shell running in a pod on the cluster
+
+It comes with many tools pre-installed (helm, stern, curl, jq...)
+
+These tools are used in many exercises in these slides
+
+shpod also gives you shell completion and a fancy prompt
+
+Create it with
+
+  kubectl apply -f https://k8smastery.com/shpod.yaml
+
+  kubectl apply -f https://k8smastery.com/shpod.yaml
+  namespace/shpod created
+  serviceaccount/shpod created
+  clusterrolebinding.rbac.authorization.k8s.io/shpod created
+  pod/shpod created
+
+  kubectl attach --namespace=shpod -ti shpod
+  If you don't see a command prompt, try pressing enter.
+
+  shpod:~# pwd
+  /root
+  shpod:~# uname -ra
+  Linux shpod 4.19.202 #1 SMP Thu Sep 2 18:19:24 UTC 2021 x86_64 Linux
+
+Attach to shell with
+
+  kubectl attach --namespace=shpod -ti shpod
+
+type exit if you want to leave the shpod shell...
+
+After finishing course
+
+  kubectl delete -f https://k8smastery.com/shpod.yaml
+
+Review the pod in their namespace shpod...
+
+  kubectl get pods -n shpod
+  NAME    READY   STATUS    RESTARTS   AGE
+  shpod   1/1     Running   0          4h51m
+
+Do you need a second shpod shell?
+
+  kubectl exec --namespace=shpod -ti shpod -- bash -l
+
+kubectl uses this config file:
+
+zsh 1609 % pwd
+/Users/aironman/.kube
+[lun 21/09/27 16:40 CEST][s002][x86_64/darwin20.0/20.6.0][5.8]
+<aironman@MacBook-Pro-de-Alonso:~/.kube>
+zsh 1610 % ll
+Executing ls -lh
+total 16
+drwxr-x---  4 aironman  staff   128B 28 abr 12:39 cache
+-rw-------  1 aironman  staff   6,2K 27 sep 10:28 config
+
+zsh 1616 % kubectl get node -o wide
+NAME       STATUS   ROLES                  AGE   VERSION   INTERNAL-IP    EXTERNAL-IP   OS-IMAGE              KERNEL-VERSION   CONTAINER-RUNTIME
+minikube   Ready    control-plane,master   18d   v1.22.1   192.168.64.3   <none>        Buildroot 2021.02.4   4.19.202         docker://20.10.8
+[lun 21/09/27 17:03 CEST][s002][x86_64/darwin20.0/20.6.0][5.8]
+
+En plural tambien funciona:
+
+kubectl get nodes -o wide
+NAME       STATUS   ROLES                  AGE   VERSION   INTERNAL-IP    EXTERNAL-IP   OS-IMAGE              KERNEL-VERSION   CONTAINER-RUNTIME
+minikube   Ready    control-plane,master   18d   v1.22.1   192.168.64.3   <none>        Buildroot 2021.02.4   4.19.202         docker://20.10.8
+
+O usando una diminutivo:
+
+zsh 1620 % kubectl get no -o wide
+NAME       STATUS   ROLES                  AGE   VERSION   INTERNAL-IP    EXTERNAL-IP   OS-IMAGE              KERNEL-VERSION   CONTAINER-RUNTIME
+minikube   Ready    control-plane,master   18d   v1.22.1   192.168.64.3   <none>        Buildroot 2021.02.4   4.19.202         docker://20.10.8
+
+Podemos sacar la configuracion en formato YAML
+
+[lun 21/09/27 17:03 CEST][s002][x86_64/darwin20.0/20.6.0][5.8]
+<aironman@MacBook-Pro-de-Alonso:~/.kube>
+zsh 1619 % kubectl get nodes -o yaml
+apiVersion: v1
+items:
+- apiVersion: v1
+  kind: Node
+  metadata:
+    annotations:
+      kubeadm.alpha.kubernetes.io/cri-socket: /var/run/dockershim.sock
+      node.alpha.kubernetes.io/ttl: "0"
+      volumes.kubernetes.io/controller-managed-attach-detach: "true"
+    creationTimestamp: "2021-09-09T11:45:46Z"
+    labels:
+      beta.kubernetes.io/arch: amd64
+      beta.kubernetes.io/os: linux
+      kubernetes.io/arch: amd64
+      kubernetes.io/hostname: minikube
+      kubernetes.io/os: linux
+      minikube.k8s.io/commit: 5931455374810b1bbeb222a9713ae2c756daee10
+      minikube.k8s.io/name: minikube
+      minikube.k8s.io/updated_at: 2021_09_09T13_45_50_0700
+      minikube.k8s.io/version: v1.23.0
+      node-role.kubernetes.io/control-plane: ""
+      node-role.kubernetes.io/master: ""
+      node.kubernetes.io/exclude-from-external-load-balancers: ""
+    name: minikube
+    resourceVersion: "117812"
+    uid: 5cdc10d6-f485-49f3-8a7d-51c3f4b40f86
+  spec:
+    podCIDR: 10.244.0.0/24
+    podCIDRs:
+    - 10.244.0.0/24
+  status:
+    addresses:
+    - address: 192.168.64.3
+      type: InternalIP
+    - address: minikube
+      type: Hostname
+    allocatable:
+      cpu: "2"
+      ephemeral-storage: 17784752Ki
+      hugepages-2Mi: "0"
+      memory: 5952468Ki
+      pods: "110"
+    capacity:
+      cpu: "2"
+      ephemeral-storage: 17784752Ki
+      hugepages-2Mi: "0"
+      memory: 5952468Ki
+      pods: "110"
+    conditions:
+    - lastHeartbeatTime: "2021-09-27T15:00:54Z"
+      lastTransitionTime: "2021-09-17T01:39:31Z"
+      message: kubelet has sufficient memory available
+      reason: KubeletHasSufficientMemory
+      status: "False"
+      type: MemoryPressure
+    - lastHeartbeatTime: "2021-09-27T15:00:54Z"
+      lastTransitionTime: "2021-09-17T01:39:31Z"
+      message: kubelet has no disk pressure
+      reason: KubeletHasNoDiskPressure
+      status: "False"
+      type: DiskPressure
+    - lastHeartbeatTime: "2021-09-27T15:00:54Z"
+      lastTransitionTime: "2021-09-17T01:39:31Z"
+      message: kubelet has sufficient PID available
+      reason: KubeletHasSufficientPID
+      status: "False"
+      type: PIDPressure
+    - lastHeartbeatTime: "2021-09-27T15:00:54Z"
+      lastTransitionTime: "2021-09-17T01:39:31Z"
+      message: kubelet is posting ready status
+      reason: KubeletReady
+      status: "True"
+      type: Ready
+    daemonEndpoints:
+      kubeletEndpoint:
+        Port: 10250
+    images:
+    - names:
+      - bretfisher/shpod@sha256:eb2cb1e1fc39478242e2e201057181618ea2eb0bee68aa50de5d60a4474e19f8
+      - bretfisher/shpod:latest
+      sizeBytes: 558201235
+    - names:
+      - k8s.gcr.io/etcd@sha256:9ce33ba33d8e738a5b85ed50b5080ac746deceed4a7496c550927a7a19ca3b6d
+      - k8s.gcr.io/etcd:3.5.0-0
+      sizeBytes: 294536887
+    - names:
+      - quay.io/radanalyticsio/spark-operator@sha256:7bfd8866134d864486ae18de72d79bf2699b1d08dab37a0e095bc86643863b8d
+      - quay.io/radanalyticsio/spark-operator:latest-released
+      sizeBytes: 272154571
+    - names:
+      - kubernetesui/dashboard@sha256:7f80b5ba141bead69c4fee8661464857af300d7d7ed0274cf7beecedc00322e6
+      sizeBytes: 225733746
+    - names:
+      - kubernetesui/dashboard@sha256:ec27f462cf1946220f5a9ace416a84a57c18f98c777876a8054405d1428cc92e
+      - kubernetesui/dashboard:v2.3.1
+      sizeBytes: 220033604
+    - names:
+      - k8s.gcr.io/kube-apiserver@sha256:6862d5a70cea8f3ef49213d6a36b7bfbbf90f99fb37f7124505be55f0ef51364
+      - k8s.gcr.io/kube-apiserver:v1.22.1
+      sizeBytes: 128446877
+    - names:
+      - k8s.gcr.io/kube-controller-manager@sha256:3e4274dee8a122bdd5e3f3db6b1eb8db59404deda2bf1adb0fec1da5dd95400a
+      - k8s.gcr.io/kube-controller-manager:v1.22.1
+      sizeBytes: 121979567
+    - names:
+      - nginx@sha256:f7988fb6c02e0ce69257d9bd9cf37ae20a60f1df7563c3a2a6abe24160306b8d
+      - nginx:1.14.2
+      sizeBytes: 109129446
+    - names:
+      - k8s.gcr.io/kube-proxy@sha256:efcf1d5fb2fc95d28841f534f1385a4884230c7c876fb1b7cf66d2777ad6dc56
+      - k8s.gcr.io/kube-proxy:v1.22.1
+      sizeBytes: 103645121
+    - names:
+      - k8s.gcr.io/kube-scheduler@sha256:e1a999694bf4b9198bc220216680ef651fabe406445a93c2d354f9dd7e53c1fd
+      - k8s.gcr.io/kube-scheduler:v1.22.1
+      sizeBytes: 52658888
+    - names:
+      - k8s.gcr.io/coredns/coredns@sha256:6e5a02c21641597998b4be7cb5eb1e7b02c0d8d23cce4dd09f4682d463798890
+      - k8s.gcr.io/coredns/coredns:v1.8.4
+      sizeBytes: 47554275
+    - names:
+      - kubernetesui/metrics-scraper@sha256:555981a24f184420f3be0c79d4efb6c948a85cfce84034f85a563f4151a81cbf
+      sizeBytes: 36937728
+    - names:
+      - kubernetesui/metrics-scraper@sha256:36d5b3f60e1a144cc5ada820910535074bdf5cf73fb70d1ff1681537eef4e172
+      - kubernetesui/metrics-scraper:v1.0.7
+      sizeBytes: 34446077
+    - names:
+      - gcr.io/k8s-minikube/storage-provisioner@sha256:18eb69d1418e854ad5a19e399310e52808a8321e4c441c1dddad8977a0d7a944
+      - gcr.io/k8s-minikube/storage-provisioner:v5
+      sizeBytes: 31465472
+    - names:
+      - k8s.gcr.io/pause@sha256:1ff6c18fbef2045af6b9c16bf034cc421a29027b800e4f9b68ae9b1cb3e9ae07
+      - k8s.gcr.io/pause:3.5
+      sizeBytes: 682696
+    nodeInfo:
+      architecture: amd64
+      bootID: 4525a770-36c1-4027-8bc8-197fd21510e2
+      containerRuntimeVersion: docker://20.10.8
+      kernelVersion: 4.19.202
+      kubeProxyVersion: v1.22.1
+      kubeletVersion: v1.22.1
+      machineID: cea931afcb7147aa92509f298edb734c
+      operatingSystem: linux
+      osImage: Buildroot 2021.02.4
+      systemUUID: 5a7211ec-0000-0000-ac0a-acde48001122
+kind: List
+metadata:
+  resourceVersion: ""
+  selfLink: ""
+
+Incluso en formato json, ideal para parsear con la herramienta jq: HORRIBLE!
+
+shpod:~# kubectl get no -o json | jq ".items[] | {name:.metadata.name} + .status.capacity"
+{
+  "name": "minikube",
+  "cpu": "2",
+  "ephemeral-storage": "17784752Ki",
+  "hugepages-2Mi": "0",
+  "memory": "5952468Ki",
+  "pods": "110"
+}
+
+Horrible en mi opinión, tenemos el comando siguiente:
+
+shpod:~# kubectl get no
+NAME       STATUS   ROLES                  AGE   VERSION
+minikube   Ready    control-plane,master   18d   v1.22.1
+
+shpod:~# kubectl describe node minikube
+Name:               minikube
+Roles:              control-plane,master
+Labels:             beta.kubernetes.io/arch=amd64
+                    beta.kubernetes.io/os=linux
+                    kubernetes.io/arch=amd64
+                    kubernetes.io/hostname=minikube
+                    kubernetes.io/os=linux
+                    minikube.k8s.io/commit=5931455374810b1bbeb222a9713ae2c756daee10
+                    minikube.k8s.io/name=minikube
+                    minikube.k8s.io/updated_at=2021_09_09T13_45_50_0700
+                    minikube.k8s.io/version=v1.23.0
+                    node-role.kubernetes.io/control-plane=
+                    node-role.kubernetes.io/master=
+                    node.kubernetes.io/exclude-from-external-load-balancers=
+Annotations:        kubeadm.alpha.kubernetes.io/cri-socket: /var/run/dockershim.sock
+                    node.alpha.kubernetes.io/ttl: 0
+                    volumes.kubernetes.io/controller-managed-attach-detach: true
+CreationTimestamp:  Thu, 09 Sep 2021 11:45:46 +0000
+Taints:             <none>
+Unschedulable:      false
+Lease:
+  HolderIdentity:  minikube
+  AcquireTime:     <unset>
+  RenewTime:       Mon, 27 Sep 2021 15:19:27 +0000
+Conditions:
+  Type             Status  LastHeartbeatTime                 LastTransitionTime                Reason                       Message
+  ----             ------  -----------------                 ------------------                ------                       -------
+  MemoryPressure   False   Mon, 27 Sep 2021 15:15:59 +0000   Fri, 17 Sep 2021 01:39:31 +0000   KubeletHasSufficientMemory   kubelet has sufficient memory available
+  DiskPressure     False   Mon, 27 Sep 2021 15:15:59 +0000   Fri, 17 Sep 2021 01:39:31 +0000   KubeletHasNoDiskPressure     kubelet has no disk pressure
+  PIDPressure      False   Mon, 27 Sep 2021 15:15:59 +0000   Fri, 17 Sep 2021 01:39:31 +0000   KubeletHasSufficientPID      kubelet has sufficient PID available
+  Ready            True    Mon, 27 Sep 2021 15:15:59 +0000   Fri, 17 Sep 2021 01:39:31 +0000   KubeletReady                 kubelet is posting ready status
+Addresses:
+  InternalIP:  192.168.64.3
+  Hostname:    minikube
+Capacity:
+  cpu:                2
+  ephemeral-storage:  17784752Ki
+  hugepages-2Mi:      0
+  memory:             5952468Ki
+  pods:               110
+Allocatable:
+  cpu:                2
+  ephemeral-storage:  17784752Ki
+  hugepages-2Mi:      0
+  memory:             5952468Ki
+  pods:               110
+System Info:
+  Machine ID:                 cea931afcb7147aa92509f298edb734c
+  System UUID:                5a7211ec-0000-0000-ac0a-acde48001122
+  Boot ID:                    4525a770-36c1-4027-8bc8-197fd21510e2
+  Kernel Version:             4.19.202
+  OS Image:                   Buildroot 2021.02.4
+  Operating System:           linux
+  Architecture:               amd64
+  Container Runtime Version:  docker://20.10.8
+  Kubelet Version:            v1.22.1
+  Kube-Proxy Version:         v1.22.1
+PodCIDR:                      10.244.0.0/24
+PodCIDRs:                     10.244.0.0/24
+Non-terminated Pods:          (10 in total)
+  Namespace                   Name                                          CPU Requests  CPU Limits  Memory Requests  Memory Limits  Age
+  ---------                   ----                                          ------------  ----------  ---------------  -------------  ---
+  kube-system                 coredns-78fcd69978-lq24r                      100m (5%)     0 (0%)      70Mi (1%)        170Mi (2%)     18d
+  kube-system                 etcd-minikube                                 100m (5%)     0 (0%)      100Mi (1%)       0 (0%)         18d
+  kube-system                 kube-apiserver-minikube                       250m (12%)    0 (0%)      0 (0%)           0 (0%)         18d
+  kube-system                 kube-controller-manager-minikube              200m (10%)    0 (0%)      0 (0%)           0 (0%)         18d
+  kube-system                 kube-proxy-79r5q                              0 (0%)        0 (0%)      0 (0%)           0 (0%)         18d
+  kube-system                 kube-scheduler-minikube                       100m (5%)     0 (0%)      0 (0%)           0 (0%)         18d
+  kube-system                 storage-provisioner                           0 (0%)        0 (0%)      0 (0%)           0 (0%)         18d
+  kubernetes-dashboard        dashboard-metrics-scraper-5594458c94-qbght    0 (0%)        0 (0%)      0 (0%)           0 (0%)         6h50m
+  kubernetes-dashboard        kubernetes-dashboard-654cf69797-hrkmr         0 (0%)        0 (0%)      0 (0%)           0 (0%)         6h50m
+  shpod                       shpod                                         0 (0%)        0 (0%)      0 (0%)           0 (0%)         5h35m
+Allocated resources:
+  (Total limits may be over 100 percent, i.e., overcommitted.)
+  Resource           Requests    Limits
+  --------           --------    ------
+  cpu                750m (37%)  0 (0%)
+  memory             170Mi (2%)  170Mi (2%)
+  ephemeral-storage  0 (0%)      0 (0%)
+  hugepages-2Mi      0 (0%)      0 (0%)
+Events:              <none>
+shpod:~#
+
+Listando tipos de recursos disponibles en un cluster:
+
+shpod:~# kubectl api-resources
+NAME                              SHORTNAMES   APIVERSION                             NAMESPACED   KIND
+bindings                                       v1                                     true         Binding
+componentstatuses                 cs           v1                                     false        ComponentStatus
+configmaps                        cm           v1                                     true         ConfigMap
+endpoints                         ep           v1                                     true         Endpoints
+events                            ev           v1                                     true         Event
+limitranges                       limits       v1                                     true         LimitRange
+namespaces                        ns           v1                                     false        Namespace
+nodes                             no           v1                                     false        Node
+persistentvolumeclaims            pvc          v1                                     true         PersistentVolumeClaim
+persistentvolumes                 pv           v1                                     false        PersistentVolume
+pods                              po           v1                                     true         Pod
+podtemplates                                   v1                                     true         PodTemplate
+replicationcontrollers            rc           v1                                     true         ReplicationController
+resourcequotas                    quota        v1                                     true         ResourceQuota
+secrets                                        v1                                     true         Secret
+serviceaccounts                   sa           v1                                     true         ServiceAccount
+services                          svc          v1                                     true         Service
+mutatingwebhookconfigurations                  admissionregistration.k8s.io/v1        false        MutatingWebhookConfiguration
+validatingwebhookconfigurations                admissionregistration.k8s.io/v1        false        ValidatingWebhookConfiguration
+customresourcedefinitions         crd,crds     apiextensions.k8s.io/v1                false        CustomResourceDefinition
+apiservices                                    apiregistration.k8s.io/v1              false        APIService
+controllerrevisions                            apps/v1                                true         ControllerRevision
+daemonsets                        ds           apps/v1                                true         DaemonSet
+deployments                       deploy       apps/v1                                true         Deployment
+replicasets                       rs           apps/v1                                true         ReplicaSet
+statefulsets                      sts          apps/v1                                true         StatefulSet
+tokenreviews                                   authentication.k8s.io/v1               false        TokenReview
+localsubjectaccessreviews                      authorization.k8s.io/v1                true         LocalSubjectAccessReview
+selfsubjectaccessreviews                       authorization.k8s.io/v1                false        SelfSubjectAccessReview
+selfsubjectrulesreviews                        authorization.k8s.io/v1                false        SelfSubjectRulesReview
+subjectaccessreviews                           authorization.k8s.io/v1                false        SubjectAccessReview
+horizontalpodautoscalers          hpa          autoscaling/v1                         true         HorizontalPodAutoscaler
+cronjobs                          cj           batch/v1                               true         CronJob
+jobs                                           batch/v1                               true         Job
+certificatesigningrequests        csr          certificates.k8s.io/v1                 false        CertificateSigningRequest
+leases                                         coordination.k8s.io/v1                 true         Lease
+endpointslices                                 discovery.k8s.io/v1                    true         EndpointSlice
+events                            ev           events.k8s.io/v1                       true         Event
+flowschemas                                    flowcontrol.apiserver.k8s.io/v1beta1   false        FlowSchema
+prioritylevelconfigurations                    flowcontrol.apiserver.k8s.io/v1beta1   false        PriorityLevelConfiguration
+ingressclasses                                 networking.k8s.io/v1                   false        IngressClass
+ingresses                         ing          networking.k8s.io/v1                   true         Ingress
+networkpolicies                   netpol       networking.k8s.io/v1                   true         NetworkPolicy
+runtimeclasses                                 node.k8s.io/v1                         false        RuntimeClass
+poddisruptionbudgets              pdb          policy/v1                              true         PodDisruptionBudget
+podsecuritypolicies               psp          policy/v1beta1                         false        PodSecurityPolicy
+clusterrolebindings                            rbac.authorization.k8s.io/v1           false        ClusterRoleBinding
+clusterroles                                   rbac.authorization.k8s.io/v1           false        ClusterRole
+rolebindings                                   rbac.authorization.k8s.io/v1           true         RoleBinding
+roles                                          rbac.authorization.k8s.io/v1           true         Role
+priorityclasses                   pc           scheduling.k8s.io/v1                   false        PriorityClass
+csidrivers                                     storage.k8s.io/v1                      false        CSIDriver
+csinodes                                       storage.k8s.io/v1                      false        CSINode
+csistoragecapacities                           storage.k8s.io/v1beta1                 true         CSIStorageCapacity
+storageclasses                    sc           storage.k8s.io/v1                      false        StorageClass
+volumeattachments                              storage.k8s.io/v1                      false        VolumeAttachment
+shpod:~#
+
+Madre mia, mogollon de recursos, para describir que hacen, podemos usar este comando:
+
+shpod:~# kubectl explain deployment
+KIND:     Deployment
+VERSION:  apps/v1
+
+DESCRIPTION:
+     Deployment enables declarative updates for Pods and ReplicaSets.
+
+FIELDS:
+   apiVersion	<string>
+     APIVersion defines the versioned schema of this representation of an
+     object. Servers should convert recognized schemas to the latest internal
+     value, and may reject unrecognized values. More info:
+     https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+
+   kind	<string>
+     Kind is a string value representing the REST resource this object
+     represents. Servers may infer this from the endpoint the client submits
+     requests to. Cannot be updated. In CamelCase. More info:
+     https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+
+   metadata	<Object>
+     Standard object's metadata. More info:
+     https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata
+
+   spec	<Object>
+     Specification of the desired behavior of the Deployment.
+
+   status	<Object>
+     Most recently observed status of the Deployment.
+
+shpod:~# kubectl explain pod
+     KIND:     Pod
+     VERSION:  v1
+
+     DESCRIPTION:
+          Pod is a collection of containers that can run on a host. This resource is
+          created by clients and scheduled onto hosts.
+
+     FIELDS:
+        apiVersion	<string>
+          APIVersion defines the versioned schema of this representation of an
+          object. Servers should convert recognized schemas to the latest internal
+          value, and may reject unrecognized values. More info:
+          https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+
+        kind	<string>
+          Kind is a string value representing the REST resource this object
+          represents. Servers may infer this from the endpoint the client submits
+          requests to. Cannot be updated. In CamelCase. More info:
+          https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+
+        metadata	<Object>
+          Standard object's metadata. More info:
+          https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata
+
+        spec	<Object>
+          Specification of the desired behavior of the pod. More info:
+          https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status
+
+        status	<Object>
+          Most recently observed status of the pod. This data may not be up to date.
+          Populated by the system. Read-only. More info:
+          https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status
+
+shpod:~# kubectl explain  services
+          KIND:     Service
+          VERSION:  v1
+
+          DESCRIPTION:
+               Service is a named abstraction of software service (for example, mysql)
+               consisting of local port (for example 3306) that the proxy listens on, and
+               the selector that determines which pods will answer requests sent through
+               the proxy.
+
+          FIELDS:
+             apiVersion	<string>
+               APIVersion defines the versioned schema of this representation of an
+               object. Servers should convert recognized schemas to the latest internal
+               value, and may reject unrecognized values. More info:
+               https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+
+             kind	<string>
+               Kind is a string value representing the REST resource this object
+               represents. Servers may infer this from the endpoint the client submits
+               requests to. Cannot be updated. In CamelCase. More info:
+               https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+
+             metadata	<Object>
+               Standard object's metadata. More info:
+               https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata
+
+             spec	<Object>
+               Spec defines the behavior of a service.
+               https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status
+
+             status	<Object>
+               Most recently observed status of the service. Populated by the system.
+               Read-only. More info:
+               https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status
+
+Más completo!
+
+shpod:~# kubectl explain  services --recursive
+               KIND:     Service
+               VERSION:  v1
+
+               DESCRIPTION:
+                    Service is a named abstraction of software service (for example, mysql)
+                    consisting of local port (for example 3306) that the proxy listens on, and
+                    the selector that determines which pods will answer requests sent through
+                    the proxy.
+
+               FIELDS:
+                  apiVersion	<string>
+                  kind	<string>
+                  metadata	<Object>
+                     annotations	<map[string]string>
+                     clusterName	<string>
+                     creationTimestamp	<string>
+                     deletionGracePeriodSeconds	<integer>
+                     deletionTimestamp	<string>
+                     finalizers	<[]string>
+                     generateName	<string>
+                     generation	<integer>
+                     labels	<map[string]string>
+                     managedFields	<[]Object>
+                        apiVersion	<string>
+                        fieldsType	<string>
+                        fieldsV1	<map[string]>
+                        manager	<string>
+                        operation	<string>
+                        subresource	<string>
+                        time	<string>
+                     name	<string>
+                     namespace	<string>
+                     ownerReferences	<[]Object>
+                        apiVersion	<string>
+                        blockOwnerDeletion	<boolean>
+                        controller	<boolean>
+                        kind	<string>
+                        name	<string>
+                        uid	<string>
+                     resourceVersion	<string>
+                     selfLink	<string>
+                     uid	<string>
+                  spec	<Object>
+                     allocateLoadBalancerNodePorts	<boolean>
+                     clusterIP	<string>
+                     clusterIPs	<[]string>
+                     externalIPs	<[]string>
+                     externalName	<string>
+                     externalTrafficPolicy	<string>
+                     healthCheckNodePort	<integer>
+                     internalTrafficPolicy	<string>
+                     ipFamilies	<[]string>
+                     ipFamilyPolicy	<string>
+                     loadBalancerClass	<string>
+                     loadBalancerIP	<string>
+                     loadBalancerSourceRanges	<[]string>
+                     ports	<[]Object>
+                        appProtocol	<string>
+                        name	<string>
+                        nodePort	<integer>
+                        port	<integer>
+                        protocol	<string>
+                        targetPort	<string>
+                     publishNotReadyAddresses	<boolean>
+                     selector	<map[string]string>
+                     sessionAffinity	<string>
+                     sessionAffinityConfig	<Object>
+                        clientIP	<Object>
+                           timeoutSeconds	<integer>
+                     type	<string>
+                  status	<Object>
+                     conditions	<[]Object>
+                        lastTransitionTime	<string>
+                        message	<string>
+                        observedGeneration	<integer>
+                        reason	<string>
+                        status	<string>
+                        type	<string>
+                     loadBalancer	<Object>
+                        ingress	<[]Object>
+                           hostname	<string>
+                           ip	<string>
+                           ports	<[]Object>
+                              error	<string>
+                              port	<integer>
+                              protocol	<string>
+
+Un Servicio es un endpoint estable para acceder al contenedor que haya en un pod.
+Puedes acceder a través de su ip.
