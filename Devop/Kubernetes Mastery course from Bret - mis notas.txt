@@ -11,6 +11,62 @@ Comprobamos que está todo ok:
   kubectl cluster-info
   kubect get nodes
 
+shpod:
+
+For a consistent Kubernetes experience You can use shpod for examples
+
+shpod provides a shell running in a pod on the cluster
+
+It comes with many tools pre-installed (helm, stern, curl, jq...)
+
+These tools are used in many exercises in these slides
+
+shpod also gives you shell completion and a fancy prompt
+
+Create it with:
+
+  kubectl apply -f https://k8smastery.com/shpod.yaml
+    namespace/shpod created
+    serviceaccount/shpod created
+    clusterrolebinding.rbac.authorization.k8s.io/shpod created
+    pod/shpod created
+
+Una vez que has aplicado por primera vez el yaml de arriba, solo tienes que ejecutar
+este comando la siguiente vez:
+
+  kubectl attach -i -t shpod -n shpod
+
+éste también funciona, menos abreviado:
+
+  kubectl attach --namespace=shpod -ti shpod
+
+    If you don't see a command prompt, try pressing enter.
+
+  shpod:~# pwd
+    /root
+  shpod:~# uname -ra
+    Linux shpod 4.19.202 #1 SMP Thu Sep 2 18:19:24 UTC 2021 x86_64 Linux
+
+  Attach to shell with
+
+    kubectl attach --namespace=shpod -ti shpod
+
+  type exit if you want to leave the shpod shell...
+
+  After finishing course
+
+    kubectl delete -f https://k8smastery.com/shpod.yaml
+
+  Review the pod in their namespace shpod...
+
+    kubectl get pods -n shpod
+    NAME    READY   STATUS    RESTARTS   AGE
+    shpod   1/1     Running   0          4h51m
+
+  Do you need a second shpod shell?
+
+    kubectl exec --namespace=shpod -ti shpod -- bash -l
+
 1. How to Deploy Containers in k8s
 
 With a running Kubernetes cluster, containers can now be deployed.
@@ -69,56 +125,6 @@ Un Pod es la unidad más pequeña en un cluster k8s.
 
 Los contenedores de un pod comparten localhost y pueden compartir entre ellos
 volumenes de datos.
-
-4. shpod:
-
-For a consistent Kubernetes experience You can use shpod for examples
-
-shpod provides a shell running in a pod on the cluster
-
-It comes with many tools pre-installed (helm, stern, curl, jq...)
-
-These tools are used in many exercises in these slides
-
-shpod also gives you shell completion and a fancy prompt
-
-Create it with
-
-  kubectl apply -f https://k8smastery.com/shpod.yaml
-
-  kubectl apply -f https://k8smastery.com/shpod.yaml
-  namespace/shpod created
-  serviceaccount/shpod created
-  clusterrolebinding.rbac.authorization.k8s.io/shpod created
-  pod/shpod created
-
-  kubectl attach --namespace=shpod -ti shpod
-  If you don't see a command prompt, try pressing enter.
-
-  shpod:~# pwd
-  /root
-  shpod:~# uname -ra
-  Linux shpod 4.19.202 #1 SMP Thu Sep 2 18:19:24 UTC 2021 x86_64 Linux
-
-Attach to shell with
-
-  kubectl attach --namespace=shpod -ti shpod
-
-type exit if you want to leave the shpod shell...
-
-After finishing course
-
-  kubectl delete -f https://k8smastery.com/shpod.yaml
-
-Review the pod in their namespace shpod...
-
-  kubectl get pods -n shpod
-  NAME    READY   STATUS    RESTARTS   AGE
-  shpod   1/1     Running   0          4h51m
-
-Do you need a second shpod shell?
-
-  kubectl exec --namespace=shpod -ti shpod -- bash -l
 
 kubectl uses this config file:
 
@@ -662,4 +668,290 @@ shpod:~# kubectl explain  services --recursive
                               protocol	<string>
 
 Un Servicio es un endpoint estable para acceder al contenedor que haya en un pod.
-Puedes acceder a través de su ip.
+Puedes acceder a través de su ip. Tres formas de ver que tienes:
+
+shpod:~# kubectl get services
+NAME         TYPE        CLUSTER-IP   EXTERNAL-IP   PORT(S)   AGE
+kubernetes   ClusterIP   10.96.0.1    <none>        443/TCP   18d
+shpod:~# kubectl get svc
+NAME         TYPE        CLUSTER-IP   EXTERNAL-IP   PORT(S)   AGE
+kubernetes   ClusterIP   10.96.0.1    <none>        443/TCP   18d
+shpod:~# kubectl get service
+NAME         TYPE        CLUSTER-IP   EXTERNAL-IP   PORT(S)   AGE
+kubernetes   ClusterIP   10.96.0.1    <none>        443/TCP   18d
+
+Un Pod es básicamente un grupo, un conjunto de contenedores, corriendo juntos en el mismo nodo.
+Comparten recursos, como RAM, CPU, volúmenes de datos, red...
+
+shpod:~# kubectl get pods
+No resources found in default namespace.
+
+Como puedes ver, no tengo pods en el namespace default, por lo que vamos a ver en otros namespaces:
+
+shpod:~# kubectl get pods -n shpod
+NAME    READY   STATUS    RESTARTS   AGE
+shpod   1/1     Running   0          23h
+
+shpod:~# kubectl get namespaces
+NAME                   STATUS   AGE
+default                Active   18d
+kube-node-lease        Active   18d
+kube-public            Active   18d
+kube-system            Active   18d
+kubernetes-dashboard   Active   13d
+shpod                  Active   23h
+
+shpod:~# kubectl get pods -n kubernetes-dashboard
+NAME                                         READY   STATUS    RESTARTS   AGE
+dashboard-metrics-scraper-5594458c94-qbght   1/1     Running   0          24h
+kubernetes-dashboard-654cf69797-hrkmr        1/1     Running   0          24h
+
+shpod:~# kubectl get pods -n kube-system
+NAME                               READY   STATUS    RESTARTS      AGE
+coredns-78fcd69978-lq24r           1/1     Running   2 (24h ago)   18d
+etcd-minikube                      1/1     Running   2 (24h ago)   18d
+kube-apiserver-minikube            1/1     Running   2 (24h ago)   18d
+kube-controller-manager-minikube   1/1     Running   2 (24h ago)   18d
+kube-proxy-79r5q                   1/1     Running   2 (24h ago)   18d
+kube-scheduler-minikube            1/1     Running   2 (24h ago)   18d
+storage-provisioner                1/1     Running   4 (24h ago)   18d
+
+como podemos observar, k8s tiene varios namespaces por defecto donde corren
+algunos pods.
+
+Vamos a listar todos los pods en todos los namespaces:
+
+shpod:~# kubectl get pods --all-namespaces
+NAMESPACE              NAME                                         READY   STATUS    RESTARTS      AGE
+kube-system            coredns-78fcd69978-lq24r                     1/1     Running   2 (25h ago)   18d
+kube-system            etcd-minikube                                1/1     Running   2 (25h ago)   18d
+kube-system            kube-apiserver-minikube                      1/1     Running   2 (25h ago)   18d
+kube-system            kube-controller-manager-minikube             1/1     Running   2 (25h ago)   18d
+kube-system            kube-proxy-79r5q                             1/1     Running   2 (25h ago)   18d
+kube-system            kube-scheduler-minikube                      1/1     Running   2 (25h ago)   18d
+kube-system            storage-provisioner                          1/1     Running   4 (25h ago)   18d
+kubernetes-dashboard   dashboard-metrics-scraper-5594458c94-qbght   1/1     Running   0             25h
+kubernetes-dashboard   kubernetes-dashboard-654cf69797-hrkmr        1/1     Running   0             25h
+shpod                  shpod                                        1/1     Running   0             23h
+
+Como puedes comprobar, -A es equivalente a --all-namespaces:
+
+shpod:~# kubectl get pods -A
+NAMESPACE              NAME                                         READY   STATUS    RESTARTS      AGE
+kube-system            coredns-78fcd69978-lq24r                     1/1     Running   2 (25h ago)   18d
+kube-system            etcd-minikube                                1/1     Running   2 (25h ago)   18d
+kube-system            kube-apiserver-minikube                      1/1     Running   2 (25h ago)   18d
+kube-system            kube-controller-manager-minikube             1/1     Running   2 (25h ago)   18d
+kube-system            kube-proxy-79r5q                             1/1     Running   2 (25h ago)   18d
+kube-system            kube-scheduler-minikube                      1/1     Running   2 (25h ago)   18d
+kube-system            storage-provisioner                          1/1     Running   4 (25h ago)   18d
+kubernetes-dashboard   dashboard-metrics-scraper-5594458c94-qbght   1/1     Running   0             25h
+kubernetes-dashboard   kubernetes-dashboard-654cf69797-hrkmr        1/1     Running   0             25h
+shpod                  shpod                                        1/1     Running   0             23h
+
+
+shpod:~# kubectl get pods -n kube-public
+No resources found in kube-public namespace.
+
+Curiosamente, si listamos los pods en ese namespace kube-public, la api te dice
+que no hay nada, pero sabemos que hay un único llamado configmaps.
+De hecho, ejecuto este comando, la api dice que no hay nada:
+
+shpod:~# kubectl get all -n kube-public
+No resources found in kube-public namespace.
+
+Pero si hay dicho objecto configmaps, que a su vez, contiene un objeto cluster-info
+
+shpod:~# kubectl get configmaps -n kube-public
+NAME               DATA   AGE
+cluster-info       1      18d
+kube-root-ca.crt   1      18d
+
+Incluso puedo examinar la informacion de cluster-info:
+
+shpod:~# kubectl get configmaps -n kube-public cluster-info -o yaml
+apiVersion: v1
+data:
+  kubeconfig: |
+    apiVersion: v1
+    clusters:
+    - cluster:
+        certificate-authority-data: MOGOLLON DE NUMEROS Y LETRAS QUE BORRO POR SEGURIDAD
+        server: https://control-plane.minikube.internal:8443
+      name: ""
+    contexts: null
+    current-context: ""
+    kind: Config
+    preferences: {}
+    users: null
+kind: ConfigMap
+metadata:
+  creationTimestamp: "2021-09-09T11:45:49Z"
+  name: cluster-info
+  namespace: kube-public
+  resourceVersion: "1165"
+  uid: 550649f2-1aaf-4313-9e50-e08c7d044b6d
+
+Incluso puedo examinar la informacion de kube-root-ca.crt:
+
+shpod:~# kubectl get configmaps -n kube-public kube-root-ca.crt -o json
+  {
+      "apiVersion": "v1",
+      "data": {
+          "ca.crt": "-----BEGIN CERTIFICATE-----\nMOGOLLON DE NUMEROS Y LETRAS QUE BORRO POR SEGURIDAD\n-----END CERTIFICATE-----\n"
+      },
+      "kind": "ConfigMap",
+      "metadata": {
+          "annotations": {
+              "kubernetes.io/description": "Contains a CA bundle that can be used to verify the kube-apiserver when using internal endpoints such as the internal service IP or kubernetes.default.svc. No other usage is guaranteed across distributions of Kubernetes clusters."
+          },
+          "creationTimestamp": "2021-09-09T11:46:01Z",
+          "name": "kube-root-ca.crt",
+          "namespace": "kube-public",
+          "resourceVersion": "402",
+          "uid": "79f3b7ca-9d4c-4b6c-a080-6a6af987d664"
+      }
+  }
+
+Cuando creas un objeto tipo Deployment, no creas un objeto tipo Pod, creas un objeto tipo
+ReplicaSet que si crea un objeto tipo Pod.
+
+Por ejemplo, el comando:
+
+kubectl create deployment pingpong --image alpine -- ping 1.1.1.1
+
+creará todos estos objetos:
+
+shpod:~# kubectl get all
+NAME                           READY   STATUS    RESTARTS   AGE
+pod/pingpong-98f6d5899-d9pq2   1/1     Running   0          8m59s
+
+NAME                 TYPE        CLUSTER-IP   EXTERNAL-IP   PORT(S)   AGE
+service/kubernetes   ClusterIP   10.96.0.1    <none>        443/TCP   19d
+
+NAME                       READY   UP-TO-DATE   AVAILABLE   AGE
+deployment.apps/pingpong   1/1     1            1           8m59s
+
+NAME                                 DESIRED   CURRENT   READY   AGE
+replicaset.apps/pingpong-98f6d5899   1         1         1       8m59s
+
+como ves, has creado un objeto tipo Deployment, que a su vez crea un objeto tipo replicaset,
+que a su vez crea un pod, que a su vez crea un contenedor Docker con una imagen alpine que está
+ejecutando una y otra vez el comando ping 1.1.1.1
+
+Esa es la jerarquia necesaria:
+
+  Deployment
+    ReplicaSet
+      Pod
+        Container
+
+Vamos, que estamos haciendo mogollon de peticiones al servidor con la ip 1.1.1.1
+
+Revisemos que está pasando...
+
+shpod:~# kubectl logs deploy/pingpong --tail 10 --follow
+PING 1.1.1.1 (1.1.1.1): 56 data bytes
+
+Ojito, si queremos crear toda esa jerarquia que finalmente ejecute un comando bash en una imagen linux,
+tienes que poner el -- al final del comando.
+Es decir, ésto funcionará:
+
+  kubectl create deployment pingpong --image alpine -- ping 1.1.1.1
+
+Esto no:
+
+  kubectl create deployment pingpong --image alpine ping 1.1.1.1
+
+ni esto otro incluso!
+
+  kubectl create deployment pingpong --image alpine
+
+Uno podría pensar que con el último comando crearías toda la jerarquia de objetos para finalmente tener un contenedor alpine,
+pero no. Si no indicas el comando que vas a ejecutar, k8s no creará adecuadamente la jerarquía de objetos.
+
+Ahora, vamos a tratar de escalar los contenedores que hay en el pod. Uno podría pensar en principio que hay que indicar algo al Replicaset,
+pero no, hay que indicar al objeto tipo Deployment que haga dicha tarea, por lo menos es así en mi version de k8s.
+
+shpod:~# kubectl scale deployment pingpong --replicas 3
+deployment.apps/pingpong scaled
+shpod:~# kubectl get deployments
+NAME       READY   UP-TO-DATE   AVAILABLE   AGE
+pingpong   3/3     3            3           24m
+shpod:~# kubectl get all
+NAME                           READY   STATUS    RESTARTS   AGE
+pod/pingpong-98f6d5899-bgrq7   1/1     Running   0          14s
+pod/pingpong-98f6d5899-bzvmc   1/1     Running   0          14s
+pod/pingpong-98f6d5899-d9pq2   1/1     Running   0          24m
+
+NAME                 TYPE        CLUSTER-IP   EXTERNAL-IP   PORT(S)   AGE
+service/kubernetes   ClusterIP   10.96.0.1    <none>        443/TCP   19d
+
+NAME                       READY   UP-TO-DATE   AVAILABLE   AGE
+deployment.apps/pingpong   3/3     3            3           24m
+
+NAME                                 DESIRED   CURRENT   READY   AGE
+replicaset.apps/pingpong-98f6d5899   3         3         3       24m
+
+shpod:~# kubectl logs deploy/pingpong
+Found 3 pods, using pod/pingpong-98f6d5899-d9pq2
+PING 1.1.1.1 (1.1.1.1): 56 data bytes
+
+Si queremos algo más de detalle viendo los logs de los pods:
+
+shpod:~# kubectl logs pingpong-98f6d5899-
+pingpong-98f6d5899-bgrq7  pingpong-98f6d5899-bzvmc  pingpong-98f6d5899-d9pq2
+shpod:~# kubectl logs pingpong-98f6d5899-bgrq7
+PING 1.1.1.1 (1.1.1.1): 56 data bytes
+shpod:~# kubectl logs pingpong-98f6d5899-bzvmc
+PING 1.1.1.1 (1.1.1.1): 56 data bytes
+shpod:~# kubectl logs pingpong-98f6d5899-d9pq2
+PING 1.1.1.1 (1.1.1.1): 56 data bytes
+
+Recuerda que tenemos una utilidad llamada watch que permite ver la salida de cualquier comando linux/unix.
+En el contenedor de bret shpod viene por defecto, entre otras muchas utilidades, como helm.
+Vamos a probarla mientras tratamos de borrar un contenedor usando el comando kubectl delete:
+
+Por un lado, ejecutamos:
+
+shpod:~# watch kubectl get pods
+
+Aparecerá algo así:
+
+Every 2.0s: kubectl get pods                                                                                                                       2021-09-28 17:01:44
+
+NAME                       READY   STATUS    RESTARTS   AGE
+pingpong-98f6d5899-7fnnc   1/1     Running   0          6m43s
+pingpong-98f6d5899-bgrq7   1/1     Running   0          19m
+pingpong-98f6d5899-bzvmc   1/1     Running   0          19m
+
+Por otro lado, en otra terminal, ejecutamos
+
+zsh 1646 % kubectl delete pod pingpong-98f6d5899-7fnnc
+pod "pingpong-98f6d5899-7fnnc" deleted
+
+En la primera pestaña podemos apreciar que ese pod se pone en estado Terminating e inmediatamente k8s trata de crear otro contenedor
+hasta que finalmente tengamos el número de replicas indicado en el objeto ReplicaSet.
+
+Date cuenta que debido a la jerarquía de objetos controlado por el objeto tipo Deployment, nunca podrías borrar los contenedores,
+en el sentido de que quieres borrar y parar la ejecución del contenedor.
+Si quieres hacer algo así, tienes que escalar a cero contenedores, usando el comando:
+
+zsh 1649 % kubectl scale deployment pingpong --replicas 0
+deployment.apps/pingpong scaled
+
+en la pantalla donde estás ejecutando el comando watch kubectl get pods verás algo asi:
+
+Every 2.0s: kubectl get pods                                                                                                                       2021-09-28 17:08:35
+
+No resources found in default namespace.
+
+zsh 1650 % kubectl get all
+NAME                 TYPE        CLUSTER-IP   EXTERNAL-IP   PORT(S)   AGE
+service/kubernetes   ClusterIP   10.96.0.1    <none>        443/TCP   19d
+
+NAME                       READY   UP-TO-DATE   AVAILABLE   AGE
+deployment.apps/pingpong   0/0     0            0           51m
+
+NAME                                 DESIRED   CURRENT   READY   AGE
+replicaset.apps/pingpong-98f6d5899   0         0         0       51m
