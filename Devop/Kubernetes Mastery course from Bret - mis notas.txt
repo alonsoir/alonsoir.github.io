@@ -955,3 +955,224 @@ deployment.apps/pingpong   0/0     0            0           51m
 
 NAME                                 DESIRED   CURRENT   READY   AGE
 replicaset.apps/pingpong-98f6d5899   0         0         0       51m
+
+shpod:~# exit
+logout
+Session ended, resume using 'kubectl attach shpod -c shpod -i -t' command when the pod is running
+
+Tareas cron.
+
+zsh 1715 % kubectl apply -f https://raw.githubusercontent.com/kubernetes/website/main/content/en/examples/application/job/cronjob.yaml
+cronjob.batch/hello created
+
+El fichero yaml es así:
+
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: hello
+spec:
+  schedule: "*/1 * * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: hello
+            image: busybox
+            imagePullPolicy: IfNotPresent
+            command:
+            - /bin/sh
+            - -c
+            - date; echo Hello from the Kubernetes cluster
+          restartPolicy: OnFailure
+
+En otra pestaña, ejecutando watch kubectl get cronjobs:
+
+Every 2.0s: kubectl get cronjobs                                                                                                                   2021-09-29 14:35:55
+
+NAME    SCHEDULE      SUSPEND   ACTIVE   LAST SCHEDULE   AGE
+hello   */1 * * * *   False     0        <none>          46s
+
+Podemos ver como se crea un pod nuevo ejecutando el comando sh descrito en el cronjob.yaml,
+cada minuto uno nuevo...
+
+Para borrar la tarea cronjob:
+
+zsh 1718 % kubectl delete cronjobs.batch hello
+cronjob.batch "hello" deleted
+
+Tener en cuenta que un cronjob creará un Job que a su vez creará un pod, donde se alojará el contenedor.
+
+Podemos comprobar los logs de todos los pods a la vez.
+La clave es usar app=pingpong
+
+zsh 1730 % kubectl logs -l app=pingpong --tail 1 -f
+PING 1.1.1.1 (1.1.1.1): 56 data bytes
+PING 1.1.1.1 (1.1.1.1): 56 data bytes
+PING 1.1.1.1 (1.1.1.1): 56 data bytes
+
+zsh 1731 [130] % kubectl get all
+NAME                           READY   STATUS    RESTARTS   AGE
+pod/pingpong-98f6d5899-9v85n   1/1     Running   0          5h17m
+pod/pingpong-98f6d5899-s2pd4   1/1     Running   0          5h17m
+pod/pingpong-98f6d5899-z784p   1/1     Running   0          5h17m
+
+NAME                 TYPE        CLUSTER-IP   EXTERNAL-IP   PORT(S)   AGE
+service/kubernetes   ClusterIP   10.96.0.1    <none>        443/TCP   20d
+
+NAME                       READY   UP-TO-DATE   AVAILABLE   AGE
+deployment.apps/pingpong   3/3     3            3           22h
+
+NAME                                 DESIRED   CURRENT   READY   AGE
+replicaset.apps/pingpong-98f6d5899   3         3         3       22h
+
+Ojo, que tiene un límite, como máximo 5!
+
+Voy a escalar los pods hasta 8,
+
+Every 2.0s: kubectl get pods                                                                                                                       2021-09-29 15:09:23
+
+NAME                       READY   STATUS    RESTARTS   AGE
+pingpong-98f6d5899-2584f   1/1     Running   0          80s
+pingpong-98f6d5899-9v85n   1/1     Running   0          5h22m
+pingpong-98f6d5899-d2m8r   1/1     Running   0          80s
+pingpong-98f6d5899-mcpnm   1/1     Running   0          80s
+pingpong-98f6d5899-n7c6m   1/1     Running   0          80s
+pingpong-98f6d5899-r5ftn   1/1     Running   0          80s
+pingpong-98f6d5899-s2pd4   1/1     Running   0          5h22m
+pingpong-98f6d5899-z784p   1/1     Running   0          5h22m
+
+zsh 1734 % kubectl logs -l app=pingpong --tail 1 -f
+error: you are attempting to follow 8 log streams, but maximum allowed concurrency is 5, use --max-log-requests to increase the limit
+
+Como podemos ver, kubectl logs tiene limitaciones a la hora de acceder a los logs, pero es por una buena razón, para proteger los recursos de
+la api. Para ello, podemos usar stern.
+
+shpod:~# stern --tail 1 --timestamps --all-namespaces pingpong
++ default pingpong-98f6d5899-z784p › alpine
++ default pingpong-98f6d5899-d2m8r › alpine
++ default pingpong-98f6d5899-n7c6m › alpine
++ default pingpong-98f6d5899-s2pd4 › alpine
++ default pingpong-98f6d5899-mcpnm › alpine
+default pingpong-98f6d5899-z784p alpine 2021-09-29T09:47:23.831054441Z PING 1.1.1.1 (1.1.1.1): 56 data bytes
++ default pingpong-98f6d5899-r5ftn › alpine
+default pingpong-98f6d5899-d2m8r alpine 2021-09-29T15:08:12.905561352Z PING 1.1.1.1 (1.1.1.1): 56 data bytes
++ default pingpong-98f6d5899-9v85n › alpine
++ default pingpong-98f6d5899-2584f › alpine
+default pingpong-98f6d5899-n7c6m alpine 2021-09-29T15:08:08.819615419Z PING 1.1.1.1 (1.1.1.1): 56 data bytes
+default pingpong-98f6d5899-s2pd4 alpine 2021-09-29T09:47:26.665132690Z PING 1.1.1.1 (1.1.1.1): 56 data bytes
+default pingpong-98f6d5899-r5ftn alpine 2021-09-29T15:08:11.594289256Z PING 1.1.1.1 (1.1.1.1): 56 data bytes
+default pingpong-98f6d5899-mcpnm alpine 2021-09-29T15:08:07.562812985Z PING 1.1.1.1 (1.1.1.1): 56 data bytes
+default pingpong-98f6d5899-9v85n alpine 2021-09-29T09:47:25.291573172Z PING 1.1.1.1 (1.1.1.1): 56 data bytes
+default pingpong-98f6d5899-2584f alpine 2021-09-29T15:08:10.149623566Z PING 1.1.1.1 (1.1.1.1): 56 data bytes
+
+Some questions...
+
+How many nodes does your cluster have?
+(the answer should be the kubectl command you used to get the answer)
+
+  Probably it is not necessary to use -o wide.
+
+  shpod:~# kubectl get nodes -o wide
+  NAME       STATUS   ROLES                  AGE   VERSION   INTERNAL-IP    EXTERNAL-IP   OS-IMAGE              KERNEL-VERSION   CONTAINER-RUNTIME
+  minikube   Ready    control-plane,master   20d   v1.22.1   192.168.64.3   <none>        Buildroot 2021.02.4   4.19.202         docker://20.10.8
+
+What kernel version and what container engine is each node running?
+(the answer should be the kubectl command you used to get the answer)
+
+  shpod:~# kubectl get nodes -o wide
+  NAME       STATUS   ROLES                  AGE   VERSION   INTERNAL-IP    EXTERNAL-IP   OS-IMAGE              KERNEL-VERSION   CONTAINER-RUNTIME
+  minikube   Ready    control-plane,master   20d   v1.22.1   192.168.64.3   <none>        Buildroot 2021.02.4   4.19.202         docker://20.10.8
+
+List only the pods in the kube-system namespace.
+(the answer should be the kubectl command you used to get the answer)
+
+  shpod:~# kubectl get pods -n kube-system
+  NAME                               READY   STATUS    RESTARTS        AGE
+  coredns-78fcd69978-lq24r           1/1     Running   2 (2d23h ago)   20d
+  etcd-minikube                      1/1     Running   2 (2d23h ago)   20d
+  kube-apiserver-minikube            1/1     Running   2 (2d23h ago)   20d
+  kube-controller-manager-minikube   1/1     Running   2 (2d23h ago)   20d
+  kube-proxy-79r5q                   1/1     Running   2 (2d23h ago)   20d
+  kube-scheduler-minikube            1/1     Running   2 (2d23h ago)   20d
+  storage-provisioner                1/1     Running   4 (2d23h ago)   20d
+
+Explain the role of some of these pods.
+
+  coredns-78fcd69978-lq24r is the dns server of k8s. basically it translates full qualified domain names to ip addresses.
+
+  etcd-minikube is basically a distributed high available key/value system where we store important k8s data.
+  The nodes, the pods, every object and relevant data.
+
+  kube-apiserver-minikube is basically a control plane component, a rest server which exposes the k8s api-server,
+  which interacts with etcd component. It is designed for high availability, as everything i k8s.
+
+  kube-controller-manager-minikube is basically another control plane component which controls every controller in k8s. It is compiled as a
+  only one component, for eficiency motives.
+
+  It controls the nodes, like when a new node comes into service or it goes down, the replicasets,
+  controlling when a pod is added or deleted from the replicaset object itself,
+  the endpoints between services and pods, i mean, when k8s adds an ip address to that pod,
+  it controls too the tokens and account services, so that the api server can access to new namespaces...
+
+
+If there are few or no pods in kube-system, why could that be?
+
+  By default, i understand that above described are the minimum components.
+  One less should indicate a system malfunction, or,
+
+  (reychel-nicole-zuniga-rojas)
+  On some clusters, the control plane is located outside the cluster itself, and not running as containers.
+
+  In that case, the control plane won't show up in kube-system, but you can find on host with
+
+  ps aux | grep kube.
+
+Create a deployment using kubectl create that runs the image bretfisher/clock and name it ticktock.
+  (the answer should be the kubectl command you used)
+
+  kubectl create deployment ticktock --images=bretfisher/clock --
+
+Increase the number of pods running in that deployment to three.
+(the answer should be the kubectl command you used)
+
+  zsh 1742 % kubectl scale deployment ticktock --replicas=3
+  deployment.apps/ticktock scaled
+
+Use a selector to output only the last line of logs of each container.
+(the answer should be the kubectl command you used)
+
+  zsh 1754 [1] % kubectl logs deployment/ticktock --tail=1 -f
+  Found 3 pods, using pod/ticktock-5cc6bf699-ks67z
+  Thu Sep 30 08:12:45 UTC 2021
+  Thu Sep 30 08:12:46 UTC 2021
+  Thu Sep 30 08:12:47 UTC 2021
+  ...
+
+  shpod:~# stern ticktock --tail 1 -t -A
+
+  // Probably this is what Bret asked...
+  kubectl logs --selector=app=ticktock --tail=1
+  kubectl logs -l app=ticktock --tail 1
+
+Exponiendo al mundo exterior esos contenedores que corren en pods.
+
+  Para ello usamos los servicios. Basicamente es asignar una direccion ip al pod.
+  Ojito, se asignan al pod, no al contenedor, como si ocurre con Docker.
+  Una vez que el servicio está creado, el componente CoreDNS se encargará de
+  traducir el nombre del servicio a la ip asignada al pod.
+
+  Tenemos cuatro tipos de servicios:
+
+  clusterIP:
+
+  NodePort:
+
+  LoadBalancer:
+
+  ExternalName:
+
+  Una vez que tenemos claro que tenemos que crear un servicio para poder exponer
+  al mundo un contenedor corriendo en un pod, tenemos que usar el comando kubectl expose.
+  Este comando crea un servicio.
