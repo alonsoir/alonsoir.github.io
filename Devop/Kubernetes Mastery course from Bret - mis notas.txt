@@ -1165,14 +1165,424 @@ Exponiendo al mundo exterior esos contenedores que corren en pods.
 
   Tenemos cuatro tipos de servicios:
 
-  clusterIP:
+  clusterIP o nodos internos inaccesibles desde el exterior: La ip asignada al servicio sólo puede ser accesible desde el
+            interior del cluster (nodos y puertos).
+            Se puede acceder al puerto asignado inicialmente por k8s.
+            Es el servicio por defecto cuando usamos el comando expose.
+            Pueden ser ideales para conformar los nodos de un cluster kafka, o spark, pues
+            estas tecnologías tienen nodos que los componen.
+            Idealmente, solo tendrías que exponer al exterior (NodePort?) el Driver spark
+            , el del dashboard, el maestro kafka
 
-  NodePort:
+  NodePort o nodos accesibles desde el exterior: La ip asignada puede ser accesible desde el interior y el exterior.
+            Te asignan un puerto de rango superior (30000-32768).
+            El código debe ser cambiado para acceder a ese puerto. -> Bret, que cojones quieres decir con ésto...
 
-  LoadBalancer:
-
+  LoadBalancer: Como su nombre indica, se usa para acceder a un NodePort de manera balanceada.
+                Solo se puede usar a través de una herramienta de terceros (raro) aws, gcp, Azure
   ExternalName:
 
   Una vez que tenemos claro que tenemos que crear un servicio para poder exponer
   al mundo un contenedor corriendo en un pod, tenemos que usar el comando kubectl expose.
   Este comando crea un servicio.
+
+  Vamos a tratar de exponer un clusterIp. Creamos un objeto deployment y lo escalamos a 10 instancias.
+  httpenv es un pequeño servidor web que usa el puerto 8888.
+
+  zsh 1774 % kubectl create deployment httpenv --image bretfisher/httpenv
+  deployment.apps/httpenv created
+
+  zsh 1776 % kubectl logs -l app=httpenv --follow
+  Starting httpenv listening on port 8888.
+
+  zsh 1778 [130] % kubectl scale deployment httpenv --replicas 10
+  deployment.apps/httpenv scaled
+
+  Si hacemos un watch, podemos ver los logs, también podemos usar stern para ver los logs.
+
+  shpod:~# kubectl get pods -w
+  NAME                       READY   STATUS    RESTARTS   AGE
+  httpenv-6fdc8554fb-79dlf   1/1     Running   0          7m6s
+  httpenv-6fdc8554fb-7dg5m   1/1     Running   0          5m13s
+  httpenv-6fdc8554fb-cw22l   1/1     Running   0          5m13s
+  httpenv-6fdc8554fb-f7h7j   1/1     Running   0          5m13s
+  httpenv-6fdc8554fb-kpj8b   1/1     Running   0          5m13s
+  httpenv-6fdc8554fb-ngrjg   1/1     Running   0          5m13s
+  httpenv-6fdc8554fb-np77c   1/1     Running   0          5m13s
+  httpenv-6fdc8554fb-nwk6r   1/1     Running   0          5m13s
+  httpenv-6fdc8554fb-tkdrv   1/1     Running   0          5m13s
+  httpenv-6fdc8554fb-wgtwx   1/1     Running   0          5m13s
+
+  <aironman@MacBook-Pro-de-Alonso:~>
+  zsh 1782 [1] % stern httpenv --tail 1 -t -A
+  + default httpenv-6fdc8554fb-cw22l › httpenv
+  + default httpenv-6fdc8554fb-ngrjg › httpenv
+  + default httpenv-6fdc8554fb-kpj8b › httpenv
+  + default httpenv-6fdc8554fb-wgtwx › httpenv
+  + default httpenv-6fdc8554fb-nwk6r › httpenv
+  + default httpenv-6fdc8554fb-np77c › httpenv
+  + default httpenv-6fdc8554fb-7dg5m › httpenv
+  + default httpenv-6fdc8554fb-79dlf › httpenv
+  + default httpenv-6fdc8554fb-tkdrv › httpenv
+  + default httpenv-6fdc8554fb-f7h7j › httpenv
+  default httpenv-6fdc8554fb-kpj8b httpenv 2021-10-01T11:39:33.853969232+02:00 Starting httpenv listening on port 8888.
+  default httpenv-6fdc8554fb-ngrjg httpenv 2021-10-01T11:39:28.381945077+02:00 Starting httpenv listening on port 8888.
+  default httpenv-6fdc8554fb-79dlf httpenv 2021-10-01T11:37:29.710767791+02:00 Starting httpenv listening on port 8888.
+  default httpenv-6fdc8554fb-nwk6r httpenv 2021-10-01T11:39:24.749041061+02:00 Starting httpenv listening on port 8888.
+  default httpenv-6fdc8554fb-7dg5m httpenv 2021-10-01T11:39:31.261413710+02:00 Starting httpenv listening on port 8888.
+  default httpenv-6fdc8554fb-np77c httpenv 2021-10-01T11:39:25.722419797+02:00 Starting httpenv listening on port 8888.
+  default httpenv-6fdc8554fb-cw22l httpenv 2021-10-01T11:39:35.150719857+02:00 Starting httpenv listening on port 8888.
+  default httpenv-6fdc8554fb-f7h7j httpenv 2021-10-01T11:39:27.088736244+02:00 Starting httpenv listening on port 8888.
+  default httpenv-6fdc8554fb-tkdrv httpenv 2021-10-01T11:39:32.492885962+02:00 Starting httpenv listening on port 8888.
+  default httpenv-6fdc8554fb-wgtwx httpenv 2021-10-01T11:39:29.749934080+02:00 Starting httpenv listening on port 8888.
+
+
+  zsh 1783 % kubectl expose deployment httpenv --port 8888
+  service/httpenv exposed
+
+  Vemos como hacer un expose, crea un servicio ClusterIp por defecto:
+
+  zsh 1784 % kubectl get service
+  NAME         TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)    AGE
+  httpenv      ClusterIP   10.98.94.183   <none>        8888/TCP   51s
+  kubernetes   ClusterIP   10.96.0.1      <none>        443/TCP    21d
+
+  Vamos a probar el servicio clusterIp.
+
+  Recuerda que esto solo funcionará si estás lanzando los comando dentro del cluster.
+  También recordar que vamos a hacer peticiones mediante curl al servidor web httpenv que está
+  corriendo en 10 contenedores, por lo que, por defecto el servicio usará a través del kube-proxy
+  un algoritmo round robin para hacer peticiones, es decir, al hacer curl, hará una petición, y al hacer
+  curl otra vez preguntará al siguiente, y asi hasta que lleguemos a la peticion 11 que volverá a preguntar
+  al primer contenedor. Round-Robin no es el unico algoritmo que kube-proxy usará para acceder a los contenedores.
+
+  Averiguemos la ip, bueno, la parseamos para tenerla en una variable.
+  Si te fijas, vemos que es más fácil averiguarla haciendo un kubectl get svc
+
+  shpod:~# IP=$(kubectl get svc httpenv -o go-template --template '{{ .spec.clusterIP }}')
+  shpod:~# echo $IP
+  10.98.94.183
+  shpod:~# curl http://10.98.94.183:8888/
+  {"HOME":"/root","HOSTNAME":"httpenv-6fdc8554fb-7dg5m","KUBERNETES_PORT":"tcp://10.96.0.1:443","KUBERNETES_PORT_443_TCP":"tcp://10.96.0.1:443","KUBERNETES_PORT_443_TCP_ADDR":"10.96.0.1","KUBERNETES_PORT_443_TCP_PORT":"443","KUBERNETES_PORT_443_TCP_PROTO":"tcp","KUBERNETES_SERVICE_HOST":"10.96.0.1","KUBERNETES_SERVICE_PORT":"443","KUBERNETES_SERVICE_PORT_HTTPS":"443","PATH":"/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"}shpod:~#
+
+  Vemos que la peticion curl saca mucha info. Podemos usar jq para quedarnos con algo que nos interese.
+  shpod:~# curl http://10.98.94.183:8888/ | jq .HOSTNAME
+    % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                   Dload  Upload   Total   Spent    Left  Speed
+  100   438  100   438    0     0   108k      0 --:--:-- --:--:-- --:--:--  142k
+  "httpenv-6fdc8554fb-cw22l"
+  shpod:~# curl http://10.98.94.183:8888/ | jq .KUBERNETES_PORT
+    % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                   Dload  Upload   Total   Spent    Left  Speed
+  100   438  100   438    0     0   176k      0 --:--:-- --:--:-- --:--:--  427k
+  "tcp://10.96.0.1:443"
+  shpod:~# curl http://10.98.94.183:8888/ | jq .KUBERNETES_PORT_TCP
+    % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                   Dload  Upload   Total   Spent    Left  Speed
+  100   438  100   438    0     0   179k      0 --:--:-- --:--:-- --:--:--  427k
+  null
+
+  Basicamente, usar round robin en el proxy implica que estamos usando un servicio de tipo LoadBalancer,
+  pero hay veces que no querremos usar un balanceador de carga, si no que querremos acceder directamente
+  al contenedor. Querremos usar un servicio headless.
+  Para hacerlo, tenemos que usar algo así:
+
+  kubectl expose deployment httpenv-none --port 8888 --cluster-ip=None
+
+  como resultado, el servicio no tendrá asignado una direccion ip virtual, por lo que no kube-proxy tampoco aplicará
+  round-robin para acceder al contenedor, por lo que CoreDNS devolverá las distintas direcciones ip de los contenedores
+  como registros. Algo así nos sirve para averiguar las replicas que tiene el contenedor.
+
+  Si intentas ejecutar el comando anterior sobre un objeto deployment ya existente, te dará error:
+
+  shpod:~# kubectl expose deployment httpenv --port 8888 --cluster-ip=None
+  Error from server (AlreadyExists): services "httpenv" already exists
+
+  Vamos a crear lo necesario:
+
+  shpod:~# kubectl create deployment httpenv-none --image bretfisher/httpenv
+  deployment.apps/httpenv-none created
+
+  shpod:~# kubectl scale deployment httpenv-none --replicas 5
+  deployment.apps/httpenv-none scaled
+
+  shpod:~# kubectl expose deployment httpenv-none --port 8888 --cluster-ip=None
+  service/httpenv-none exposed
+
+  shpod:~# kubectl get deployments
+  NAME           READY   UP-TO-DATE   AVAILABLE   AGE
+  httpenv        10/10   10           10          98m
+  httpenv-none   5/5     5            5           58s
+  ticktock       3/3     3            3           27h
+
+  Podemos apreciar que el servicio no tiene asignado una direccion ip,
+  kube-proxy no accederá a él.
+  por lo que, como cojones podemos acceder a él?
+
+  https://kubernetes.io/docs/concepts/services-networking/service/#headless-services
+
+  shpod:~# kubectl get services
+  NAME           TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)    AGE
+  httpenv        ClusterIP   10.98.94.183   <none>        8888/TCP   84m
+  httpenv-none   ClusterIP   None           <none>        8888/TCP   31s
+  kubernetes     ClusterIP   10.96.0.1      <none>        443/TCP    21d
+
+  Un servicio tiene un número determinado y gestionado por k8s de endpoints.
+  Un endpoint es la combinacion de anfitrion y puerto, direccion ip y puerto.
+  k8s actualizará continuamente estos endpoints.
+
+  shpod:~# kubectl describe service httpenv
+Name:              httpenv
+Namespace:         default
+Labels:            app=httpenv
+Annotations:       <none>
+Selector:          app=httpenv
+Type:              ClusterIP
+IP Family Policy:  SingleStack
+IP Families:       IPv4
+IP:                10.98.94.183
+IPs:               10.98.94.183
+Port:              <unset>  8888/TCP
+TargetPort:        8888/TCP
+Endpoints:         172.17.0.10:8888,172.17.0.11:8888,172.17.0.12:8888 + 7 more...
+Session Affinity:  None
+Events:            <none>
+
+Y vemos el otro despliegue, ya puestos...
+
+shpod:~# kubectl describe service httpenv-none
+Name:              httpenv-none
+Namespace:         default
+Labels:            app=httpenv-none
+Annotations:       <none>
+Selector:          app=httpenv-none
+Type:              ClusterIP
+IP Family Policy:  SingleStack
+IP Families:       IPv4
+IP:                None
+IPs:               None
+Port:              <unset>  8888/TCP
+TargetPort:        8888/TCP
+Endpoints:         172.17.0.19:8888,172.17.0.20:8888,172.17.0.21:8888 + 2 more...
+Session Affinity:  None
+Events:            <none>
+
+inmediatamente te fijas en el apartado Endpoints, no te muestra todos...
+Para ello, lanzamos:
+
+shpod:~# kubectl get endpoints
+NAME           ENDPOINTS                                                        AGE
+httpenv        172.17.0.10:8888,172.17.0.11:8888,172.17.0.12:8888 + 7 more...   105m
+httpenv-none   172.17.0.19:8888,172.17.0.20:8888,172.17.0.21:8888 + 2 more...   21m
+kubernetes     192.168.64.3:8443                                                21d
+
+shpod:~# kubectl get endpoints -o wide
+NAME           ENDPOINTS                                                        AGE
+httpenv        172.17.0.10:8888,172.17.0.11:8888,172.17.0.12:8888 + 7 more...   105m
+httpenv-none   172.17.0.19:8888,172.17.0.20:8888,172.17.0.21:8888 + 2 more...   21m
+kubernetes     192.168.64.3:8443                                                21d
+
+No se ven todos, para ello mejor usar:
+
+shpod:~# kubectl get endpoints -o yaml
+apiVersion: v1
+items:
+- apiVersion: v1
+  kind: Endpoints
+  metadata:
+    annotations:
+      endpoints.kubernetes.io/last-change-trigger-time: "2021-10-01T09:51:49Z"
+    creationTimestamp: "2021-10-01T09:51:49Z"
+    labels:
+      app: httpenv
+    name: httpenv
+    namespace: default
+    resourceVersion: "193961"
+    uid: fcacc51d-05ef-4a23-9e67-b933bea173cc
+  subsets:
+  - addresses:
+    - ip: 172.17.0.10
+      nodeName: minikube
+      targetRef:
+        kind: Pod
+        name: httpenv-6fdc8554fb-nwk6r
+        namespace: default
+        resourceVersion: "193389"
+        uid: 9a3caeae-daaa-4231-b1f0-fe9b1bb9addb
+    - ip: 172.17.0.11
+      nodeName: minikube
+      targetRef:
+        kind: Pod
+        name: httpenv-6fdc8554fb-np77c
+        namespace: default
+        resourceVersion: "193395"
+        uid: 3ed504e0-47aa-4349-a78b-52b395f588db
+    - ip: 172.17.0.12
+      nodeName: minikube
+      targetRef:
+        kind: Pod
+        name: httpenv-6fdc8554fb-ngrjg
+        namespace: default
+        resourceVersion: "193409"
+        uid: 03991f72-2d53-4ce9-b67a-22fca2ad22e8
+    - ip: 172.17.0.13
+      nodeName: minikube
+      targetRef:
+        kind: Pod
+        name: httpenv-6fdc8554fb-kpj8b
+        namespace: default
+        resourceVersion: "193437"
+        uid: 15b4d296-fa1c-4330-9367-996a15a42d1f
+    - ip: 172.17.0.14
+      nodeName: minikube
+      targetRef:
+        kind: Pod
+        name: httpenv-6fdc8554fb-wgtwx
+        namespace: default
+        resourceVersion: "193417"
+        uid: ef608ff1-55b4-46b3-968e-aca15a56b39a
+    - ip: 172.17.0.15
+      nodeName: minikube
+      targetRef:
+        kind: Pod
+        name: httpenv-6fdc8554fb-cw22l
+        namespace: default
+        resourceVersion: "193444"
+        uid: 7e3440a9-a0d3-452b-9612-5af58e592584
+    - ip: 172.17.0.16
+      nodeName: minikube
+      targetRef:
+        kind: Pod
+        name: httpenv-6fdc8554fb-tkdrv
+        namespace: default
+        resourceVersion: "193431"
+        uid: 599de533-7de2-47b0-b1f5-860438ad00e8
+    - ip: 172.17.0.17
+      nodeName: minikube
+      targetRef:
+        kind: Pod
+        name: httpenv-6fdc8554fb-f7h7j
+        namespace: default
+        resourceVersion: "193402"
+        uid: ac01c364-6655-4764-a03b-cf98b13453f6
+    - ip: 172.17.0.18
+      nodeName: minikube
+      targetRef:
+        kind: Pod
+        name: httpenv-6fdc8554fb-7dg5m
+        namespace: default
+        resourceVersion: "193422"
+        uid: 8da0b27c-be2b-4015-86d2-ae2c67b212f8
+    - ip: 172.17.0.9
+      nodeName: minikube
+      targetRef:
+        kind: Pod
+        name: httpenv-6fdc8554fb-79dlf
+        namespace: default
+        resourceVersion: "193239"
+        uid: 2c20d45d-8175-4975-87f9-679fbff467f4
+    ports:
+    - port: 8888
+      protocol: TCP
+- apiVersion: v1
+  kind: Endpoints
+  metadata:
+    annotations:
+      endpoints.kubernetes.io/last-change-trigger-time: "2021-10-01T11:15:50Z"
+    creationTimestamp: "2021-10-01T11:15:50Z"
+    labels:
+      app: httpenv-none
+      service.kubernetes.io/headless: ""
+    name: httpenv-none
+    namespace: default
+    resourceVersion: "197571"
+    uid: 81064e1f-879b-4434-bfe1-2cfcb41f61aa
+  subsets:
+  - addresses:
+    - ip: 172.17.0.19
+      nodeName: minikube
+      targetRef:
+        kind: Pod
+        name: httpenv-none-5d8c77785f-fc8zh
+        namespace: default
+        resourceVersion: "197482"
+        uid: c623fb82-3027-4cef-a588-7463ae3f767a
+    - ip: 172.17.0.20
+      nodeName: minikube
+      targetRef:
+        kind: Pod
+        name: httpenv-none-5d8c77785f-5dvzd
+        namespace: default
+        resourceVersion: "197535"
+        uid: a9a3f0ad-abcd-4d16-a821-a3fe4ba36292
+    - ip: 172.17.0.21
+      nodeName: minikube
+      targetRef:
+        kind: Pod
+        name: httpenv-none-5d8c77785f-95t8j
+        namespace: default
+        resourceVersion: "197549"
+        uid: f3a34a7e-b165-495d-85d1-9f9c7f57fc5d
+    - ip: 172.17.0.22
+      nodeName: minikube
+      targetRef:
+        kind: Pod
+        name: httpenv-none-5d8c77785f-ncwx8
+        namespace: default
+        resourceVersion: "197541"
+        uid: fe5f0594-2fbc-45b4-b06a-d2f15a291ee6
+    - ip: 172.17.0.23
+      nodeName: minikube
+      targetRef:
+        kind: Pod
+        name: httpenv-none-5d8c77785f-n4pfg
+        namespace: default
+        resourceVersion: "197555"
+        uid: 62e2571d-93ca-49f6-a7d8-0a7b412c2e33
+    ports:
+    - port: 8888
+      protocol: TCP
+- apiVersion: v1
+  kind: Endpoints
+  metadata:
+    creationTimestamp: "2021-09-09T11:45:48Z"
+    labels:
+      endpointslice.kubernetes.io/skip-mirror: "true"
+    name: kubernetes
+    namespace: default
+    resourceVersion: "210"
+    uid: 6ce695ed-ea95-45a0-8645-045cd27ccee7
+  subsets:
+  - addresses:
+    - ip: 192.168.64.3
+    ports:
+    - name: https
+      port: 8443
+      protocol: TCP
+kind: List
+metadata:
+  resourceVersion: ""
+  selfLink: ""
+
+Los pods deben coincidir:
+
+shpod:~# kubectl get pods -l app=httpenv -o wide
+NAME                       READY   STATUS    RESTARTS   AGE    IP            NODE       NOMINATED NODE   READINESS GATES
+httpenv-6fdc8554fb-79dlf   1/1     Running   0          120m   172.17.0.9    minikube   <none>           <none>
+httpenv-6fdc8554fb-7dg5m   1/1     Running   0          118m   172.17.0.18   minikube   <none>           <none>
+httpenv-6fdc8554fb-cw22l   1/1     Running   0          118m   172.17.0.15   minikube   <none>           <none>
+httpenv-6fdc8554fb-f7h7j   1/1     Running   0          118m   172.17.0.17   minikube   <none>           <none>
+httpenv-6fdc8554fb-kpj8b   1/1     Running   0          118m   172.17.0.13   minikube   <none>           <none>
+httpenv-6fdc8554fb-ngrjg   1/1     Running   0          118m   172.17.0.12   minikube   <none>           <none>
+httpenv-6fdc8554fb-np77c   1/1     Running   0          118m   172.17.0.11   minikube   <none>           <none>
+httpenv-6fdc8554fb-nwk6r   1/1     Running   0          118m   172.17.0.10   minikube   <none>           <none>
+httpenv-6fdc8554fb-tkdrv   1/1     Running   0          118m   172.17.0.16   minikube   <none>           <none>
+httpenv-6fdc8554fb-wgtwx   1/1     Running   0          118m   172.17.0.14   minikube   <none>           <none>
+
+Recuerda que hemos estado trabajando hasta ahora con un servicio de tipo clusterIp, que solo sirve para trafico interno del cluster.
+No sirve para exponer servicios al mundo exterior. Para ello necesitamos servicios de tipo:
+
+  NodePort: expone un servicio a través de TCP usando un puerto en el rango 30000-32768
+  LoadBalancer: Expone un balanceador de carga en el cluster para acceder a ese servicio. Por defecto usa RoundRobin.
+  ExternalIP: Usa una direccion IP externa. Te deja asignar una direccion Ip física al nodo.Por definir más adelante.
+  Ingress: Es un mecanismo especial para servicios HTTP de tipo reverse proxy.
