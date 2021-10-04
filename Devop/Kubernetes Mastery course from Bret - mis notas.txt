@@ -1,12 +1,12 @@
 Conceptos k8s.
 
-https://slides.kubernetesmastery.com/#63
+https:slides.kubernetesmastery.com/#63
 
 0. Start the cluster (with minikube)
 
   minikube start --wait=false
 
-Comprobamos que está todo ok:
+Checking that everything is ok:
 
   kubectl cluster-info
   kubect get nodes
@@ -25,29 +25,29 @@ shpod also gives you shell completion and a fancy prompt
 
 Create it with:
 
-  kubectl apply -f https://k8smastery.com/shpod.yaml
+  kubectl apply -f https:k8smastery.com/shpod.yaml
     namespace/shpod created
     serviceaccount/shpod created
     clusterrolebinding.rbac.authorization.k8s.io/shpod created
     pod/shpod created
 
-Una vez que has aplicado por primera vez el yaml de arriba, solo tienes que ejecutar
-este comando la siguiente vez:
+    Once you have applied the yaml above for the first time, you just have to run
+    this command the next time:
 
   kubectl attach -i -t shpod -n shpod
 
-éste también funciona, menos abreviado:
+  this also works, less abbreviated:
 
   kubectl attach --namespace=shpod -ti shpod
 
     If you don't see a command prompt, try pressing enter.
 
   shpod:~# pwd
-    /root
+  /root
   shpod:~# uname -ra
     Linux shpod 4.19.202 #1 SMP Thu Sep 2 18:19:24 UTC 2021 x86_64 Linux
 
-  Attach to shell with
+  Attach to shell with next command:
 
     kubectl attach --namespace=shpod -ti shpod
 
@@ -55,7 +55,7 @@ este comando la siguiente vez:
 
   After finishing course
 
-    kubectl delete -f https://k8smastery.com/shpod.yaml
+    kubectl delete -f https:k8smastery.com/shpod.yaml
 
   Review the pod in their namespace shpod...
 
@@ -113,18 +113,18 @@ To see the progress of the Dashboard starting, watch the Pods within the kube-sy
 
 Once running, the URL to the dashboard is
 
-  https://2886795282-30000-kitek05.environments.katacoda.com/
+  https:2886795282-30000-kitek05.environments.katacoda.com/
 
 3. Pod:
 
-Un conjunto de uno o más contenedores accesibles a través de una direccion IP.
-Esa direccion IP sirve para acceder al Pod, nunca a los contenedores por si, de hecho,
-los contenedores no son accesibles directamente.
+A set of one or more containers accessible through an IP address.
+That IP address is used to access the Pod, never the containers themselves, in fact,
+the containers are not directly accessible.
 
-Un Pod es la unidad más pequeña en un cluster k8s.
+A Pod is the smallest unit in a k8s cluster.
 
-Los contenedores de un pod comparten localhost y pueden compartir entre ellos
-volumenes de datos.
+Containers in a pod share localhost and can share between them
+volumes of data.
 
 kubectl uses this config file:
 
@@ -140,22 +140,22 @@ drwxr-x---  4 aironman  staff   128B 28 abr 12:39 cache
 
 zsh 1616 % kubectl get node -o wide
 NAME       STATUS   ROLES                  AGE   VERSION   INTERNAL-IP    EXTERNAL-IP   OS-IMAGE              KERNEL-VERSION   CONTAINER-RUNTIME
-minikube   Ready    control-plane,master   18d   v1.22.1   192.168.64.3   <none>        Buildroot 2021.02.4   4.19.202         docker://20.10.8
+minikube   Ready    control-plane,master   18d   v1.22.1   192.168.64.3   <none>        Buildroot 2021.02.4   4.19.202         docker:20.10.8
 [lun 21/09/27 17:03 CEST][s002][x86_64/darwin20.0/20.6.0][5.8]
 
-En plural tambien funciona:
+It also works in the plural:
 
 kubectl get nodes -o wide
 NAME       STATUS   ROLES                  AGE   VERSION   INTERNAL-IP    EXTERNAL-IP   OS-IMAGE              KERNEL-VERSION   CONTAINER-RUNTIME
-minikube   Ready    control-plane,master   18d   v1.22.1   192.168.64.3   <none>        Buildroot 2021.02.4   4.19.202         docker://20.10.8
+minikube   Ready    control-plane,master   18d   v1.22.1   192.168.64.3   <none>        Buildroot 2021.02.4   4.19.202         docker:20.10.8
 
-O usando una diminutivo:
+Or using a diminutive:
 
 zsh 1620 % kubectl get no -o wide
 NAME       STATUS   ROLES                  AGE   VERSION   INTERNAL-IP    EXTERNAL-IP   OS-IMAGE              KERNEL-VERSION   CONTAINER-RUNTIME
-minikube   Ready    control-plane,master   18d   v1.22.1   192.168.64.3   <none>        Buildroot 2021.02.4   4.19.202         docker://20.10.8
+minikube   Ready    control-plane,master   18d   v1.22.1   192.168.64.3   <none>        Buildroot 2021.02.4   4.19.202         docker:20.10.8
 
-Podemos sacar la configuracion en formato YAML
+We can output the configuration in YAML format.
 
 [lun 21/09/27 17:03 CEST][s002][x86_64/darwin20.0/20.6.0][5.8]
 <aironman@MacBook-Pro-de-Alonso:~/.kube>
@@ -298,7 +298,7 @@ items:
     nodeInfo:
       architecture: amd64
       bootID: 4525a770-36c1-4027-8bc8-197fd21510e2
-      containerRuntimeVersion: docker://20.10.8
+      containerRuntimeVersion: docker:20.10.8
       kernelVersion: 4.19.202
       kubeProxyVersion: v1.22.1
       kubeletVersion: v1.22.1
@@ -311,7 +311,7 @@ metadata:
   resourceVersion: ""
   selfLink: ""
 
-Incluso en formato json, ideal para parsear con la herramienta jq: HORRIBLE!
+Even in json format, ideal for parsing with the jq tool: HORRIBLE!
 
 shpod:~# kubectl get no -o json | jq ".items[] | {name:.metadata.name} + .status.capacity"
 {
@@ -323,7 +323,7 @@ shpod:~# kubectl get no -o json | jq ".items[] | {name:.metadata.name} + .status
   "pods": "110"
 }
 
-Horrible en mi opinión, tenemos el comando siguiente:
+Horrible in my opinion, we have the following command. no is nodes!
 
 shpod:~# kubectl get no
 NAME       STATUS   ROLES                  AGE   VERSION
@@ -384,7 +384,7 @@ System Info:
   OS Image:                   Buildroot 2021.02.4
   Operating System:           linux
   Architecture:               amd64
-  Container Runtime Version:  docker://20.10.8
+  Container Runtime Version:  docker:20.10.8
   Kubelet Version:            v1.22.1
   Kube-Proxy Version:         v1.22.1
 PodCIDR:                      10.244.0.0/24
@@ -413,7 +413,7 @@ Allocated resources:
 Events:              <none>
 shpod:~#
 
-Listando tipos de recursos disponibles en un cluster:
+Listing types of resources available in a cluster:
 
 shpod:~# kubectl api-resources
 NAME                              SHORTNAMES   APIVERSION                             NAMESPACED   KIND
@@ -475,7 +475,7 @@ storageclasses                    sc           storage.k8s.io/v1                
 volumeattachments                              storage.k8s.io/v1                      false        VolumeAttachment
 shpod:~#
 
-Madre mia, mogollon de recursos, para describir que hacen, podemos usar este comando:
+My goodness, a lot of resources, to describe what they do, we can use this command:
 
 shpod:~# kubectl explain deployment
 KIND:     Deployment
@@ -489,17 +489,17 @@ FIELDS:
      APIVersion defines the versioned schema of this representation of an
      object. Servers should convert recognized schemas to the latest internal
      value, and may reject unrecognized values. More info:
-     https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+     https:git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
 
    kind	<string>
      Kind is a string value representing the REST resource this object
      represents. Servers may infer this from the endpoint the client submits
      requests to. Cannot be updated. In CamelCase. More info:
-     https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+     https:git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
 
    metadata	<Object>
      Standard object's metadata. More info:
-     https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata
+     https:git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata
 
    spec	<Object>
      Specification of the desired behavior of the Deployment.
@@ -520,26 +520,26 @@ shpod:~# kubectl explain pod
           APIVersion defines the versioned schema of this representation of an
           object. Servers should convert recognized schemas to the latest internal
           value, and may reject unrecognized values. More info:
-          https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+          https:git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
 
         kind	<string>
           Kind is a string value representing the REST resource this object
           represents. Servers may infer this from the endpoint the client submits
           requests to. Cannot be updated. In CamelCase. More info:
-          https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+          https:git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
 
         metadata	<Object>
           Standard object's metadata. More info:
-          https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata
+          https:git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata
 
         spec	<Object>
           Specification of the desired behavior of the pod. More info:
-          https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status
+          https:git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status
 
         status	<Object>
           Most recently observed status of the pod. This data may not be up to date.
           Populated by the system. Read-only. More info:
-          https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status
+          https:git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status
 
 shpod:~# kubectl explain  services
           KIND:     Service
@@ -556,28 +556,28 @@ shpod:~# kubectl explain  services
                APIVersion defines the versioned schema of this representation of an
                object. Servers should convert recognized schemas to the latest internal
                value, and may reject unrecognized values. More info:
-               https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+               https:git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
 
              kind	<string>
                Kind is a string value representing the REST resource this object
                represents. Servers may infer this from the endpoint the client submits
                requests to. Cannot be updated. In CamelCase. More info:
-               https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+               https:git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
 
              metadata	<Object>
                Standard object's metadata. More info:
-               https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata
+               https:git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata
 
              spec	<Object>
                Spec defines the behavior of a service.
-               https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status
+               https:git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status
 
              status	<Object>
                Most recently observed status of the service. Populated by the system.
                Read-only. More info:
-               https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status
+               https:git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status
 
-Más completo!
+More comprehensive!
 
 shpod:~# kubectl explain  services --recursive
                KIND:     Service
@@ -667,8 +667,8 @@ shpod:~# kubectl explain  services --recursive
                               port	<integer>
                               protocol	<string>
 
-Un Servicio es un endpoint estable para acceder al contenedor que haya en un pod.
-Puedes acceder a través de su ip. Tres formas de ver que tienes:
+A Service is a stable endpoint for accessing a container in a pod.
+You can access it through its ip. Three ways to see what you have:
 
 shpod:~# kubectl get services
 NAME         TYPE        CLUSTER-IP   EXTERNAL-IP   PORT(S)   AGE
@@ -680,13 +680,13 @@ shpod:~# kubectl get service
 NAME         TYPE        CLUSTER-IP   EXTERNAL-IP   PORT(S)   AGE
 kubernetes   ClusterIP   10.96.0.1    <none>        443/TCP   18d
 
-Un Pod es básicamente un grupo, un conjunto de contenedores, corriendo juntos en el mismo nodo.
-Comparten recursos, como RAM, CPU, volúmenes de datos, red...
+A Pod is basically a cluster, a set of containers, running together on the same node.
+They share resources, such as RAM, CPU, data volumes, network...
 
 shpod:~# kubectl get pods
 No resources found in default namespace.
 
-Como puedes ver, no tengo pods en el namespace default, por lo que vamos a ver en otros namespaces:
+As you can see, I don't have pods in the default namespace, so let's look at other namespaces, like shpod:
 
 shpod:~# kubectl get pods -n shpod
 NAME    READY   STATUS    RESTARTS   AGE
@@ -716,10 +716,9 @@ kube-proxy-79r5q                   1/1     Running   2 (24h ago)   18d
 kube-scheduler-minikube            1/1     Running   2 (24h ago)   18d
 storage-provisioner                1/1     Running   4 (24h ago)   18d
 
-como podemos observar, k8s tiene varios namespaces por defecto donde corren
-algunos pods.
+As we can see, k8s has several default namespaces where some pods run.
 
-Vamos a listar todos los pods en todos los namespaces:
+Let's list all the pods in all the namespaces:
 
 shpod:~# kubectl get pods --all-namespaces
 NAMESPACE              NAME                                         READY   STATUS    RESTARTS      AGE
@@ -734,7 +733,7 @@ kubernetes-dashboard   dashboard-metrics-scraper-5594458c94-qbght   1/1     Runn
 kubernetes-dashboard   kubernetes-dashboard-654cf69797-hrkmr        1/1     Running   0             25h
 shpod                  shpod                                        1/1     Running   0             23h
 
-Como puedes comprobar, -A es equivalente a --all-namespaces:
+As you can see, -A is equivalent to --all-namespaces:
 
 shpod:~# kubectl get pods -A
 NAMESPACE              NAME                                         READY   STATUS    RESTARTS      AGE
@@ -753,21 +752,21 @@ shpod                  shpod                                        1/1     Runn
 shpod:~# kubectl get pods -n kube-public
 No resources found in kube-public namespace.
 
-Curiosamente, si listamos los pods en ese namespace kube-public, la api te dice
-que no hay nada, pero sabemos que hay un único llamado configmaps.
-De hecho, ejecuto este comando, la api dice que no hay nada:
+Interestingly, if we list the pods in that kube-public namespace, the api tells you that there is nothing,
+but we know there is only one called configmaps.
+In fact, I run this command, the api says there is nothing:
 
 shpod:~# kubectl get all -n kube-public
 No resources found in kube-public namespace.
 
-Pero si hay dicho objecto configmaps, que a su vez, contiene un objeto cluster-info
+But if there is such a configmaps object, which, in turn, contains a cluster-info object
 
 shpod:~# kubectl get configmaps -n kube-public
 NAME               DATA   AGE
 cluster-info       1      18d
 kube-root-ca.crt   1      18d
 
-Incluso puedo examinar la informacion de cluster-info:
+I can even examine cluster-info information:
 
 shpod:~# kubectl get configmaps -n kube-public cluster-info -o yaml
 apiVersion: v1
@@ -776,8 +775,8 @@ data:
     apiVersion: v1
     clusters:
     - cluster:
-        certificate-authority-data: MOGOLLON DE NUMEROS Y LETRAS QUE BORRO POR SEGURIDAD
-        server: https://control-plane.minikube.internal:8443
+        certificate-authority-data: LOTS OF NUMBERS AND LETTERS THAT I DELETE FOR SECURITY REASONS
+        server: https:control-plane.minikube.internal:8443
       name: ""
     contexts: null
     current-context: ""
@@ -792,13 +791,13 @@ metadata:
   resourceVersion: "1165"
   uid: 550649f2-1aaf-4313-9e50-e08c7d044b6d
 
-Incluso puedo examinar la informacion de kube-root-ca.crt:
+I can even examine the kube-root-ca.crt information.:
 
 shpod:~# kubectl get configmaps -n kube-public kube-root-ca.crt -o json
   {
       "apiVersion": "v1",
       "data": {
-          "ca.crt": "-----BEGIN CERTIFICATE-----\nMOGOLLON DE NUMEROS Y LETRAS QUE BORRO POR SEGURIDAD\n-----END CERTIFICATE-----\n"
+          "ca.crt": "-----BEGIN CERTIFICATE-----\LOTS OF NUMBERS AND LETTERS THAT I DELETE FOR SECURITY REASONS\n-----END CERTIFICATE-----\n"
       },
       "kind": "ConfigMap",
       "metadata": {
@@ -813,14 +812,14 @@ shpod:~# kubectl get configmaps -n kube-public kube-root-ca.crt -o json
       }
   }
 
-Cuando creas un objeto tipo Deployment, no creas un objeto tipo Pod, creas un objeto tipo
-ReplicaSet que si crea un objeto tipo Pod.
+  When you create a Deployment object, you do not create a Pod object.
+  ReplicaSet object, which does create a Pod object.
 
-Por ejemplo, el comando:
+  For example, the command:
 
 kubectl create deployment pingpong --image alpine -- ping 1.1.1.1
 
-creará todos estos objetos:
+will create all these objects:
 
 shpod:~# kubectl get all
 NAME                           READY   STATUS    RESTARTS   AGE
@@ -835,43 +834,45 @@ deployment.apps/pingpong   1/1     1            1           8m59s
 NAME                                 DESIRED   CURRENT   READY   AGE
 replicaset.apps/pingpong-98f6d5899   1         1         1       8m59s
 
-como ves, has creado un objeto tipo Deployment, que a su vez crea un objeto tipo replicaset,
-que a su vez crea un pod, que a su vez crea un contenedor Docker con una imagen alpine que está
-ejecutando una y otra vez el comando ping 1.1.1.1
+As you can see, you have created a Deployment object, which in turn creates a replicaset object,
+which in turn creates a pod, which in turn creates a Docker container with an alpine image that's
+executing the ping 1.1.1.1.1 command over and over again.
 
-Esa es la jerarquia necesaria:
+That's the necessary hierarchy:
 
   Deployment
     ReplicaSet
       Pod
         Container
 
-Vamos, que estamos haciendo mogollon de peticiones al servidor con la ip 1.1.1.1
+        We are making a lot of requests to the server with the ip 1.1.1.1.1.
 
-Revisemos que está pasando...
+Let's check what's going on...
 
 shpod:~# kubectl logs deploy/pingpong --tail 10 --follow
 PING 1.1.1.1 (1.1.1.1): 56 data bytes
 
-Ojito, si queremos crear toda esa jerarquia que finalmente ejecute un comando bash en una imagen linux,
-tienes que poner el -- al final del comando.
-Es decir, ésto funcionará:
+Note that if you want to create all that hierarchy to finally execute a bash command in a linux image,
+you have to put the -- at the end of the command.
+That is, this will work:
 
   kubectl create deployment pingpong --image alpine -- ping 1.1.1.1
 
-Esto no:
+Not this:
 
   kubectl create deployment pingpong --image alpine ping 1.1.1.1
 
-ni esto otro incluso!
+or even this!
 
   kubectl create deployment pingpong --image alpine
 
-Uno podría pensar que con el último comando crearías toda la jerarquia de objetos para finalmente tener un contenedor alpine,
-pero no. Si no indicas el comando que vas a ejecutar, k8s no creará adecuadamente la jerarquía de objetos.
+  One would think that with the last command you would create the whole hierarchy of objects to finally have an alpine container,
+  but you don't. If you don't specify the command you are going to execute, k8s will not properly create the object hierarchy.
 
-Ahora, vamos a tratar de escalar los contenedores que hay en el pod. Uno podría pensar en principio que hay que indicar algo al Replicaset,
-pero no, hay que indicar al objeto tipo Deployment que haga dicha tarea, por lo menos es así en mi version de k8s.
+  Now, let's try to scale the containers in the pod. You might think at first that you have to specify something to the Replicaset,
+  but no, you have to tell the Deployment object to do that task, at least in my version of k8s.
+
+  Translated with www.DeepL.com/Translator (free version)
 
 shpod:~# kubectl scale deployment pingpong --replicas 3
 deployment.apps/pingpong scaled
@@ -897,7 +898,7 @@ shpod:~# kubectl logs deploy/pingpong
 Found 3 pods, using pod/pingpong-98f6d5899-d9pq2
 PING 1.1.1.1 (1.1.1.1): 56 data bytes
 
-Si queremos algo más de detalle viendo los logs de los pods:
+If we want a bit more detail by looking at the pod logs:
 
 shpod:~# kubectl logs pingpong-98f6d5899-
 pingpong-98f6d5899-bgrq7  pingpong-98f6d5899-bzvmc  pingpong-98f6d5899-d9pq2
@@ -908,15 +909,15 @@ PING 1.1.1.1 (1.1.1.1): 56 data bytes
 shpod:~# kubectl logs pingpong-98f6d5899-d9pq2
 PING 1.1.1.1 (1.1.1.1): 56 data bytes
 
-Recuerda que tenemos una utilidad llamada watch que permite ver la salida de cualquier comando linux/unix.
-En el contenedor de bret shpod viene por defecto, entre otras muchas utilidades, como helm.
-Vamos a probarla mientras tratamos de borrar un contenedor usando el comando kubectl delete:
+Remember that we have a utility called watch that allows you to see the output of any linux/unix command.
+In  Bret's shpod container it comes by default, among many other utilities, as helm.
+Let's try it while trying to delete a container using the kubectl delete command:
 
-Por un lado, ejecutamos:
+On the one hand, we run:
 
 shpod:~# watch kubectl get pods
 
-Aparecerá algo así:
+It will look something like this:
 
 Every 2.0s: kubectl get pods                                                                                                                       2021-09-28 17:01:44
 
@@ -925,22 +926,22 @@ pingpong-98f6d5899-7fnnc   1/1     Running   0          6m43s
 pingpong-98f6d5899-bgrq7   1/1     Running   0          19m
 pingpong-98f6d5899-bzvmc   1/1     Running   0          19m
 
-Por otro lado, en otra terminal, ejecutamos
+On the other hand, in another terminal, we run
 
 zsh 1646 % kubectl delete pod pingpong-98f6d5899-7fnnc
 pod "pingpong-98f6d5899-7fnnc" deleted
 
-En la primera pestaña podemos apreciar que ese pod se pone en estado Terminating e inmediatamente k8s trata de crear otro contenedor
-hasta que finalmente tengamos el número de replicas indicado en el objeto ReplicaSet.
+In the first tab we can see that the pod is put in Terminating state and immediately k8s tries to create another container until we finally have the number of replicas indicated in the ReplicaSet object.
+until we finally have the number of replicas indicated in the ReplicaSet object.
 
-Date cuenta que debido a la jerarquía de objetos controlado por el objeto tipo Deployment, nunca podrías borrar los contenedores,
-en el sentido de que quieres borrar y parar la ejecución del contenedor.
-Si quieres hacer algo así, tienes que escalar a cero contenedores, usando el comando:
+Note that due to the hierarchy of objects controlled by the Deployment object, you could never delete the containers,
+in the sense that you want to delete and stop the execution of the container.
+If you want to do something like that, you have to scale to zero containers, using the command:
 
 zsh 1649 % kubectl scale deployment pingpong --replicas 0
 deployment.apps/pingpong scaled
 
-en la pantalla donde estás ejecutando el comando watch kubectl get pods verás algo asi:
+on the screen where you are running the watch kubectl get pods command you will see something like this:
 
 Every 2.0s: kubectl get pods                                                                                                                       2021-09-28 17:08:35
 
@@ -960,12 +961,12 @@ shpod:~# exit
 logout
 Session ended, resume using 'kubectl attach shpod -c shpod -i -t' command when the pod is running
 
-Tareas cron.
+Cron tasks.
 
-zsh 1715 % kubectl apply -f https://raw.githubusercontent.com/kubernetes/website/main/content/en/examples/application/job/cronjob.yaml
+zsh 1715 % kubectl apply -f https:raw.githubusercontent.com/kubernetes/website/main/content/en/examples/application/job/cronjob.yaml
 cronjob.batch/hello created
 
-El fichero yaml es así:
+The yaml file looks like this:
 
 apiVersion: batch/v1
 kind: CronJob
@@ -987,25 +988,25 @@ spec:
             - date; echo Hello from the Kubernetes cluster
           restartPolicy: OnFailure
 
-En otra pestaña, ejecutando watch kubectl get cronjobs:
+In another tab, running watch kubectl get cronjobs:
 
 Every 2.0s: kubectl get cronjobs                                                                                                                   2021-09-29 14:35:55
 
 NAME    SCHEDULE      SUSPEND   ACTIVE   LAST SCHEDULE   AGE
 hello   */1 * * * *   False     0        <none>          46s
 
-Podemos ver como se crea un pod nuevo ejecutando el comando sh descrito en el cronjob.yaml,
-cada minuto uno nuevo...
+We can see how a new pod is created by running the sh command described in cronjob.yaml,
+every minute a new one...
 
-Para borrar la tarea cronjob:
+To delete the cronjob:
 
 zsh 1718 % kubectl delete cronjobs.batch hello
 cronjob.batch "hello" deleted
 
-Tener en cuenta que un cronjob creará un Job que a su vez creará un pod, donde se alojará el contenedor.
+Note that a cronjob will create a Job which in turn will create a pod, where the container will be hosted.
 
-Podemos comprobar los logs de todos los pods a la vez.
-La clave es usar app=pingpong
+We can check the logs of all pods at once.
+The key is to use -l app=pingpong
 
 zsh 1730 % kubectl logs -l app=pingpong --tail 1 -f
 PING 1.1.1.1 (1.1.1.1): 56 data bytes
@@ -1027,9 +1028,9 @@ deployment.apps/pingpong   3/3     3            3           22h
 NAME                                 DESIRED   CURRENT   READY   AGE
 replicaset.apps/pingpong-98f6d5899   3         3         3       22h
 
-Ojo, que tiene un límite, como máximo 5!
+Note that there is a limit, maximum 5!
 
-Voy a escalar los pods hasta 8,
+I will scale the pods up to 8,
 
 Every 2.0s: kubectl get pods                                                                                                                       2021-09-29 15:09:23
 
@@ -1046,8 +1047,8 @@ pingpong-98f6d5899-z784p   1/1     Running   0          5h22m
 zsh 1734 % kubectl logs -l app=pingpong --tail 1 -f
 error: you are attempting to follow 8 log streams, but maximum allowed concurrency is 5, use --max-log-requests to increase the limit
 
-Como podemos ver, kubectl logs tiene limitaciones a la hora de acceder a los logs, pero es por una buena razón, para proteger los recursos de
-la api. Para ello, podemos usar stern.
+As we can see, kubectl logs has limitations when it comes to accessing logs, but it is for a good reason, to protect the resources of the
+api resources. For this, we can use stern.
 
 shpod:~# stern --tail 1 --timestamps --all-namespaces pingpong
 + default pingpong-98f6d5899-z784p › alpine
@@ -1076,14 +1077,14 @@ How many nodes does your cluster have?
 
   shpod:~# kubectl get nodes -o wide
   NAME       STATUS   ROLES                  AGE   VERSION   INTERNAL-IP    EXTERNAL-IP   OS-IMAGE              KERNEL-VERSION   CONTAINER-RUNTIME
-  minikube   Ready    control-plane,master   20d   v1.22.1   192.168.64.3   <none>        Buildroot 2021.02.4   4.19.202         docker://20.10.8
+  minikube   Ready    control-plane,master   20d   v1.22.1   192.168.64.3   <none>        Buildroot 2021.02.4   4.19.202         docker:20.10.8
 
 What kernel version and what container engine is each node running?
 (the answer should be the kubectl command you used to get the answer)
 
   shpod:~# kubectl get nodes -o wide
   NAME       STATUS   ROLES                  AGE   VERSION   INTERNAL-IP    EXTERNAL-IP   OS-IMAGE              KERNEL-VERSION   CONTAINER-RUNTIME
-  minikube   Ready    control-plane,master   20d   v1.22.1   192.168.64.3   <none>        Buildroot 2021.02.4   4.19.202         docker://20.10.8
+  minikube   Ready    control-plane,master   20d   v1.22.1   192.168.64.3   <none>        Buildroot 2021.02.4   4.19.202         docker:20.10.8
 
 List only the pods in the kube-system namespace.
 (the answer should be the kubectl command you used to get the answer)
@@ -1152,42 +1153,43 @@ Use a selector to output only the last line of logs of each container.
 
   shpod:~# stern ticktock --tail 1 -t -A
 
-  // Probably this is what Bret asked...
+   Probably this is what Bret asked...
   kubectl logs --selector=app=ticktock --tail=1
   kubectl logs -l app=ticktock --tail 1
 
-Exponiendo al mundo exterior esos contenedores que corren en pods.
+  Exposing those containers running in pods to the outside world.
 
-  Para ello usamos los servicios. Basicamente es asignar una direccion ip al pod.
-  Ojito, se asignan al pod, no al contenedor, como si ocurre con Docker.
-  Una vez que el servicio está creado, el componente CoreDNS se encargará de
-  traducir el nombre del servicio a la ip asignada al pod.
+    To do this we use services. Basically it's assigning an ip address to the pod.
+    Note that they are assigned to the pod, not to the container, as is the case with Docker.
+    Once the service is created, the CoreDNS component will be in charge of
+    translate the name of the service to the ip assigned to the pod.
 
-  Tenemos cuatro tipos de servicios:
+    We have four types of services:
 
-  clusterIP o nodos internos inaccesibles desde el exterior: La ip asignada al servicio sólo puede ser accesible desde el
-            interior del cluster (nodos y puertos).
-            Se puede acceder al puerto asignado inicialmente por k8s.
-            Es el servicio por defecto cuando usamos el comando expose.
-            Pueden ser ideales para conformar los nodos de un cluster kafka, o spark, pues
-            estas tecnologías tienen nodos que los componen.
-            Idealmente, solo tendrías que exponer al exterior (NodePort?) el Driver spark
-            , el del dashboard, el maestro kafka
+    clusterIP or internal nodes inaccessible from outside: The ip assigned to the service can only be accessed from inside the cluster (nodes and ports).
+              inside the cluster (nodes and ports).
+              The port initially assigned by k8s can be accessed.
+              It is the default service when using the expose command.
+              They can be ideal for forming the nodes of a kafka or spark cluster, as these technologies have nodes that compose them.
+              these technologies have nodes that make them up.
+              Ideally, you would only have to expose to the outside (NodePort?) the spark Driver
+              Driver, the dashboard, the kafka master
 
-  NodePort o nodos accesibles desde el exterior: La ip asignada puede ser accesible desde el interior y el exterior.
-            Te asignan un puerto de rango superior (30000-32768).
-            El código debe ser cambiado para acceder a ese puerto. -> Bret, que cojones quieres decir con ésto...
+    NodePort or externally accessible nodes: The assigned ip can be accessible from inside and outside.
+              You are assigned a higher port range (30000-32768).
+              The code must be changed to access that port. -> Bret, what the fuck do you mean by this?
 
-  LoadBalancer: Como su nombre indica, se usa para acceder a un NodePort de manera balanceada.
-                Solo se puede usar a través de una herramienta de terceros (raro) aws, gcp, Azure
-  ExternalName:
+    LoadBalancer: As the name suggests, it is used to access a NodePort in a balanced way.
+                  It can only be used through a third party tool, aws, gcp, Azure,...
 
-  Una vez que tenemos claro que tenemos que crear un servicio para poder exponer
-  al mundo un contenedor corriendo en un pod, tenemos que usar el comando kubectl expose.
-  Este comando crea un servicio.
+    ExternalName: to be defined.
 
-  Vamos a tratar de exponer un clusterIp. Creamos un objeto deployment y lo escalamos a 10 instancias.
-  httpenv es un pequeño servidor web que usa el puerto 8888.
+    Once we are clear that we need to create a service to be able to expose a container running on a
+    a container running in a pod to the world, we have to use the kubectl expose command.
+    This command creates a service.
+
+    Let's try to expose a clusterIp. We create a deployment object and scale it to 10 instances.
+    httpenv is a small web server using port 8888.
 
   zsh 1774 % kubectl create deployment httpenv --image bretfisher/httpenv
   deployment.apps/httpenv created
@@ -1198,7 +1200,7 @@ Exponiendo al mundo exterior esos contenedores que corren en pods.
   zsh 1778 [130] % kubectl scale deployment httpenv --replicas 10
   deployment.apps/httpenv scaled
 
-  Si hacemos un watch, podemos ver los logs, también podemos usar stern para ver los logs.
+  If we do a watch, we can see the logs, we can also use stern to see the logs.
 
   shpod:~# kubectl get pods -w
   NAME                       READY   STATUS    RESTARTS   AGE
@@ -1240,65 +1242,66 @@ Exponiendo al mundo exterior esos contenedores que corren en pods.
   zsh 1783 % kubectl expose deployment httpenv --port 8888
   service/httpenv exposed
 
-  Vemos como hacer un expose, crea un servicio ClusterIp por defecto:
+  We see how to do an expose, it creates a ClusterIp service by default:
 
   zsh 1784 % kubectl get service
   NAME         TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)    AGE
   httpenv      ClusterIP   10.98.94.183   <none>        8888/TCP   51s
   kubernetes   ClusterIP   10.96.0.1      <none>        443/TCP    21d
 
-  Vamos a probar el servicio clusterIp.
+  Let's test the clusterIp service.
 
-  Recuerda que esto solo funcionará si estás lanzando los comando dentro del cluster.
-  También recordar que vamos a hacer peticiones mediante curl al servidor web httpenv que está
-  corriendo en 10 contenedores, por lo que, por defecto el servicio usará a través del kube-proxy
-  un algoritmo round robin para hacer peticiones, es decir, al hacer curl, hará una petición, y al hacer
-  curl otra vez preguntará al siguiente, y asi hasta que lleguemos a la peticion 11 que volverá a preguntar
-  al primer contenedor. Round-Robin no es el unico algoritmo que kube-proxy usará para acceder a los contenedores.
+  Remember that this will only work if you are launching the commands inside the cluster.
+  Also remember that we are going to make requests via curl to the httpenv web server that is
+  running in 10 containers, so, by default the service will use through the kube-proxy
+  a round robin algorithm to make requests, i.e., when curling, it will make a request, and when curling again it will ask the next one.
+  curl again it will ask the next one, and so on until we get to request 11 which will ask the first container again.
+  to the first container. Round-Robin is not the only algorithm that kube-proxy will use to access containers.
 
-  Averiguemos la ip, bueno, la parseamos para tenerla en una variable.
-  Si te fijas, vemos que es más fácil averiguarla haciendo un kubectl get svc
+  Let's find out the ip, well, we parse it to have it in a variable.
+  If you look at it, it's easier to find it out by doing a kubectl get svc
 
   shpod:~# IP=$(kubectl get svc httpenv -o go-template --template '{{ .spec.clusterIP }}')
   shpod:~# echo $IP
   10.98.94.183
-  shpod:~# curl http://10.98.94.183:8888/
-  {"HOME":"/root","HOSTNAME":"httpenv-6fdc8554fb-7dg5m","KUBERNETES_PORT":"tcp://10.96.0.1:443","KUBERNETES_PORT_443_TCP":"tcp://10.96.0.1:443","KUBERNETES_PORT_443_TCP_ADDR":"10.96.0.1","KUBERNETES_PORT_443_TCP_PORT":"443","KUBERNETES_PORT_443_TCP_PROTO":"tcp","KUBERNETES_SERVICE_HOST":"10.96.0.1","KUBERNETES_SERVICE_PORT":"443","KUBERNETES_SERVICE_PORT_HTTPS":"443","PATH":"/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"}shpod:~#
+  shpod:~# curl http:10.98.94.183:8888/
+  {"HOME":"/root","HOSTNAME":"httpenv-6fdc8554fb-7dg5m","KUBERNETES_PORT":"tcp:10.96.0.1:443","KUBERNETES_PORT_443_TCP":"tcp:10.96.0.1:443","KUBERNETES_PORT_443_TCP_ADDR":"10.96.0.1","KUBERNETES_PORT_443_TCP_PORT":"443","KUBERNETES_PORT_443_TCP_PROTO":"tcp","KUBERNETES_SERVICE_HOST":"10.96.0.1","KUBERNETES_SERVICE_PORT":"443","KUBERNETES_SERVICE_PORT_HTTPS":"443","PATH":"/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"}shpod:~#
 
-  Vemos que la peticion curl saca mucha info. Podemos usar jq para quedarnos con algo que nos interese.
-  shpod:~# curl http://10.98.94.183:8888/ | jq .HOSTNAME
+  We see that the curl request pulls a lot of info. We can use jq to keep something that interests us.
+
+  shpod:~# curl http:10.98.94.183:8888/ | jq .HOSTNAME
     % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
                                    Dload  Upload   Total   Spent    Left  Speed
   100   438  100   438    0     0   108k      0 --:--:-- --:--:-- --:--:--  142k
   "httpenv-6fdc8554fb-cw22l"
-  shpod:~# curl http://10.98.94.183:8888/ | jq .KUBERNETES_PORT
+  shpod:~# curl http:10.98.94.183:8888/ | jq .KUBERNETES_PORT
     % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
                                    Dload  Upload   Total   Spent    Left  Speed
   100   438  100   438    0     0   176k      0 --:--:-- --:--:-- --:--:--  427k
-  "tcp://10.96.0.1:443"
-  shpod:~# curl http://10.98.94.183:8888/ | jq .KUBERNETES_PORT_TCP
+  "tcp:10.96.0.1:443"
+  shpod:~# curl http:10.98.94.183:8888/ | jq .KUBERNETES_PORT_TCP
     % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
                                    Dload  Upload   Total   Spent    Left  Speed
   100   438  100   438    0     0   179k      0 --:--:-- --:--:-- --:--:--  427k
   null
 
-  Basicamente, usar round robin en el proxy implica que estamos usando un servicio de tipo LoadBalancer,
-  pero hay veces que no querremos usar un balanceador de carga, si no que querremos acceder directamente
-  al contenedor. Querremos usar un servicio headless.
-  Para hacerlo, tenemos que usar algo así:
+  Basically, using round robin in the proxy implies that we are using a LoadBalancer type service,
+  but there are times when you don't want to use a load balancer, you want to access the container directly.
+  to the container. You want to use a headless service.
+  To do that, we need to use something like this:
 
   kubectl expose deployment httpenv-none --port 8888 --cluster-ip=None
 
-  como resultado, el servicio no tendrá asignado una direccion ip virtual, por lo que no kube-proxy tampoco aplicará
-  round-robin para acceder al contenedor, por lo que CoreDNS devolverá las distintas direcciones ip de los contenedores
-  como registros. Algo así nos sirve para averiguar las replicas que tiene el contenedor.
+  as a result, the service will not be assigned a virtual ip address, so kube-proxy will not apply a
+  round-robin to access the container, so CoreDNS will return the different ip addresses of the containers as records.
+  as records. Something like this is useful to find out the replicas that the container has.
 
-  Si intentas ejecutar el comando anterior sobre un objeto deployment ya existente, te dará error:
+  If you try to run the above command on an existing deployment object, you will get an error:
 
   shpod:~# kubectl expose deployment httpenv --port 8888 --cluster-ip=None
   Error from server (AlreadyExists): services "httpenv" already exists
 
-  Vamos a crear lo necesario:
+  Let's create what is needed:
 
   shpod:~# kubectl create deployment httpenv-none --image bretfisher/httpenv
   deployment.apps/httpenv-none created
@@ -1315,11 +1318,11 @@ Exponiendo al mundo exterior esos contenedores que corren en pods.
   httpenv-none   5/5     5            5           58s
   ticktock       3/3     3            3           27h
 
-  Podemos apreciar que el servicio no tiene asignado una direccion ip,
-  kube-proxy no accederá a él.
-  por lo que, como cojones podemos acceder a él?
+  We can see that the service does not have an ip address assigned to it,
+  kube-proxy will not access it.
+  So how the fuck can we access it?
 
-  https://kubernetes.io/docs/concepts/services-networking/service/#headless-services
+  https:kubernetes.io/docs/concepts/services-networking/service/#headless-services
 
   shpod:~# kubectl get services
   NAME           TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)    AGE
@@ -1327,9 +1330,9 @@ Exponiendo al mundo exterior esos contenedores que corren en pods.
   httpenv-none   ClusterIP   None           <none>        8888/TCP   31s
   kubernetes     ClusterIP   10.96.0.1      <none>        443/TCP    21d
 
-  Un servicio tiene un número determinado y gestionado por k8s de endpoints.
-  Un endpoint es la combinacion de anfitrion y puerto, direccion ip y puerto.
-  k8s actualizará continuamente estos endpoints.
+  A service has a set number of k8s managed endpoints.
+  An endpoint is the combination of host and port, ip address and port.
+  k8s will continuously update these endpoints.
 
   shpod:~# kubectl describe service httpenv
 Name:              httpenv
@@ -1348,7 +1351,7 @@ Endpoints:         172.17.0.10:8888,172.17.0.11:8888,172.17.0.12:8888 + 7 more..
 Session Affinity:  None
 Events:            <none>
 
-Y vemos el otro despliegue, ya puestos...
+And we see the other deployment, if you want to...
 
 shpod:~# kubectl describe service httpenv-none
 Name:              httpenv-none
@@ -1367,8 +1370,8 @@ Endpoints:         172.17.0.19:8888,172.17.0.20:8888,172.17.0.21:8888 + 2 more..
 Session Affinity:  None
 Events:            <none>
 
-inmediatamente te fijas en el apartado Endpoints, no te muestra todos...
-Para ello, lanzamos:
+immediately you look at the Endpoints section, it doesn't show you all of them...
+To do this, we launch:
 
 shpod:~# kubectl get endpoints
 NAME           ENDPOINTS                                                        AGE
@@ -1382,7 +1385,7 @@ httpenv        172.17.0.10:8888,172.17.0.11:8888,172.17.0.12:8888 + 7 more...   
 httpenv-none   172.17.0.19:8888,172.17.0.20:8888,172.17.0.21:8888 + 2 more...   21m
 kubernetes     192.168.64.3:8443                                                21d
 
-No se ven todos, para ello mejor usar:
+Not all of them are visible, so it is better to use:
 
 shpod:~# kubectl get endpoints -o yaml
 apiVersion: v1
@@ -1564,7 +1567,7 @@ metadata:
   resourceVersion: ""
   selfLink: ""
 
-Los pods deben coincidir:
+The pods must match:
 
 shpod:~# kubectl get pods -l app=httpenv -o wide
 NAME                       READY   STATUS    RESTARTS   AGE    IP            NODE       NOMINATED NODE   READINESS GATES
@@ -1579,10 +1582,221 @@ httpenv-6fdc8554fb-nwk6r   1/1     Running   0          118m   172.17.0.10   min
 httpenv-6fdc8554fb-tkdrv   1/1     Running   0          118m   172.17.0.16   minikube   <none>           <none>
 httpenv-6fdc8554fb-wgtwx   1/1     Running   0          118m   172.17.0.14   minikube   <none>           <none>
 
-Recuerda que hemos estado trabajando hasta ahora con un servicio de tipo clusterIp, que solo sirve para trafico interno del cluster.
-No sirve para exponer servicios al mundo exterior. Para ello necesitamos servicios de tipo:
+If you notice, doing the latter does not tell you the port, only the ip.
 
-  NodePort: expone un servicio a través de TCP usando un puerto en el rango 30000-32768
-  LoadBalancer: Expone un balanceador de carga en el cluster para acceder a ese servicio. Por defecto usa RoundRobin.
-  ExternalIP: Usa una direccion IP externa. Te deja asignar una direccion Ip física al nodo.Por definir más adelante.
-  Ingress: Es un mecanismo especial para servicios HTTP de tipo reverse proxy.
+Remember that we have been working so far with a clusterIp type service, which is only for internal cluster traffic.
+It does not serve to expose services to the outside world. For that we need services of type:
+
+  NodePort: exposes a service through TCP using a port in the range 30000-32768.
+  LoadBalancer: Expose a load balancer in the cluster to access that service. Defaults to RoundRobin.
+  ExternalIP: Uses an external IP address. Lets you assign a physical IP address to the node, to be defined later.
+  Ingress: It is a special mechanism for reverse proxy HTTP services.
+
+Questions for this task:
+
+  Create a deployment called littletomcat using the tomcat image.
+
+    shpod:~# kubectl create deployment littletomcat --image tomcat --
+    deployment.apps/littletomcat created
+
+    shpod:~# kubectl expose deployment littletomcat --port 8080
+    service/littletomcat exposed
+
+  What command will help you get the IP address of that Tomcat server?
+
+    IP=$(kubectl get svc littletomcat -o go-template --template '{{ .spec.clusterIP }}')
+    echo $IP
+
+    curl $IP:8080
+
+    <!doctype html><html lang="en"><head><title>HTTP Status 404 – Not Found</title><style type="text/css">body {font-family:Tahoma,Arial,sans-serif;} h1, h2, h3, b {color:white;background-color:#525D76;} h1 {font-size:22px;} h2 {font-size:16px;} h3 {font-size:14px;} p {font-size:12px;} a {color:black;} .line {height:1px;background-color:#525D76;border:none;}</style></head><body><h1>HTTP Status 404 – Not Found</h1><hr class="line" /><p><b>Type</b> Status Report</p><p><b>Description</b> The origin server did not find a current representation for the target resource or is not willing to disclose that one exists.</p><hr class="line" /><h3>Apache Tomcat/10.0.11</h3></body></html>shpod:~#
+
+  What steps would you take to ping it from another container?
+
+  (Use the shpod environment if necessary)
+
+    First, i find out which containers i have:
+
+    zsh 1854 % kubectl get pods -o wide
+    NAME                               READY   STATUS    RESTARTS   AGE   IP           NODE       NOMINATED NODE   READINESS GATES
+    hello-minikube1-7f754574c6-4m6pd   1/1     Running   0          30m   172.17.0.9   minikube   <none>           <none>
+    hello-minikube1-7f754574c6-b44jh   1/1     Running   0          30m   172.17.0.8   minikube   <none>           <none>
+    hello-minikube1-7f754574c6-d425b   1/1     Running   0          30m   172.17.0.7   minikube   <none>           <none>
+    hello-minikube1-7f754574c6-kwt7n   1/1     Running   0          32m   172.17.0.6   minikube   <none>           <none>
+
+    Then, i run commands like this, from the container with ip 172.17.0.9, I curl the others.
+    In this image I don't have the ping command.
+
+    <aironman@MacBook-Pro-de-Alonso:~>
+    zsh 1855 % kubectl exec hello-minikube1-7f754574c6-4m6pd curl 172.17.0.8:8080
+    kubectl exec [POD] [COMMAND] is DEPRECATED and will be removed in a future version. Use kubectl exec [POD] -- [COMMAND] instead.
+    CLIENT VALUES:
+    client_address=172.17.0.9
+    command=GET
+    real path=/
+    query=nil
+    request_version=1.1
+    request_uri=http:172.17.0.8:8080/
+
+    SERVER VALUES:
+    server_version=nginx: 1.10.0 - lua: 10001
+
+    HEADERS RECEIVED:
+    accept=*/*
+    host=172.17.0.8:8080
+    user-agent=curl/7.47.0
+    BODY:
+    -no body in request-  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                     Dload  Upload   Total   Spent    Left  Speed
+    100   289    0   289    0     0   151k      0 --:--:-- --:--:-- --:--:--  282k
+    [lun 21/10/04 13:55 CEST][s003][x86_64/darwin20.0/20.6.0][5.8]
+    <aironman@MacBook-Pro-de-Alonso:~>
+    zsh 1856 % kubectl exec hello-minikube1-7f754574c6-4m6pd curl 172.17.0.7:8080
+    kubectl exec [POD] [COMMAND] is DEPRECATED and will be removed in a future version. Use kubectl exec [POD] -- [COMMAND] instead.
+      % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                     Dload  Upload   Total   Spent    Left  Speed
+    100   28CLIENT VALUES:  0     0      0      0 --:--:-- --:--:-- --:--:--     0
+    client_address=172.17.0.9
+    command=GET
+    real path=/
+    query=nil
+    request_version=1.1
+    request_uri=http:172.17.0.7:8080/
+
+    SERVER VALUES:
+    server_version=nginx: 1.10.0 - lua: 10001
+
+    HEADERS RECEIVED:
+    accept=*/*
+    host=172.17.0.7:8080
+    user-agent=curl/7.47.0
+    BODY:
+    -no body in request-9    0   289    0     0  53737      0 --:--:-- --:--:-- --:--:-- 72250
+    [lun 21/10/04 13:55 CEST][s003][x86_64/darwin20.0/20.6.0][5.8]
+    <aironman@MacBook-Pro-de-Alonso:~>
+    zsh 1857 % kubectl exec hello-minikube1-7f754574c6-4m6pd curl 172.17.0.6:8080
+    kubectl exec [POD] [COMMAND] is DEPRECATED and will be removed in a future version. Use kubectl exec [POD] -- [COMMAND] instead.
+      % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                     Dload  Upload   Total   Spent    Left  Speed
+    100   289    0   289    0     0  56833      0 --:--:-- --:--:-- --:--:-- 72250
+    CLIENT VALUES:
+    client_address=172.17.0.9
+    command=GET
+    real path=/
+    query=nil
+    request_version=1.1
+    request_uri=http:172.17.0.6:8080/
+
+    SERVER VALUES:
+    server_version=nginx: 1.10.0 - lua: 10001
+
+    HEADERS RECEIVED:
+    accept=*/*
+    host=172.17.0.6:8080
+    user-agent=curl/7.47.0
+    BODY:
+    -no body in request-%
+
+  What command would delete the running pod inside that deployment?
+
+    shpod:~# kubectl get pods -l app=littletomcat -o wide
+    NAME                            READY   STATUS    RESTARTS   AGE    IP            NODE       NOMINATED NODE   READINESS GATES
+    littletomcat-7b6c88c67d-446r9   1/1     Running   0          71s    172.17.0.7    minikube   <none>           <none>
+    littletomcat-7b6c88c67d-nrg4x   1/1     Running   0          71s    172.17.0.10   minikube   <none>           <none>
+    littletomcat-7b6c88c67d-sghgl   1/1     Running   0          8m9s   172.17.0.6    minikube   <none>           <none>
+    littletomcat-7b6c88c67d-x2kw4   1/1     Running   0          71s    172.17.0.9    minikube   <none>           <none>
+    littletomcat-7b6c88c67d-xgpkk   1/1     Running   0          71s    172.17.0.8    minikube   <none>           <none>
+
+    kubectl delete pod littletomcat-7b6c88c67d-446r9
+
+  What happens if we delete the pod that holds Tomcat, while the ping is running?
+
+    Another container should be created while Deployment object
+
+  What command can give our Tomcat server a stable DNS name and IP address?
+
+  (An address that doesn't change when something bad happens to the container)
+
+    kubectl expose deployment littletomcat --port 8080 --target-port 8080 --name littletomcat-lb --type LoadBalancer
+    Be sure that you have a real load balancer or run minikube tunnel --cleanup
+
+  What commands would you run to curl Tomcat with that DNS address?
+
+  (Use the shpod environment if necessary)
+
+  If we delete the pod that holds Tomcat, does the IP address still work? How could we test that?
+
+    kubectl patch svc littletomcat -p '{"spec": {"ports": [{"port": 443,"targetPort": 443,"name": "https"},{"port": 8080,"targetPort": 8080,"name": "http"}],"type": "LoadBalancer"}}'
+
+    Or we can launch these two commands. It creates two balancers, because we have to provide two different names, but LoadBalancer
+    must be provided by the cloud provider where we host the cluster, as it will be their DNS who will resolve the names...
+    This probably won't work well locally, in minikube, but by launching the following commands:
+
+     create the rule of exposure to the http port
+    kubectl expose deployment littletomcat --port=8080 --target-port=8080 --name=littletomcat-lb --type=LoadBalancer
+
+     we created the safe harbour exposure rule
+    kubectl expose deployment littletomcat --port=443 --target-port=443 --name=littletomcat-lb-https --type=LoadBalancer
+
+    Another example:
+
+    kubectl create deployment hello-minikube1 --image=k8s.gcr.io/echoserver:1.4
+
+    kubectl expose deployment hello-minikube1 --type=LoadBalancer --port=8080
+
+    In a real cluster, in AWS, GCP, etc., when you create a LoadBalancer type service, the provider would manage for you
+    the load balancing capability for you. On local, we have to make do, if we are with minikube, with tunnel:
+    Something like this will appear.
+    Careful what you read, if you look, a service appears that is not called littletomcat.
+    This is because at this moment, I created another deployment and another service called littletomcat.
+    Before launching this, I deleted the previous deployment and service.
+
+    zsh 1825 % minikube tunnel --cleanup
+    Status:
+    	machine: minikube
+    	pid: 65928
+    	route: 10.96.0.0/12 -> 192.168.64.3
+    	minikube: Running
+    	services: [hello-minikube1]
+        errors:
+    		minikube: no errors
+    		router: no errors
+    		loadbalancer emulator: no errors
+
+
+    We check the external ip that minikube has given us in the unsecured port.
+
+    [lun 21/10/04 11:09 CEST][s002][x86_64/darwin20.0/20.6.0][5.8]
+    <aironman@MacBook-Pro-de-Alonso:~>
+    zsh 1804 % minikube service littletomcat-lb
+    |-----------|-----------------|-------------|---------------------------|
+    | NAMESPACE |      NAME       | TARGET PORT |            URL            |
+    |-----------|-----------------|-------------|---------------------------|
+    | default   | littletomcat-lb |        8080 | http:192.168.64.3:31074 |
+    |-----------|-----------------|-------------|---------------------------|
+    🎉  Opening service default/littletomcat-lb in default browser...
+
+    We check the external ip that minikube has given us in the secure port.
+    See how it is the same as the previous one?
+
+    [lun 21/10/04 11:09 CEST][s002][x86_64/darwin20.0/20.6.0][5.8]
+    <aironman@MacBook-Pro-de-Alonso:~>
+    zsh 1805 % minikube service littletomcat-lb-https
+    |-----------|-----------------------|-------------|---------------------------|
+    | NAMESPACE |         NAME          | TARGET PORT |            URL            |
+    |-----------|-----------------------|-------------|---------------------------|
+    | default   | littletomcat-lb-https |         443 | http:192.168.64.3:32004 |
+    |-----------|-----------------------|-------------|---------------------------|
+    🎉  Opening service default/littletomcat-lb-https in default browser...
+
+     we can ping from localhost...
+    [lun 21/10/04 11:09 CEST][s002][x86_64/darwin20.0/20.6.0][5.8]
+    <aironman@MacBook-Pro-de-Alonso:~>
+    zsh 1806 % ping 192.168.64.3
+    PING 192.168.64.3 (192.168.64.3): 56 data bytes
+    64 bytes from 192.168.64.3: icmp_seq=0 ttl=64 time=0.245 ms
+    64 bytes from 192.168.64.3: icmp_seq=1 ttl=64 time=0.374 ms
+    64 bytes from 192.168.64.3: icmp_seq=2 ttl=64 time=0.461 ms
+    64 bytes from 192.168.64.3: icmp_seq=3 ttl=64 time=0.298 ms
+    64 bytes from 192.168.64.3: icmp_seq=4 ttl=64 time=0.293 ms
+    64 bytes from 192.168.64.3: icmp_seq=5 ttl=64 time=0.499 ms
