@@ -1800,3 +1800,388 @@ Questions for this task:
     64 bytes from 192.168.64.3: icmp_seq=3 ttl=64 time=0.298 ms
     64 bytes from 192.168.64.3: icmp_seq=4 ttl=64 time=0.293 ms
     64 bytes from 192.168.64.3: icmp_seq=5 ttl=64 time=0.499 ms
+
+We are going to play with a somewhat more real application, one created by Bret's
+colleagues, composed of several components.
+
+Its purpose is to mine a virtual currency
+the url is located at https://github.com/BretFisher/kubernetes-mastery/tree/mastery/dockercoins
+
+This link is usefull too. It shows the diagram architecture: https://revconf19.bretfisher.com/#32
+
+So, we clone it and we can see there is a docker-compose.yml file. So lets run the processes via docker-compose up command.
+After some time, we will see something like this:
+
+zsh 1890 mastery% docker-compose up
+[+] Running 5/5
+ ⠿ Container dockercoins-rng-1     Created                                                                                                                        0.0s
+ ⠿ Container dockercoins-redis-1   Recreated                                                                                                                      0.2s
+ ⠿ Container dockercoins-worker-1  Created                                                                                                                        0.0s
+ ⠿ Container dockercoins-webui-1   Created                                                                                                                        0.0s
+ ⠿ Container dockercoins-hasher-1  Created                                                                                                                        0.0s
+Attaching to dockercoins-hasher-1, dockercoins-redis-1, dockercoins-rng-1, dockercoins-webui-1, dockercoins-worker-1
+...
+dockercoins-worker-1  | INFO:__main__:4 units of work done, updating hash counter
+dockercoins-hasher-1  | 172.19.0.3 - - [05/Oct/2021:08:55:42 +0000] "POST / HTTP/1.1" 200 64 0.1012
+dockercoins-rng-1     | 172.19.0.3 - - [05/Oct/2021 08:55:42] "GET /32 HTTP/1.1" 200 -
+dockercoins-hasher-1  | 172.19.0.3 - - [05/Oct/202
+...
+
+zsh 1890 % docker ps -a
+CONTAINER ID   IMAGE                      COMMAND                  CREATED          STATUS                     PORTS                  NAMES
+910413bcdb4c   redis                      "docker-entrypoint.s…"   43 seconds ago   Up 41 seconds              6379/tcp               dockercoins-redis-1
+8b220ff08cdd   dockercoins_webui          "node webui.js"          15 minutes ago   Up 40 seconds              0.0.0.0:8000->80/tcp   dockercoins-webui-1
+0ddcba1f35f6   dockercoins_rng            "python rng.py"          15 minutes ago   Up 40 seconds              0.0.0.0:8001->80/tcp   dockercoins-rng-1
+ad07cb4ef85e   dockercoins_worker         "python worker.py"       15 minutes ago   Up 40 seconds                                     dockercoins-worker-1
+baa28a27dbb1   dockercoins_hasher         "ruby hasher.rb"         15 minutes ago   Up 40 seconds              0.0.0.0:8002->80/tcp   dockercoins-hasher-1
+
+We can see the webui running in a safari tab using this url 0.0.0.0:8000
+
+Now, i am going to do the same but with k8s. I am going to create some deployments objects.
+
+kubectl create deployment redis --image redis
+kubectl create deployment hasher --image dockercoins/hasher:v0.1
+kubectl create deployment rng --image dockercoins/rng:v0.1
+kubectl create deployment webui --image dockercoins/webui:v0.1
+kubectl create deployment worker --image dockercoins/worker:v0.1
+
+shpod:~# kubectl get deployments -w -o wide
+NAME              READY   UP-TO-DATE   AVAILABLE   AGE     CONTAINERS   IMAGES                      SELECTOR
+hasher            1/1     1            1           4m41s   hasher       dockercoins/hasher:v0.1     app=hasher
+hello-minikube1   4/4     4            4           23h     echoserver   k8s.gcr.io/echoserver:1.4   app=hello-minikube1
+redis             1/1     1            1           7m37s   redis        redis                       app=redis
+rng               1/1     1            1           4m41s   rng          dockercoins/rng:v0.1        app=rng
+webui             1/1     1            1           4m41s   webui        dockercoins/webui:v0.1      app=webui
+worker            1/1     1            1           4m40s   worker       dockercoins/worker:v0.1     app=worker
+
+Now, lets check its logs:
+
+zsh 1902 master% kubectl logs deploy/redis
+1:C 05 Oct 2021 10:32:22.625 # oO0OoO0OoO0Oo Redis is starting oO0OoO0OoO0Oo
+1:C 05 Oct 2021 10:32:22.625 # Redis version=6.2.5, bits=64, commit=00000000, modified=0, pid=1, just started
+1:C 05 Oct 2021 10:32:22.625 # Warning: no config file specified, using the default config. In order to specify a config file use redis-server /path/to/redis.conf
+1:M 05 Oct 2021 10:32:22.626 * monotonic clock: POSIX clock_gettime
+1:M 05 Oct 2021 10:32:22.626 * Running mode=standalone, port=6379.
+1:M 05 Oct 2021 10:32:22.626 # WARNING: The TCP backlog setting of 511 cannot be enforced because /proc/sys/net/core/somaxconn is set to the lower value of 128.
+1:M 05 Oct 2021 10:32:22.626 # Server initialized
+1:M 05 Oct 2021 10:32:22.626 * Ready to accept connections
+
+redis is apparently looking fine, but probably we will have to do something with its port, 6379.
+
+zsh 1903 master% kubectl logs deploy/hasher
+== Sinatra (v2.0.1) has taken the stage on 80 for development with backup from Thin
+
+hasher is looking fine.
+
+zsh 1904 master% kubectl logs deploy/rng
+ * Running on http://0.0.0.0:80/ (Press CTRL+C to quit)
+
+rng is looking fine.
+
+zsh 1905 master% kubectl logs deploy/webui
+WEBUI running on port 80
+Redis error { [Error: Redis connection to redis:6379 failed - getaddrinfo ENOTFOUND redis redis:6379]
+  code: 'ENOTFOUND',
+  errno: 'ENOTFOUND',
+  syscall: 'getaddrinfo',
+  hostname: 'redis',
+  host: 'redis',
+  port: 6379 }
+
+WebUi looks is not running fine.
+
+zsh 1907 master% kubectl logs deploy/worker | more
+INFO:__main__:0 units of work done, updating hash counter
+ERROR:__main__:In work loop:
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.6/site-packages/redis/connection.py", line 484, in connect
+    sock = self._connect()
+  File "/usr/local/lib/python3.6/site-packages/redis/connection.py", line 511, in _connect
+    socket.SOCK_STREAM):
+  File "/usr/local/lib/python3.6/socket.py", line 745, in getaddrinfo
+    for res in _socket.getaddrinfo(host, port, family, type, proto, flags):
+socket.gaierror: [Errno -2] Name does not resolve
+...
+
+worker is not looking fine too. Definetly there are some connections problems.
+I have to expose some ports. Creating some ClusterIP services.
+
+zsh 1909 master% kubectl expose deployment redis --port 6379
+service/redis exposed
+
+zsh 1910 master% kubectl expose deployment rng --port 80
+service/rng exposed
+
+zsh 1911 master% kubectl expose deployment hasher --port 80
+service/hasher exposed
+
+After that, i am going to run kubectl logs deploy/worker --follow command
+
+kubectl logs deploy/worker --follow command
+...
+ERROR:__main__:Waiting 10s and restarting.
+INFO:__main__:0 units of work done, updating hash counter
+INFO:__main__:4 units of work done, updating hash counter
+INFO:__main__:Coin found: 04420bff...
+INFO:__main__:4 units of work done, updating hash counter
+INFO:__main__:Coin found: 06f2c9e1...
+INFO:__main__:Coin found: 0ffe8f95...
+INFO:__main__:4 units of work done, updating hash counter
+
+What happened? i have exposed into the cluster the necessary ports between internal services.
+Please, remember how the services are connected between them.
+
+Please, remember the Architecture
+
+https://revconf19.bretfisher.com/#32
+
+rng, hasher and redis needs to talk with worker, so i opened their working ports, exposing them
+to the cluster, only to the cluster, not outside of it (ClusterIP).
+
+Now, i am going to expose the webui to the exterior, so i will expose it as a NodePort.
+
+zsh 1913 [130] master% kubectl expose deployment webui --port 80 --type NodePort
+service/webui exposed
+
+[mar 21/10/05 13:01 CEST][s003][x86_64/darwin20.0/20.6.0][5.8]
+<aironman@MacBook-Pro-de-Alonso:~/git/alonsoir.github.io/Devop>
+zsh 1914 master% kubectl get svc
+NAME              TYPE           CLUSTER-IP       EXTERNAL-IP      PORT(S)          AGE
+hasher            ClusterIP      10.110.187.36    <none>           80/TCP           11m
+hello-minikube1   LoadBalancer   10.110.114.191   10.110.114.191   8080:30747/TCP   23h
+kubernetes        ClusterIP      10.96.0.1        <none>           443/TCP          25d
+redis             ClusterIP      10.97.123.66     <none>           6379/TCP         12m
+rng               ClusterIP      10.103.101.112   <none>           80/TCP           11m
+webui             NodePort       10.104.105.61    <none>           80:31329/TCP     7s
+
+As i have minikube running in my mac, i have to run this in order to have the webui
+ip address.
+
+[mar 21/10/05 13:01 CEST][s003][x86_64/darwin20.0/20.6.0][5.8]
+<aironman@MacBook-Pro-de-Alonso:~/git/alonsoir.github.io/Devop>
+zsh 1915 master% minikube service webui
+|-----------|-------|-------------|---------------------------|
+| NAMESPACE | NAME  | TARGET PORT |            URL            |
+|-----------|-------|-------------|---------------------------|
+| default   | webui |          80 | http://192.168.64.3:31329 |
+|-----------|-------|-------------|---------------------------|
+🎉  Opening service default/webui in default browser...
+
+You should see in Safari or whatever browser you have the same web page showing
+DockerCoin miner webui.
+
+Now i am going to scale containers in order to get more than 4 hashes per second.
+How about if i scale the worker deployment until two replicas?
+
+zsh 1917 % kubectl scale deployment worker --replicas 2
+deployment.apps/worker scaled
+
+Running watch commands. I can see the new pods
+Every 2,0s: kubectl get pods                                                                                      MacBook-Pro-de-Alonso.local: Tue Oct  5 13:17:40 2021
+
+NAME                               READY   STATUS    RESTARTS   AGE
+hasher-ccc9f44ff-dp8mp             1/1     Running   0          42m
+hello-minikube1-7f754574c6-4m6pd   1/1     Running   0          23h
+hello-minikube1-7f754574c6-b44jh   1/1     Running   0          23h
+hello-minikube1-7f754574c6-d425b   1/1     Running   0          23h
+hello-minikube1-7f754574c6-kwt7n   1/1     Running   0          23h
+redis-6749d7bd65-8xmcq             1/1     Running   0          45m
+rng-5d8b6c4cff-ctbwp               1/1     Running   0          42m
+webui-5f69bbf966-6gk77             1/1     Running   0          42m
+worker-699dc8c88-6csgw             1/1     Running   0          42m
+worker-699dc8c88-g7wrj             1/1     Running   0          108s
+
+Every 2,0s: kubectl get deployments                                                                               MacBook-Pro-de-Alonso.local: Tue Oct  5 13:17:58 2021
+
+NAME              READY   UP-TO-DATE   AVAILABLE   AGE
+hasher            1/1     1            1           42m
+hello-minikube1   4/4     4            4           23h
+redis             1/1     1            1           45m
+rng               1/1     1            1           42m
+webui             1/1     1            1           42m
+worker            2/2     2            2           42m
+
+
+In the webpage i can see that i have 8 hashes per second, oscillating between 4 and 8. Great.
+
+If you try to scale the worker service up and down, you will notice that one more container will give you
+four more hashes per second, and one less will substract four hashes per second.
+Now you can think that we can increase more workers to the cluster, more processing power, more money, dont you?
+
+i am going to increase to 10 workers, the performance should be 40 hashes per second right?
+It is stuck at 10 hashes per second! what happened?
+
+In the real world, we have tools like DataDog, honeycomb, new relic, statsd, sumologic,...
+
+In shpod container we have two useful apps, ab and httping, in order to stress the webui server.
+
+zsh 1930 % kubectl get svc
+NAME              TYPE           CLUSTER-IP       EXTERNAL-IP      PORT(S)          AGE
+hasher            ClusterIP      10.110.187.36    <none>           80/TCP           61m
+hello-minikube1   LoadBalancer   10.110.114.191   10.110.114.191   8080:30747/TCP   24h
+kubernetes        ClusterIP      10.96.0.1        <none>           443/TCP          26d
+redis             ClusterIP      10.97.123.66     <none>           6379/TCP         63m
+rng               ClusterIP      10.103.101.112   <none>           80/TCP           62m
+webui             NodePort       10.104.105.61    <none>           80:31329/TCP     50m
+
+Or, i can figure it out hasher ip address and rng ip too...
+
+zsh 1928 [1] % kubectl get svc hasher -o go-template={{.spec.clusterIP}}
+10.110.187.36
+
+[mar 21/10/05 13:50 CEST][s008][x86_64/darwin20.0/20.6.0][5.8]
+<aironman@MacBook-Pro-de-Alonso:~>
+zsh 1929 % kubectl get svc rng -o go-template={{.spec.clusterIP}}
+10.103.101.112
+
+or programmatically...
+
+RNG=$(kubectl get svc rng -o go-template={{.spec.clusterIP}})
+echo $RNG
+
+HASHER=$(kubectl get svc hasher -o go-template={{.spec.clusterIP}})
+echo $HASHER
+
+httping -c 3 $HASHER
+
+httping -c 3 $RNG
+
+shpod:~# httping -c 3 $HASHER
+PING 10.110.187.36:80 (/):
+connected to 10.110.187.36:80 (210 bytes), seq=0 time=  2.33 ms
+connected to 10.110.187.36:80 (210 bytes), seq=1 time=  2.00 ms
+connected to 10.110.187.36:80 (210 bytes), seq=2 time=  1.38 ms
+--- http://10.110.187.36/ ping statistics ---
+3 connects, 3 ok, 0.00% failed, time 3008ms
+round-trip min/avg/max = 1.4/1.9/2.3 ms
+
+shpod:~# httping -c 3 $R
+$RANDOM  $RNG
+shpod:~# httping -c 3 $RNG
+PING 10.103.101.112:80 (/):
+connected to 10.103.101.112:80 (158 bytes), seq=0 time=767.88 ms
+connected to 10.103.101.112:80 (158 bytes), seq=1 time=752.14 ms
+connected to 10.103.101.112:80 (158 bytes), seq=2 time=752.75 ms
+--- http://10.103.101.112/ ping statistics ---
+3 connects, 3 ok, 0.00% failed, time 5276ms
+round-trip min/avg/max = 752.1/757.6/767.9 ms
+
+It looks like rng service is the problem. So, how about if i try to scale it up
+in a multinode cluster?
+
+In my mac, if i scale rng service to two replicas, i got the double perfomance,
+like 20 hashes per second. Three containers hashes per second ranges from 10 to 30.
+
+shpod:~# httping -c 4 $RNG
+PING 10.103.101.112:80 (/):
+connected to 10.103.101.112:80 (158 bytes), seq=0 time= 98.01 ms
+connected to 10.103.101.112:80 (158 bytes), seq=1 time= 11.83 ms
+connected to 10.103.101.112:80 (158 bytes), seq=2 time= 45.07 ms
+connected to 10.103.101.112:80 (158 bytes), seq=3 time=  9.21 ms
+--- http://10.103.101.112/ ping statistics ---
+4 connects, 4 ok, 0.00% failed, time 4171ms
+
+Times are much better with three containers, three deployments.
+What about with 10 rng containers?
+
+I can see that there are only 19 to 38 hashes per second in the webpage
+
+shpod:~# httping -c 4 $RNG
+PING 10.103.101.112:80 (/):
+connected to 10.103.101.112:80 (158 bytes), seq=0 time=  3.22 ms
+connected to 10.103.101.112:80 (158 bytes), seq=1 time=  4.38 ms
+connected to 10.103.101.112:80 (158 bytes), seq=2 time=  2.56 ms
+connected to 10.103.101.112:80 (158 bytes), seq=3 time=  4.83 ms
+--- http://10.103.101.112/ ping statistics ---
+4 connects, 4 ok, 0.00% failed, time 4019ms
+round-trip min/avg/max = 2.6/3.7/4.8 ms
+
+ping times are much better than using three rng containers, so what happened?
+
+Before that, some tasks...
+
+Let's deploy another application called wordsmith
+Wordsmith has 3 components:
+
+a web frontend bretfisher/wordsmith-web
+
+an API backend bretfisher/wordsmith-words
+
+a postgres DB bretfisher/wordsmith-db
+
+These images have been built and pushed to Docker Hub
+
+We want to deploy all 3 components on Kubernetes
+
+Here's how the parts of this app communicate with each other:
+
+The web frontend listens on port 80
+
+The web frontend should be public (available on a high port from outside the cluster)
+
+The web frontend connects to the API at the address http://words:8080
+
+The API backend listens on port 8080
+
+The API connects to the database with the connection string pgsql://db:5432
+
+The database listens on port 5432
+
+Your Assignment is to create the kubectl create commands to make this all work
+This is what we should see when we bring up the web frontend on our browser:
+
+
+  (You will probably see a different sentence, though.)
+
+- Yes, there is some repetition in that sentence; that's OK for now
+
+- If you see empty LEGO bricks, something's wrong ...
+
+Preguntas de esta tarea
+What deployment commands did you use to create the pods?
+
+Alonso´solution
+// backend deployment
+kubectl create deployment wordsmith-db --image bretfisher/wordsmith-db
+// frontend deployment
+kubectl create deployment wordsmith-web --image bretfisher/wordsmith-web
+// API deployment
+kubectl create deployment wordsmith-words --image bretfisher/wordsmith-words
+
+Bret`s solution:
+
+kubectl create deployment db --image=bretfisher/wordsmith-db
+kubectl create deployment web --image=bretfisher/wordsmith-web
+kubectl create deployment words --image=bretfisher/wordsmith-words
+
+What service commands did you use to make the pods available on a friendly DNS name?
+
+kubectl expose deployment wordsmith-web --type NodePort --ports 8080
+kubectl expose deployment wordsmith-words --ports 8080
+kubectl expose deployment wordsmith-db --ports 5432
+
+Bret´s solution:
+kubectl expose deployment db --port=5432
+kubectl expose deployment web --port=80 --type=NodePort
+kubectl expose deployment words --port=8080
+
+or
+
+kubectl create service clusterip db --tcp=5432
+kubectl create service nodeport web --tcp=80
+kubectl create service clusterip words --tcp=8080
+
+
+
+If we add more wordsmith-words API pods, then when the browser is refreshed, you'll see different words.
+What is the command to scale that deployment up to 5 pods? Test it to ensure a browser refresh shows different words.
+
+kubectl scale deployment wordsmith-words --replicas 5
+
+Bret´s solution:
+kubectl scale deployment words --replicas=5
+
+Ok, mine is not correct because DNS is hardcoded inside the code,
+so frontend will never connect to API, API will not connect to db...
+
+Deploying with yaml.
