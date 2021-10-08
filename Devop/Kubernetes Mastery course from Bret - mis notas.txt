@@ -2171,8 +2171,6 @@ kubectl create service clusterip db --tcp=5432
 kubectl create service nodeport web --tcp=80
 kubectl create service clusterip words --tcp=8080
 
-
-
 If we add more wordsmith-words API pods, then when the browser is refreshed, you'll see different words.
 What is the command to scale that deployment up to 5 pods? Test it to ensure a browser refresh shows different words.
 
@@ -2185,3 +2183,642 @@ Ok, mine is not correct because DNS is hardcoded inside the code,
 so frontend will never connect to API, API will not connect to db...
 
 Deploying with yaml.
+
+kubectl apply -f my-manifest.yaml
+
+example: https://github.com/BretFisher/kubernetes-mastery/blob/mastery/k8s/dockercoins.yaml
+
+Deployments vs daemonsets vs StatefulSets
+
+https://medium.com/stakater/k8s-deployments-vs-statefulsets-vs-daemonsets-60582f0c62d4
+
+Añadir al label de un pod que ya tenga un label con app=rng la cadena enabled=yes
+
+zsh 2023 mastery% kubectl label pods -l app=rng enabled=yes
+pod/rng-5d8b6c4cff-lgm7s labeled
+pod/rng-x85c5 labeled
+
+Then, run this command:
+
+shpod:~# kubectl edit service rng
+
+Look for selector tag, add
+
+enabled: "yes"
+
+Last login: Thu Oct  7 16:47:30 on ttys002
+Zelda
+              _
+             /_\
+_            )_(            _
+|`-.___,.-~'`|=|`'~-.,___,-'|
+|  __________|=|__________  |
+| |    ______|=|__________| | ___      _      _  _   _             _
+| |   |  ____|=|_____     / |  |  |_| |_  |  |_ | _ |_ |\| |\  /\ |_
+| |   | /    |=|    /    /| |  |  | | |_  |_ |_ |_| |_ | | |/  \/ |
+| |   |/   ,-|_|-. / /  /_|_|______ ______     _______        ____
+| |      ,' _____ / // / \    ___  |\    /     \      `.      \   \
+| |     / ,'| A |/ // /   |  |   \ | |  |       |  |`.  \     /    \
+| |    /_// |/V\/ // /    |  |    \| |  |       |  |  \  \   /  /\  \
+| |      /__| |/  / /     |  |       |  |       |  |   \  | /  /  \  \
+| |     /\  | / /| /\     |  |__/|   |  |       |  |   |  ||  |    |  |
+| |    /  \ |/ // // \    |   __ |   |  |       |  |   |  ||  |____|  |
+| |   /    \/ |/ //   \   |  |  \|   |  |       |  |   |  ||   ____   |
+| |  /     /    //     \  |  |       |  |       |  |   /  ||  |    |  |
+| | /     / /  /|       \ |  |    /| |  |    /| |  |  /  / |  |    |  |
+| |/_____/ // / |________\|  |___/ | |  |___/ | |  |,'  /  |  |    |  |     aironman@MacBook-Pro-de-Alonso.local
+| |     / // /| |        /_________|/_________|/______,'  /____\  /____\    ------------------------------------
+\ \    / // / | |       /|/ /_               ___  ___    _   _  _  _ ___    OS: macOS 11.6 20G165 x86_64
+ \ \  /  / /| | |______/ | //_\  |  | |\| |/  |/\  | |_||_  |_)/_\(_` |     Host: MacBookPro15,3
+  \ \/______| | |________|/ | |  |_ | | | |\  |\/  | | ||_  |  | |._) |     Kernel: 20.6.0
+   `.`.     | | |     ,','                                                  Uptime: 1 day, 3 hours, 5 mins
+     `.`.   | | |   ,','    _        _        _        _                    Packages: 195 (brew)
+       `.`-.| | |,-','     |.\      |.\      |.\      |.\                   Shell: zsh 5.8
+         `-.| | |,-'        \\      \\      \\      \\                      Resolution: 1680x1050
+            | | |    ________\\______\\______\\______\\_____________        DE: Aqua
+            | | |   | .--  __        __    ,--.        __   __   __| _  |   WM: Quartz Compositor
+            | | |   | |-  /  \ |  | |  `   `--. | | | /  \ |  ` /  |(_` |   WM Theme: Blue (Light)
+            | | |   | |   \__/ \_/| |      .__/ \/ \/ \__/ |    \__|._) |   Terminal: iTerm2
+            | | |   '---------------------------------------------------'   Terminal Font: MesloLGMForPowerline-Italic 16 (normal) / Hack-Regular 12 (non-ascii)
+             \|/                  \\ /|   \\ /|   \\ /|   \\ /|             CPU: Intel i9-9980HK (16) @ 2.40GHz
+              V                  __\V /  __\V /  __\V /  __\V /             GPU: Intel UHD Graphics 630, Radeon Pro Vega 20
+                                 \___O/   \___O/   \___O/   \___O/          Memory: 15124MiB / 32768MiB
+                                     \/\      \/\      \/\      \/\
+                                      \/\      \/\      \/\      \/\
+                                       (O)      (O)      (O)      (O)
+
+Opening a dashboard!
+
+<aironman@MacBook-Pro-de-Alonso:~/git/kubernetes-mastery/k8s>
+zsh 2002 mastery% kubectl apply -f insecure-dashboard.yaml
+namespace/kubernetes-dashboard unchanged
+serviceaccount/kubernetes-dashboard unchanged
+service/kubernetes-dashboard unchanged
+secret/kubernetes-dashboard-certs unchanged
+secret/kubernetes-dashboard-csrf configured
+secret/kubernetes-dashboard-key-holder unchanged
+configmap/kubernetes-dashboard-settings unchanged
+role.rbac.authorization.k8s.io/kubernetes-dashboard unchanged
+clusterrole.rbac.authorization.k8s.io/kubernetes-dashboard unchanged
+rolebinding.rbac.authorization.k8s.io/kubernetes-dashboard unchanged
+deployment.apps/kubernetes-dashboard unchanged
+service/dashboard-metrics-scraper unchanged
+deployment.apps/dashboard-metrics-scraper unchanged
+deployment.apps/dashboard created
+service/dashboard created
+clusterrolebinding.rbac.authorization.k8s.io/insecure-dashboard unchanged
+The ClusterRoleBinding "kubernetes-dashboard" is invalid: roleRef: Invalid value: rbac.RoleRef{APIGroup:"rbac.authorization.k8s.io", Kind:"ClusterRole", Name:"kubernetes-dashboard"}: cannot change roleRef
+
+[jue 21/10/07 16:50 CEST][s003][x86_64/darwin20.0/20.6.0][5.8]
+<aironman@MacBook-Pro-de-Alonso:~/git/kubernetes-mastery/k8s>
+zsh 2004 mastery% kubectl apply -f dockercoins.yaml
+deployment.apps/hasher created
+service/hasher created
+deployment.apps/redis created
+service/redis created
+deployment.apps/rng created
+service/rng created
+deployment.apps/webui created
+service/webui created
+deployment.apps/worker created
+[jue 21/10/07 16:51 CEST][s003][x86_64/darwin20.0/20.6.0][5.8]
+<aironman@MacBook-Pro-de-Alonso:~/git/kubernetes-mastery/k8s>
+
+Please minikube, open it in a browser.
+
+zsh 2005 mastery% minikube service dashboard
+|-----------|-----------|-------------|---------------------------|
+| NAMESPACE |   NAME    | TARGET PORT |            URL            |
+|-----------|-----------|-------------|---------------------------|
+| default   | dashboard |          80 | http://192.168.64.3:32763 |
+|-----------|-----------|-------------|---------------------------|
+🎉  Opening service default/dashboard in default browser...
+
+[jue 21/10/07 16:51 CEST][s003][x86_64/darwin20.0/20.6.0][5.8]
+<aironman@MacBook-Pro-de-Alonso:~/git/kubernetes-mastery/k8s>
+zsh 2006 mastery% kubectl version --short
+Client Version: v1.22.1
+Server Version: v1.22.1
+
+[jue 21/10/07 16:53 CEST][s003][x86_64/darwin20.0/20.6.0][5.8]
+<aironman@MacBook-Pro-de-Alonso:~/git/kubernetes-mastery/k8s>
+zsh 2007 mastery% kubectl get all --all-namespaces
+NAMESPACE              NAME                                             READY   STATUS    RESTARTS      AGE
+default                pod/dashboard-79c6957b6f-5bdrr                   1/1     Running   0             3m29s
+default                pod/hasher-ccc9f44ff-xgm8n                       1/1     Running   0             3m3s
+default                pod/redis-6749d7bd65-2dnvj                       1/1     Running   0             3m3s
+default                pod/rng-5d8b6c4cff-lgm7s                         1/1     Running   0             3m3s
+default                pod/webui-5f69bbf966-2ddqg                       1/1     Running   0             3m3s
+default                pod/worker-699dc8c88-2wzxw                       1/1     Running   0             3m2s
+default                pod/worker-699dc8c88-4tqp5                       1/1     Running   0             3m2s
+default                pod/worker-699dc8c88-5nqjp                       1/1     Running   0             3m2s
+default                pod/worker-699dc8c88-bgbrk                       1/1     Running   0             3m2s
+default                pod/worker-699dc8c88-fv6qw                       1/1     Running   0             3m2s
+default                pod/worker-699dc8c88-fzqqk                       1/1     Running   0             3m2s
+default                pod/worker-699dc8c88-mhcsq                       1/1     Running   0             3m2s
+default                pod/worker-699dc8c88-n4kk8                       1/1     Running   0             3m2s
+default                pod/worker-699dc8c88-p6gqq                       1/1     Running   0             3m2s
+default                pod/worker-699dc8c88-pc9cq                       1/1     Running   0             3m2s
+kube-system            pod/coredns-78fcd69978-lq24r                     1/1     Running   4 (24h ago)   28d
+kube-system            pod/etcd-minikube                                1/1     Running   4 (24h ago)   28d
+kube-system            pod/kube-apiserver-minikube                      1/1     Running   4 (24h ago)   28d
+kube-system            pod/kube-controller-manager-minikube             1/1     Running   4 (24h ago)   28d
+kube-system            pod/kube-proxy-79r5q                             1/1     Running   4 (24h ago)   28d
+kube-system            pod/kube-scheduler-minikube                      1/1     Running   4 (24h ago)   28d
+kube-system            pod/storage-provisioner                          1/1     Running   7 (24h ago)   28d
+kubernetes-dashboard   pod/dashboard-metrics-scraper-869f64985b-xv5qj   1/1     Running   0             24h
+kubernetes-dashboard   pod/kubernetes-dashboard-67b97d586c-qq6tb        1/1     Running   0             24h
+shpod                  pod/shpod                                        1/1     Running   6 (24h ago)   10d
+
+NAMESPACE              NAME                                TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)                  AGE
+default                service/dashboard                   NodePort    10.103.74.228   <none>        80:32763/TCP             3m29s
+default                service/hasher                      ClusterIP   10.110.195.5    <none>        80/TCP                   3m3s
+default                service/kubernetes                  ClusterIP   10.96.0.1       <none>        443/TCP                  28d
+default                service/redis                       ClusterIP   10.109.170.70   <none>        6379/TCP                 3m3s
+default                service/rng                         ClusterIP   10.99.167.224   <none>        80/TCP                   3m3s
+default                service/webui                       NodePort    10.97.244.1     <none>        80:32125/TCP             3m2s
+kube-system            service/kube-dns                    ClusterIP   10.96.0.10      <none>        53/UDP,53/TCP,9153/TCP   28d
+kubernetes-dashboard   service/dashboard-metrics-scraper   ClusterIP   10.106.0.137    <none>        8000/TCP                 23d
+kubernetes-dashboard   service/kubernetes-dashboard        ClusterIP   10.110.32.200   <none>        443/TCP                  23d
+
+NAMESPACE     NAME                        DESIRED   CURRENT   READY   UP-TO-DATE   AVAILABLE   NODE SELECTOR            AGE
+kube-system   daemonset.apps/kube-proxy   1         1         1       1            1           kubernetes.io/os=linux   28d
+
+NAMESPACE              NAME                                        READY   UP-TO-DATE   AVAILABLE   AGE
+default                deployment.apps/dashboard                   1/1     1            1           3m29s
+default                deployment.apps/hasher                      1/1     1            1           3m3s
+default                deployment.apps/redis                       1/1     1            1           3m3s
+default                deployment.apps/rng                         1/1     1            1           3m3s
+default                deployment.apps/webui                       1/1     1            1           3m3s
+default                deployment.apps/worker                      10/10   10           10          3m2s
+kube-system            deployment.apps/coredns                     1/1     1            1           28d
+kubernetes-dashboard   deployment.apps/dashboard-metrics-scraper   1/1     1            1           23d
+kubernetes-dashboard   deployment.apps/kubernetes-dashboard        1/1     1            1           23d
+
+NAMESPACE              NAME                                                   DESIRED   CURRENT   READY   AGE
+default                replicaset.apps/dashboard-79c6957b6f                   1         1         1       3m29s
+default                replicaset.apps/hasher-ccc9f44ff                       1         1         1       3m3s
+default                replicaset.apps/redis-6749d7bd65                       1         1         1       3m3s
+default                replicaset.apps/rng-5d8b6c4cff                         1         1         1       3m3s
+default                replicaset.apps/webui-5f69bbf966                       1         1         1       3m3s
+default                replicaset.apps/worker-699dc8c88                       10        10        10      3m2s
+kube-system            replicaset.apps/coredns-78fcd69978                     1         1         1       28d
+kubernetes-dashboard   replicaset.apps/dashboard-metrics-scraper-5594458c94   0         0         0       10d
+kubernetes-dashboard   replicaset.apps/dashboard-metrics-scraper-7976b667d4   0         0         0       23d
+kubernetes-dashboard   replicaset.apps/dashboard-metrics-scraper-869f64985b   1         1         1       24h
+kubernetes-dashboard   replicaset.apps/kubernetes-dashboard-654cf69797        0         0         0       10d
+kubernetes-dashboard   replicaset.apps/kubernetes-dashboard-67b97d586c        1         1         1       24h
+kubernetes-dashboard   replicaset.apps/kubernetes-dashboard-6fcdf4f6d         0         0         0       23d
+[jue 21/10/07 16:53 CEST][s003][x86_64/darwin20.0/20.6.0][5.8]
+<aironman@MacBook-Pro-de-Alonso:~/git/kubernetes-mastery/k8s>
+zsh 2008 mastery% kubectl get all --all-namespaces
+NAMESPACE              NAME                                             READY   STATUS    RESTARTS      AGE
+default                pod/dashboard-79c6957b6f-5bdrr                   1/1     Running   0             14m
+default                pod/hasher-ccc9f44ff-xgm8n                       1/1     Running   0             13m
+default                pod/my-ingress-nginx-ingress-b896685d9-jntjm     1/1     Running   0             16s
+default                pod/redis-6749d7bd65-2dnvj                       1/1     Running   0             13m
+default                pod/rng-5d8b6c4cff-lgm7s                         1/1     Running   0             13m
+default                pod/webui-5f69bbf966-2ddqg                       1/1     Running   0             13m
+default                pod/worker-699dc8c88-2wzxw                       1/1     Running   0             13m
+default                pod/worker-699dc8c88-4tqp5                       1/1     Running   0             13m
+default                pod/worker-699dc8c88-5nqjp                       1/1     Running   0             13m
+default                pod/worker-699dc8c88-bgbrk                       1/1     Running   0             13m
+default                pod/worker-699dc8c88-fv6qw                       1/1     Running   0             13m
+default                pod/worker-699dc8c88-fzqqk                       1/1     Running   0             13m
+default                pod/worker-699dc8c88-mhcsq                       1/1     Running   0             13m
+default                pod/worker-699dc8c88-n4kk8                       1/1     Running   0             13m
+default                pod/worker-699dc8c88-p6gqq                       1/1     Running   0             13m
+default                pod/worker-699dc8c88-pc9cq                       1/1     Running   0             13m
+kube-system            pod/coredns-78fcd69978-lq24r                     1/1     Running   4 (25h ago)   28d
+kube-system            pod/etcd-minikube                                1/1     Running   4 (25h ago)   28d
+kube-system            pod/kube-apiserver-minikube                      1/1     Running   4 (25h ago)   28d
+kube-system            pod/kube-controller-manager-minikube             1/1     Running   4 (25h ago)   28d
+kube-system            pod/kube-proxy-79r5q                             1/1     Running   4 (25h ago)   28d
+kube-system            pod/kube-scheduler-minikube                      1/1     Running   4 (25h ago)   28d
+kube-system            pod/storage-provisioner                          1/1     Running   7 (25h ago)   28d
+kubernetes-dashboard   pod/dashboard-metrics-scraper-869f64985b-xv5qj   1/1     Running   0             24h
+kubernetes-dashboard   pod/kubernetes-dashboard-67b97d586c-qq6tb        1/1     Running   0             24h
+shpod                  pod/shpod                                        1/1     Running   6 (24h ago)   10d
+
+NAMESPACE              NAME                                TYPE           CLUSTER-IP      EXTERNAL-IP   PORT(S)                      AGE
+default                service/dashboard                   NodePort       10.103.74.228   <none>        80:32763/TCP                 14m
+default                service/hasher                      ClusterIP      10.110.195.5    <none>        80/TCP                       13m
+default                service/kubernetes                  ClusterIP      10.96.0.1       <none>        443/TCP                      28d
+default                service/my-ingress-nginx-ingress    LoadBalancer   10.98.97.50     <pending>     80:32330/TCP,443:32493/TCP   16s
+default                service/redis                       ClusterIP      10.109.170.70   <none>        6379/TCP                     13m
+default                service/rng                         ClusterIP      10.99.167.224   <none>        80/TCP                       13m
+default                service/webui                       NodePort       10.97.244.1     <none>        80:32125/TCP                 13m
+kube-system            service/kube-dns                    ClusterIP      10.96.0.10      <none>        53/UDP,53/TCP,9153/TCP       28d
+kubernetes-dashboard   service/dashboard-metrics-scraper   ClusterIP      10.106.0.137    <none>        8000/TCP                     23d
+kubernetes-dashboard   service/kubernetes-dashboard        ClusterIP      10.110.32.200   <none>        443/TCP                      23d
+
+NAMESPACE     NAME                        DESIRED   CURRENT   READY   UP-TO-DATE   AVAILABLE   NODE SELECTOR            AGE
+kube-system   daemonset.apps/kube-proxy   1         1         1       1            1           kubernetes.io/os=linux   28d
+
+NAMESPACE              NAME                                        READY   UP-TO-DATE   AVAILABLE   AGE
+default                deployment.apps/dashboard                   1/1     1            1           14m
+default                deployment.apps/hasher                      1/1     1            1           13m
+default                deployment.apps/my-ingress-nginx-ingress    1/1     1            1           16s
+default                deployment.apps/redis                       1/1     1            1           13m
+default                deployment.apps/rng                         1/1     1            1           13m
+default                deployment.apps/webui                       1/1     1            1           13m
+default                deployment.apps/worker                      10/10   10           10          13m
+kube-system            deployment.apps/coredns                     1/1     1            1           28d
+kubernetes-dashboard   deployment.apps/dashboard-metrics-scraper   1/1     1            1           23d
+kubernetes-dashboard   deployment.apps/kubernetes-dashboard        1/1     1            1           23d
+
+NAMESPACE              NAME                                                   DESIRED   CURRENT   READY   AGE
+default                replicaset.apps/dashboard-79c6957b6f                   1         1         1       14m
+default                replicaset.apps/hasher-ccc9f44ff                       1         1         1       13m
+default                replicaset.apps/my-ingress-nginx-ingress-b896685d9     1         1         1       16s
+default                replicaset.apps/redis-6749d7bd65                       1         1         1       13m
+default                replicaset.apps/rng-5d8b6c4cff                         1         1         1       13m
+default                replicaset.apps/webui-5f69bbf966                       1         1         1       13m
+default                replicaset.apps/worker-699dc8c88                       10        10        10      13m
+kube-system            replicaset.apps/coredns-78fcd69978                     1         1         1       28d
+kubernetes-dashboard   replicaset.apps/dashboard-metrics-scraper-5594458c94   0         0         0       10d
+kubernetes-dashboard   replicaset.apps/dashboard-metrics-scraper-7976b667d4   0         0         0       23d
+kubernetes-dashboard   replicaset.apps/dashboard-metrics-scraper-869f64985b   1         1         1       24h
+kubernetes-dashboard   replicaset.apps/kubernetes-dashboard-654cf69797        0         0         0       10d
+kubernetes-dashboard   replicaset.apps/kubernetes-dashboard-67b97d586c        1         1         1       24h
+kubernetes-dashboard   replicaset.apps/kubernetes-dashboard-6fcdf4f6d         0         0         0       23d
+
+
+zsh 2012 mastery% kubectl get deployment rng -o yaml > rng.yaml
+[jue 21/10/07 17:07 CEST][s003][x86_64/darwin20.0/20.6.0][5.8]
+<aironman@MacBook-Pro-de-Alonso:~/git/kubernetes-mastery/k8s>
+zsh 2013 mastery% cat rng.yaml
+apiVersion: apps/v1
+kind: Deployment ---> i am going to change this, to Daemonset
+metadata:
+  annotations:
+    deployment.kubernetes.io/revision: "1"
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"apps/v1","kind":"Deployment","metadata":{"annotations":{},"labels":{"app":"rng"},"name":"rng","namespace":"default"},"spec":{"replicas":1,"selector":{"matchLabels":{"app":"rng"}},"template":{"metadata":{"labels":{"app":"rng"}},"spec":{"containers":[{"image":"dockercoins/rng:v0.1","name":"rng"}]}}}}
+  creationTimestamp: "2021-10-07T14:50:47Z"
+  generation: 1
+  labels:
+    app: rng
+  name: rng
+  namespace: default
+  resourceVersion: "259054"
+  uid: 3bd05032-c08d-4170-96c0-4dd79392551a
+spec:
+  progressDeadlineSeconds: 600
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app: rng
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: rng
+    spec:
+      containers:
+      - image: dockercoins/rng:v0.1
+        imagePullPolicy: IfNotPresent
+        name: rng
+        resources: {}
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 30
+status:
+  availableReplicas: 1
+ rng.yaml                                                                                                                                                    buffers
+1   apiVersion: apps/v1
+  1 kind: Deployment
+  2 metadata:
+  3   annotations:
+  4   . deployment.kubernetes.io/revision: "1"
+  5   . kubectl.kubernetes.io/last-applied-configuration: |
+  6   . . {"apiVersion":"apps/v1","kind":"Deployment","metadata":{"annotations":{},"labels":{"app":"rng"},"name":"rng","namespace":"default"},"spec":{"replicas":1,"sel
+  7   creationTimestamp: "2021-10-07T14:50:47Z"
+  8   generation: 1
+  9   labels:
+ 10   . app: rng
+ 11   name: rng
+ 12   namespace: default
+ 13   resourceVersion: "259054"
+ 14   uid: 3bd05032-c08d-4170-96c0-4dd79392551a
+ 15 spec:
+ 16   progressDeadlineSeconds: 600
+ 17   replicas: 1
+ NORMAL  rng.yaml                                                                                                      yaml  utf-8[unix]    1% ☰    1/64  :  1 
+"rng.yaml" 64L, 1952B
+ rng.yaml                                                                                                                                                    buffers
+1   apiVersion: apps/v1
+  1 kind: Deployment
+  2 metadata:
+  3   annotations:
+  4   . deployment.kubernetes.io/revision: "1"
+  5   . kubectl.kubernetes.io/last-applied-configuration: |
+  6   . . {"apiVersion":"apps/v1","kind":"Deployment","metadata":{"annotations":{},"labels":{"app":"rng"},"name":"rng","namespace":"default"},"spec":{"replicas":1,"sel
+  7   creationTimestamp: "2021-10-07T14:50:47Z"
+  8   generation: 1
+  9   labels:
+ 10   . app: rng
+ 11   name: rng
+ 12   namespace: default
+ 13   resourceVersion: "259054"
+ 14   uid: 3bd05032-c08d-4170-96c0-4dd79392551a
+ 15 spec:
+ 16   progressDeadlineSeconds: 600
+ 17   replicas: 1
+ 18   revisionHistoryLimit: 10
+ NORMAL  rng.yaml                                                                                                      yaml  utf-8[unix]    1% ☰    1/64  :  1 
+ rng.yaml                                                                                                                                                    buffers
+1   apiVersion: apps/v1
+  1 kind: Deployment
+  2 metadata:
+  3   annotations:
+  4   . deployment.kubernetes.io/revision: "1"
+  5   . kubectl.kubernetes.io/last-applied-configuration: |
+  6   . . {"apiVersion":"apps/v1","kind":"Deployment","metadata":{"annotations":{},"labels":{"app":"rng"},"name":"rng","namespace":"default"},"spec":{"replicas":1,"sel
+  7   creationTimestamp: "2021-10-07T14:50:47Z"
+  8   generation: 1
+  9   labels:
+ 10   . app: rng
+ 11   name: rng
+ 12   namespace: default
+ 13   resourceVersion: "259054"
+ 14   uid: 3bd05032-c08d-4170-96c0-4dd79392551a
+ 15 spec:
+ 16   progressDeadlineSeconds: 600
+ 17   replicas: 1
+ 18   revisionHistoryLimit: 10
+ 19   selector:
+ 20   . matchLabels:
+ 21   . . app: rng
+ 22   strategy:
+ 23   . rollingUpdate:
+ 24   . . maxSurge: 25%
+ 25   . . maxUnavailable: 25%
+ 26   . type: RollingUpdate
+ NORMAL  rng.yaml                                                                                                      yaml  utf-8[unix]    1% ☰    1/64  :  1 
+ rng.yaml                                                                                                                                                    buffers
+1   apiVersion: apps/v1
+  1 kind: Deployment
+  2 metadata:
+  3   annotations:
+  4   . deployment.kubernetes.io/revision: "1"
+  5   . kubectl.kubernetes.io/last-applied-configuration: |
+  6   . . {"apiVersion":"apps/v1","kind":"Deployment","metadata":{"annotations":{},"labels":{"app":"rng"},"name":"rng","namespace":"default"},"spec":{"replicas":1,"sel
+  7   creationTimestamp: "2021-10-07T14:50:47Z"
+  8   generation: 1
+  9   labels:
+ 10   . app: rng
+ 11   name: rng
+ 12   namespace: default
+ 13   resourceVersion: "259054"
+ 14   uid: 3bd05032-c08d-4170-96c0-4dd79392551a
+ 15 spec:
+ 16   progressDeadlineSeconds: 600
+ 17   replicas: 1
+ 18   revisionHistoryLimit: 10
+ 19   selector:
+ 20   . matchLabels:
+ 21   . . app: rng
+ 22   strategy:
+ 23   . rollingUpdate:
+ 24   . . maxSurge: 25%
+ 25   . . maxUnavailable: 25%
+ 26   . type: RollingUpdate
+ 27   template:
+ NORMAL  rng.yaml                                                                                                      yaml  utf-8[unix]    1% ☰    1/64  :  1 
+ rng.yaml+                                                                                                                                                   buffers
+  conditions:
+  - lastTransitionTime: "2021-10-07T14:51:00Z"
+    lastUpdateTime: "2021-10-07T14:51:00Z"
+    message: Deployment has minimum availability.
+    reason: MinimumReplicasAvailable
+    status: "True"
+    type: Available
+  - lastTransitionTime: "2021-10-07T14:50:47Z"
+    lastUpdateTime: "2021-10-07T14:51:00Z"
+    message: ReplicaSet "rng-5d8b6c4cff" has successfully progressed.
+    reason: NewReplicaSetAvailable
+    status: "True"
+    type: Progressing
+  observedGeneration: 1
+  readyReplicas: 1
+  replicas: 1
+  updatedReplicas: 1
+[jue 21/10/07 17:08 CEST][s003][x86_64/darwin20.0/20.6.0][5.8]
+<aironman@MacBook-Pro-de-Alonso:~/git/kubernetes-mastery/k8s>
+zsh 2014 mastery% vi rng.yaml
+[jue 21/10/07 17:09 CEST][s003][x86_64/darwin20.0/20.6.0][5.8]
+<aironman@MacBook-Pro-de-Alonso:~/git/kubernetes-mastery/k8s>
+zsh 2015 mastery% kubectl apply -f rng.yaml
+error: error validating "rng.yaml": error validating data: [ValidationError(DaemonSet.spec): unknown field "progressDeadlineSeconds" in io.k8s.api.apps.v1.DaemonSetSpec, ValidationError(DaemonSet.spec): unknown field "replicas" in io.k8s.api.apps.v1.DaemonSetSpec, ValidationError(DaemonSet.spec): unknown field "strategy" in io.k8s.api.apps.v1.DaemonSetSpec, ValidationError(DaemonSet.status): unknown field "availableReplicas" in io.k8s.api.apps.v1.DaemonSetStatus, ValidationError(DaemonSet.status.conditions[0]): unknown field "lastUpdateTime" in io.k8s.api.apps.v1.DaemonSetCondition, ValidationError(DaemonSet.status.conditions[1]): unknown field "lastUpdateTime" in io.k8s.api.apps.v1.DaemonSetCondition, ValidationError(DaemonSet.status): unknown field "readyReplicas" in io.k8s.api.apps.v1.DaemonSetStatus, ValidationError(DaemonSet.status): unknown field "replicas" in io.k8s.api.apps.v1.DaemonSetStatus, ValidationError(DaemonSet.status): unknown field "updatedReplicas" in io.k8s.api.apps.v1.DaemonSetStatus, ValidationError(DaemonSet.status): missing required field "currentNumberScheduled" in io.k8s.api.apps.v1.DaemonSetStatus, ValidationError(DaemonSet.status): missing required field "numberMisscheduled" in io.k8s.api.apps.v1.DaemonSetStatus, ValidationError(DaemonSet.status): missing required field "desiredNumberScheduled" in io.k8s.api.apps.v1.DaemonSetStatus, ValidationError(DaemonSet.status): missing required field "numberReady" in io.k8s.api.apps.v1.DaemonSetStatus]; if you choose to ignore these errors, turn validation off with --validate=false
+[jue 21/10/07 17:10 CEST][s003][x86_64/darwin20.0/20.6.0][5.8]
+<aironman@MacBook-Pro-de-Alonso:~/git/kubernetes-mastery/k8s>
+zsh 2016 [1] mastery% vi rng.yaml
+[jue 21/10/07 17:10 CEST][s003][x86_64/darwin20.0/20.6.0][5.8]
+<aironman@MacBook-Pro-de-Alonso:~/git/kubernetes-mastery/k8s>
+zsh 2017 mastery% minikube service webui
+|-----------|-------|-------------|---------------------------|
+| NAMESPACE | NAME  | TARGET PORT |            URL            |
+|-----------|-------|-------------|---------------------------|
+| default   | webui |          80 | http://192.168.64.3:32125 |
+|-----------|-------|-------------|---------------------------|
+🎉  Opening service default/webui in default browser...
+
+What is it a DaemonSet?
+
+It is like a Deployment, without a ReplicaSet, k8s ensures that only one container
+is running in every node. Useful to run loggers in every node, or monitors...
+
+I am going to modify rng.yaml file, changing Deployment type to DaemonSet type:
+
+Generate the yaml file from rng Service:
+
+kubectl get deployment rng -o yaml > rng.yml
+Edit the the file, changing Deployment type to DaemonSet type.
+Aply changes:
+
+kubectl apply -f rng-yml
+It wont work because some server validations. Fix it, or apply without validations.
+On your own risk!
+
+[jue 21/10/07 17:16 CEST][s003][x86_64/darwin20.0/20.6.0][5.8]
+<aironman@MacBook-Pro-de-Alonso:~/git/kubernetes-mastery/k8s>
+zsh 2019 [1] mastery% kubectl apply -f rng.yaml --validate=false
+daemonset.apps/rng created
+[jue 21/10/07 17:17 CEST][s003][x86_64/darwin20.0/20.6.0][5.8]
+<aironman@MacBook-Pro-de-Alonso:~/git/kubernetes-mastery/k8s>
+zsh 2020 mastery% kubectl describe service rng
+...
+ NORMAL  /private/var/folders/0x/gmzly6vn2f7ggfk47bdcsbnc0000gn/T/kubectl-edit-2929862863.yaml                         yaml  utf-8[unix]    2% ☰    1/36  :  1 
+ /p/v/f/0/g/T/kubectl-edit-2929862863.yaml                                                                                                                   buffers
+1   # Please edit the object below. Lines beginning with a '#' will be ignored,
+  1 # and an empty file will abort the edit. If an error occurs while saving this file will be
+  2 # reopened with the relevant failures.
+  3 #
+  4 apiVersion: v1
+  5 kind: Service
+  6 metadata:
+  7   annotations:
+  8   . kubectl.kubernetes.io/last-applied-configuration: |
+  9   . . {"apiVersion":"v1","kind":"Service","metadata":{"annotations":{},"labels":{"app":"rng"},"name":"rng","namespace":"default"},"spec":{"ports":[{"port":80,"prot
+ 10   creationTimestamp: "2021-10-07T14:50:47Z"
+ 11   labels:
+ 12   . app: rng
+ 13   name: rng
+ 14   namespace: default
+ 15   resourceVersion: "270394"
+ 16   uid: 851fce11-7c00-4330-b41a-e324b299a72b
+ 17 spec:
+ 18   clusterIP: 10.99.167.224
+ 19   clusterIPs:
+ 20   - 10.99.167.224
+ 21   internalTrafficPolicy: Cluster
+ 22   ipFamilies:
+ 23   - IPv4
+ 24   ipFamilyPolicy: SingleStack
+ 25   ports:
+ 26   - port: 80
+ 27   . protocol: TCP
+ 28   . targetPort: 80
+ 29   selector:
+ 30   . app: rng
+ 31   . enabled: "yes" --> NEW LINE!!
+ 32   sessionAffinity: None
+ 33   type: ClusterIP
+ 34 status:
+ 35   loadBalancer: {}
+ NORMAL  /private/var/folders/0x/gmzly6vn2f7ggfk47bdcsbnc0000gn/T/kubectl-edit-2929862863.yaml
+
+Now, i am going to detect, select and change the behaviour of previous Deployment rng object:
+
+zsh 2032 [1] mastery% POD=$(kubectl get pod -l app=rng,pod-template-hash -o name)
+[vie 21/10/08 12:23 CEST][s003][x86_64/darwin20.0/20.6.0][5.8]
+<aironman@MacBook-Pro-de-Alonso:~/git/kubernetes-mastery/k8s>
+zsh 2033 mastery% echo $POD
+pod/rng-5d8b6c4cff-lgm7s
+
+[vie 21/10/08 12:24 CEST][s003][x86_64/darwin20.0/20.6.0][5.8]
+<aironman@MacBook-Pro-de-Alonso:~/git/kubernetes-mastery/k8s>
+zsh 2035 [1] mastery% kubectl logs --tail 1 --follow $POD
+172.17.0.1 - - [08/Oct/2021 10:24:46] "GET /32 HTTP/1.1" 200 -
+172.17.0.1 - - [08/Oct/2021 10:24:46] "GET /32 HTTP/1.1" 200 -
+...
+
+in another tab, i will remove the label enabled: "true" from the pod marked with
+label app=rng and pod-template-hash.
+
+zsh 2036 % kubectl label pod -l app=rng,pod-template-hash enabled-
+pod/rng-5d8b6c4cff-lgm7s labeled
+
+
+The get petitions should be off inmediately! You should see that in the browser that
+number of hashes are going down dramatically, to the half.
+With this action, changing the label of a pod which belongs to a Deployment,
+the requests from worker pod will not arrive to that pod! without the need of deleting the pod.
+
+That is the purpose of editing labels, when we detect something weird in that pod, we can
+change the label, the pod will not operate through its upper object, so it will be disconected,
+so we can examinate it later with calm.
+If i delete it, the ReplicaSet will recreate it again, that is the reason why we
+change the labels in production, we will be able to debug the container, find the bug,
+attach to a debugger...
+
+
+Our goal here will be to create a service that load balances connections to two different deployments.
+You might use this as a simplistic way to run two versions of your apps in parallel for a period of time.
+
+In the real world, you'll likely use a 3rd party load balancer to provide advanced blue/green or
+canary-style deployments, but this assignment will help further your understanding of how service
+selectors are used to find pods and use them as service endpoints.
+
+For simplicity, version 1 of our application will be using the NGINX image,
+and version 2 of our application will be using the Apache image.
+They both listen on port 80 by default and have different HTML by default so that
+it's easy to distinguish which is being accessed.
+
+Once properly set up, when we connect to the service we expect to see some
+requests being served by NGINX and some requests being served by Apache.
+
+Objectives:
+We need to create two deployments: one for v1 (NGINX), another for v2 (Apache).
+
+They will be exposed through a single service.
+
+The selector of that service will need to match the pods created by *both* deployments.
+
+For that, we will need to change the deployment specification to add an extra label, to be used solely by the service.
+
+That label should be different from the pre-existing labels of our deployments, otherwise, our deployments will step on each other's toes.
+
+We're not at the point of writing our own YAML from scratch, so you'll need to use the kubectl edit command to modify existing resources.
+
+Preguntas de esta tarea
+What commands did you use to perform the following?
+
+1. Create a deployment running one pod using the official NGINX image.
+
+kubectl create deployment my-nginx --image nginx
+
+2. Expose that deployment.
+
+kubectl expose deployment my-nginx --port=80 --type=NodePort
+
+3. Check that you can successfully connect to the exposed service.
+
+What commands did you use to perform the following?
+
+I am using minikube, so i used:
+
+minikube service my-nginx
+
+1. Change (edit) the service definition to use a label/value of myapp: web
+
+kubectl edit service my-nginx
+
+Go to Selector tag, add enabled: "yes"
+
+which selector tag????
+
+zsh 2046 % kubectl edit service my-nginx
+service/my-nginx edited
+
+
+2. Check that you cannot connect to the exposed service anymore.
+
+I cant
+
+3. Change (edit) the deployment definition to add that label/value to the pod template.
+
+kubectl edit deployment my-nginx
+
+4. Check that you *can* connect to the exposed service again.
+
+What commands did you use to perform the following?
+
+1. Create a deployment running one pod using the official Apache image (httpd).
+
+kubectl create deployment apache --image httpd
+
+kubectl expose deployment apache --port 80 --type NodePort
+
+2. Change (edit) the deployment definition to add the label/value picked previously.
+
+kubectl edit deployment apache
+
+3. Connect to the exposed service again.
+
+(It should now yield responses from both Apache and NGINX.)
+
+kubectl label pod -l app=apache,pod-template-hash enabled-
+
+kubectl label pod -l app=my-nginx,pod-template-hash enabled-
