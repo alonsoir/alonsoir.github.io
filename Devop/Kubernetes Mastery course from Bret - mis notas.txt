@@ -26,13 +26,13 @@ shpod also gives you shell completion and a fancy prompt
 Create it with:
 
   kubectl apply -f https:k8smastery.com/shpod.yaml
-    namespace/shpod created
-    serviceaccount/shpod created
-    clusterrolebinding.rbac.authorization.k8s.io/shpod created
-    pod/shpod created
+  namespace/shpod created
+  serviceaccount/shpod created
+  clusterrolebinding.rbac.authorization.k8s.io/shpod created
+  pod/shpod created
 
-    Once you have applied the yaml above for the first time, you just have to run
-    this command the next time:
+Once you have applied the yaml above for the first time, you just have to run
+this command the next time:
 
   kubectl attach -i -t shpod -n shpod
 
@@ -2773,6 +2773,19 @@ kubectl create deployment my-nginx --image nginx
 
 kubectl expose deployment my-nginx --port=80 --type=NodePort
 
+Bret`s solution:
+
+  kubectl create deployment v1-nginx --image=nginx
+
+  kubectl expose deployment v1-nginx --port=80
+
+  or
+
+  kubectl create service v1-nginx --tcp=80
+
+  kubectl get svc v1-nginx
+  curl http://A.B.C.D
+
 3. Check that you can successfully connect to the exposed service.
 
 What commands did you use to perform the following?
@@ -2822,3 +2835,139 @@ kubectl edit deployment apache
 kubectl label pod -l app=apache,pod-template-hash enabled-
 
 kubectl label pod -l app=my-nginx,pod-template-hash enabled-
+
+
+Bret`s
+
+What commands did you use to perform the following?
+
+1. Create a deployment running one pod using the official NGINX image.
+
+  kubectl create deployment v1-nginx --image=nginx
+
+2. Expose that deployment.
+
+  kubectl expose deployment v1-nginx --port=80
+  or
+  kubectl create service v1-nginx --tcp=80
+3. Check that you can successfully connect to the exposed service.
+
+If you are using `shpod`, or if you are running directly on the cluster:
+
+  kubectl get svc v1-nginx
+  curl http://A.B.C.D
+  You can also run a program like `curl` in a container:
+
+  kubectl run --restart=Never --image=alpine -ti --rm testcontainer
+  ### Then, once you get a prompt, install curl
+  apk add curl
+  curl v1-nginx
+
+What commands did you use to perform the following?
+
+1. Change (edit) the service definition to use a label/value of myapp: web
+
+    Edit the YAML manifest of the service with kubectl edit service v1-nginx.
+    Look for the selector: section, and change app: v1-nginx to myapp: web.
+    Make sure to change the selector: section, not the labels: section!
+    After making the change, save and quit.
+
+2. Check that you cannot connect to the exposed service anymore.
+
+    The reason is doing above, i broke the way to connect the objects belonging
+    to a hierarchy. Remember:
+
+      Deployment
+        ReplicaSet
+          Pod
+            containers.
+
+    A service creates an ip address to that Deployment, and the way to connect them is
+    using the selectors. I am adding a new one, so k8s doesnt do the match between the
+    service and Deployment object.
+
+3. Change (edit) the deployment definition to add that label/value to the pod template.
+
+    The curl command should now time out. The service can't find a pod with that label yet.
+
+4. Check that you *can* connect to the exposed service again.
+
+    Edit the YAML manifest of the deployment with the next command:
+
+      kubectl edit deployment v1-nginx.
+
+    Look for the labels: section within the template: section, as we want to change
+    the labels of the pods created by the deployment, not of the deployment itself.
+
+    Ignore the matchLabels: one. Add myapp: web just below app: v1-nginx, with the
+    same indentation level. After making the change, save and quit.
+
+    We need both labels here, unlike the service selector.
+    The app label keeps the pod "linked" to the deployment/replicaset, and the new
+    one will cause the service to match to this pod.
+
+5. The `curl` command should now work again.
+
+  (It might need a minute, since changing the label will trigger a rolling update and create a new pod.)
+
+What commands did you use to perform the following?
+
+1. Create a deployment running one pod using the official Apache image (httpd).
+
+  kubectl create deployment v2-apache --image=httpd
+
+2. Change (edit) the deployment definition to add the label/value picked previously.
+
+  Same as previously: kubectl edit deployment v2-apache, then add the label myapp: web below app: v2-apache.
+  Again, make sure to change the labels in the pod template, not of the deployment itself.
+
+3. Connect to the exposed service again.
+
+(It should now yield responses from both Apache and NGINX.)
+
+3. The curl command show now yield responses from NGINX and Apache.
+
+(Note: you won't see a perfect round-robin, i.e. NGINX/Apache/NGINX/Apache etc.,
+but on average, Apache and NGINX should serve approximately 50% of the requests each.)
+
+
+YAML files!
+
+How to create a template file, using --dry-run
+
+zsh 2094 % kubectl create deployment web --image nginx -o yaml --dry-run=client
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: web
+  name: web
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: web
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: web
+    spec:
+      containers:
+      - image: nginx
+        name: nginx
+        resources: {}
+status: {}
+
+Another one:
+
+zsh 2097 % kubectl create namespace awesome-app -o yaml --dry-run=client
+apiVersion: v1
+kind: Namespace
+metadata:
+  creationTimestamp: null
+  name: awesome-app
+spec: {}
+status: {}
