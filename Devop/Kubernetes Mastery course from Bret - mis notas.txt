@@ -2933,6 +2933,8 @@ but on average, Apache and NGINX should serve approximately 50% of the requests 
 
 YAML files!
 
+https://docs.ansible.com/ansible/latest/reference_appendices/YAMLSyntax.html
+
 How to create a template file, using --dry-run
 
 zsh 2094 % kubectl create deployment web --image nginx -o yaml --dry-run=client
@@ -2971,3 +2973,430 @@ metadata:
   name: awesome-app
 spec: {}
 status: {}
+
+Using kubectl diff
+
+[mié 21/10/13 09:16 CEST][s002][x86_64/darwin20.0/20.6.0][5.8]
+<aironman@MacBook-Pro-de-Alonso:~>
+zsh 2127 % curl -O https://k8smastery.com/just-a-pod.yaml
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100   124  100   124    0     0     89      0  0:00:01  0:00:01 --:--:--    89
+
+[mié 21/10/13 09:28 CEST][s002][x86_64/darwin20.0/20.6.0][5.8]
+<aironman@MacBook-Pro-de-Alonso:~>
+zsh 2128 % kubectl apply -f just-a-pod.yaml
+pod/hello created
+
+# Change nginx version to 1.17
+[mié 21/10/13 09:28 CEST][s002][x86_64/darwin20.0/20.6.0][5.8]
+<aironman@MacBook-Pro-de-Alonso:~>
+zsh 2129 % vim just-a-pod.yaml
+
+[mié 21/10/13 09:30 CEST][s002][x86_64/darwin20.0/20.6.0][5.8]
+<aironman@MacBook-Pro-de-Alonso:~>
+zsh 2131 [2] % kubectl diff -f just-a-pod.yaml
+diff -u -N /var/folders/0x/gmzly6vn2f7ggfk47bdcsbnc0000gn/T/LIVE-762420065/v1.Pod.default.hello /var/folders/0x/gmzly6vn2f7ggfk47bdcsbnc0000gn/T/MERGED-220878156/v1.Pod.default.hello
+--- /var/folders/0x/gmzly6vn2f7ggfk47bdcsbnc0000gn/T/LIVE-762420065/v1.Pod.default.hello	2021-10-13 09:30:11.000000000 +0200
++++ /var/folders/0x/gmzly6vn2f7ggfk47bdcsbnc0000gn/T/MERGED-220878156/v1.Pod.default.hello	2021-10-13 09:30:11.000000000 +0200
+@@ -75,7 +75,7 @@
+   uid: 82c7ee65-6ee0-43e0-9e49-37f891bad31c
+ spec:
+   containers:
+-  - image: nginx
++  - image: nginx:1.17
+     imagePullPolicy: Always
+     name: hello
+     resources: {}
+[mié 21/10/13 09:30 CEST][s002][x86_64/darwin20.0/20.6.0][5.8]
+<aironman@MacBook-Pro-de-Alonso:~>
+zsh 2132 [1] %
+
+Strategy Rolling Updates!
+
+I can do rolling updates to Deployment, DaemonSets and statefulsets!
+Editing them, the yaml file, will result in a rolling update
+The resources can be monitored using a command like this:
+
+shpod:~# kubectl get deployments -o json | jq ".items[] | {name:.metadata.name} + .spec.strategy.rollingUpdate"
+{
+  "name": "dashboard",
+  "maxSurge": "25%",
+  "maxUnavailable": "25%"
+}
+{
+  "name": "hasher",
+  "maxSurge": "25%",
+  "maxUnavailable": "25%"
+}
+{
+  "name": "redis",
+  "maxSurge": "25%",
+  "maxUnavailable": "25%"
+}
+{
+  "name": "rng",
+  "maxSurge": "25%",
+  "maxUnavailable": "25%"
+}
+{
+  "name": "webui",
+  "maxSurge": "25%",
+  "maxUnavailable": "25%"
+}
+{
+  "name": "worker",
+  "maxSurge": "25%",
+  "maxUnavailable": "25%"
+}
+
+or using the command kubectl rollout
+
+shpod:~# kubectl get deployments
+NAME        READY   UP-TO-DATE   AVAILABLE   AGE
+dashboard   1/1     1            1           5d17h
+hasher      1/1     1            1           10m
+redis       1/1     1            1           10m
+rng         1/1     1            1           10m
+webui       1/1     1            1           10m
+worker      10/10   10           10          10m
+shpod:~# kubectl rollout status deployment worker
+deployment "worker" successfully rolled out
+shpod:~# kubectl rollout history deployment worker
+deployment.apps/worker
+REVISION  CHANGE-CAUSE
+1         <none>
+
+What happen if you try to update a deployment in a wrong way?
+
+shpod:~# kubectl set image deploy worker worker=dockercoins/worker:v0.3
+deployment.apps/worker image updated
+shpod:~# kubectl rollout status deploy worker
+Waiting for deployment "worker" rollout to finish: 5 out of 10 new replicas have been updated...
+
+[mié 21/10/13 10:44 CEST][s002][x86_64/darwin20.0/20.6.0][5.8]
+<aironman@MacBook-Pro-de-Alonso:~>
+zsh 2135 % kubectl get deployments -w
+NAME        READY   UP-TO-DATE   AVAILABLE   AGE
+dashboard   1/1     1            1           5d17h
+hasher      1/1     1            1           19m
+redis       1/1     1            1           19m
+rng         1/1     1            1           19m
+webui       1/1     1            1           19m
+worker      8/10    5            8           19m
+
+[mié 21/10/13 10:44 CEST][s003][x86_64/darwin20.0/20.6.0][5.8]
+<aironman@MacBook-Pro-de-Alonso:~>
+zsh 2136 % kubectl get pods -w
+NAME                         READY   STATUS             RESTARTS      AGE
+dashboard-79c6957b6f-5bdrr   1/1     Running            2 (23h ago)   5d17h
+hasher-ccc9f44ff-z56pz       1/1     Running            0             19m
+redis-6749d7bd65-c6fng       1/1     Running            0             19m
+rng-5d8b6c4cff-w4mw4         1/1     Running            0             19m
+webui-5f69bbf966-vhk6m       1/1     Running            0             19m
+worker-699dc8c88-f2j6j       1/1     Running            0             19m
+worker-699dc8c88-h2nn2       1/1     Running            0             19m
+worker-699dc8c88-ml96b       1/1     Running            0             19m
+worker-699dc8c88-mv5rs       1/1     Running            0             19m
+worker-699dc8c88-mxfpl       1/1     Running            0             19m
+worker-699dc8c88-tq584       1/1     Running            0             19m
+worker-699dc8c88-wrkpl       1/1     Running            0             19m
+worker-699dc8c88-xhgrx       1/1     Running            0             19m
+worker-6b6cd45fb6-4mjg9      0/1     ImagePullBackOff   0             48s
+worker-6b6cd45fb6-6gzff      0/1     ImagePullBackOff   0             48s
+worker-6b6cd45fb6-hnf5n      0/1     ErrImagePull       0             48s
+worker-6b6cd45fb6-hxpn4      0/1     ErrImagePull       0             48s
+worker-6b6cd45fb6-q62hb      0/1     ErrImagePull       0             48s
+worker-6b6cd45fb6-q62hb      0/1     ImagePullBackOff   0             51s
+worker-6b6cd45fb6-hnf5n      0/1     ImagePullBackOff   0             51s
+worker-6b6cd45fb6-hxpn4      0/1     ImagePullBackOff   0             52s
+worker-6b6cd45fb6-4mjg9      0/1     ErrImagePull       0             57s
+worker-6b6cd45fb6-6gzff      0/1     ErrImagePull       0             60s
+worker-6b6cd45fb6-hnf5n      0/1     ErrImagePull       0             65s
+worker-6b6cd45fb6-q62hb      0/1     ErrImagePull       0             67s
+worker-6b6cd45fb6-hxpn4      0/1     ErrImagePull       0             69s
+worker-6b6cd45fb6-4mjg9      0/1     ImagePullBackOff   0             69s
+worker-6b6cd45fb6-6gzff      0/1     ImagePullBackOff   0             71s
+worker-6b6cd45fb6-hnf5n      0/1     ImagePullBackOff   0             78s
+worker-6b6cd45fb6-hxpn4      0/1     ImagePullBackOff   0             80s
+worker-6b6cd45fb6-q62hb      0/1     ImagePullBackOff   0             80s
+worker-6b6cd45fb6-6gzff      0/1     ErrImagePull       0             110s
+worker-6b6cd45fb6-4mjg9      0/1     ErrImagePull       0             112s
+worker-6b6cd45fb6-q62hb      0/1     ErrImagePull       0             2m
+worker-6b6cd45fb6-hnf5n      0/1     ErrImagePull       0             2m1s
+worker-6b6cd45fb6-6gzff      0/1     ImagePullBackOff   0             2m2s
+worker-6b6cd45fb6-hxpn4      0/1     ErrImagePull       0             2m2s
+worker-6b6cd45fb6-4mjg9      0/1     ImagePullBackOff   0             2m7s
+worker-6b6cd45fb6-hnf5n      0/1     ImagePullBackOff   0             2m15s
+worker-6b6cd45fb6-q62hb      0/1     ImagePullBackOff   0             2m15s
+worker-6b6cd45fb6-hxpn4      0/1     ImagePullBackOff   0             2m17s
+worker-6b6cd45fb6-6gzff      0/1     ErrImagePull       0             3m9s
+worker-6b6cd45fb6-q62hb      0/1     ErrImagePull       0             3m20s
+worker-6b6cd45fb6-6gzff      0/1     ImagePullBackOff   0             3m22s
+worker-6b6cd45fb6-4mjg9      0/1     ErrImagePull       0             3m25s
+worker-6b6cd45fb6-hxpn4      0/1     ErrImagePull       0             3m28s
+worker-6b6cd45fb6-q62hb      0/1     ImagePullBackOff   0             3m33s
+worker-6b6cd45fb6-hnf5n      0/1     ErrImagePull       0             3m36s
+worker-6b6cd45fb6-4mjg9      0/1     ImagePullBackOff   0             3m38s
+worker-6b6cd45fb6-hxpn4      0/1     ImagePullBackOff   0             3m42s
+
+you see that there are a lot of errors, basically there is no v.0.3 version,
+so k8s cannot pull the image. But i know that because i provoked it.
+
+I can go to the dashboard, or execute a command like this:
+
+zsh 2158 mastery% kubectl describe deployment worker
+Name:                   worker
+Namespace:              default
+CreationTimestamp:      Wed, 13 Oct 2021 10:25:13 +0200
+Labels:                 app=worker
+Annotations:            deployment.kubernetes.io/revision: 2
+Selector:               app=worker
+Replicas:               10 desired | 5 updated | 13 total | 8 available | 5 unavailable
+StrategyType:           RollingUpdate
+MinReadySeconds:        0
+RollingUpdateStrategy:  25% max unavailable, 25% max surge
+Pod Template:
+  Labels:  app=worker
+  Containers:
+   worker:
+    Image:        dockercoins/worker:v0.3
+    Port:         <none>
+    Host Port:    <none>
+    Environment:  <none>
+    Mounts:       <none>
+  Volumes:        <none>
+Conditions:
+  Type           Status  Reason
+  ----           ------  ------
+  Available      True    MinimumReplicasAvailable
+  Progressing    False   ProgressDeadlineExceeded
+OldReplicaSets:  worker-699dc8c88 (8/8 replicas created)
+NewReplicaSet:   worker-6b6cd45fb6 (5/5 replicas created)
+Events:
+  Type    Reason             Age   From                   Message
+  ----    ------             ----  ----                   -------
+  Normal  ScalingReplicaSet  53m   deployment-controller  Scaled up replica set worker-699dc8c88 to 10
+  Normal  ScalingReplicaSet  34m   deployment-controller  Scaled up replica set worker-6b6cd45fb6 to 3
+  Normal  ScalingReplicaSet  34m   deployment-controller  Scaled down replica set worker-699dc8c88 to 8
+  Normal  ScalingReplicaSet  34m   deployment-controller  Scaled up replica set worker-6b6cd45fb6 to 5
+[mié 21/10/13 11:18 CEST][s004][x86_64/darwin20.0/20.6.0][5.8]
+<aironman@MacBook-Pro-de-Alonso:~/git/kubernetes-mastery/k8s>
+zsh 2159 mastery%
+
+how can i rollout to a previous deployment? i know that worker deployment is
+causing problems, so i will rollout that deployment:
+
+[mié 21/10/13 11:18 CEST][s004][x86_64/darwin20.0/20.6.0][5.8]
+<aironman@MacBook-Pro-de-Alonso:~/git/kubernetes-mastery/k8s>
+zsh 2159 mastery% kubectl rollout undo deployment worker
+deployment.apps/worker rolled back
+
+[mié 21/10/13 11:25 CEST][s004][x86_64/darwin20.0/20.6.0][5.8]
+<aironman@MacBook-Pro-de-Alonso:~/git/kubernetes-mastery/k8s>
+zsh 2160 mastery% kubectl rollout status deployment worker
+
+deployment "worker" successfully rolled out
+
+In the dashboard i can see now that i have 10 containers in the worker pod again.
+What happen if i execute rollout undo a second time?
+i will be at problems again because k8s will be in the previous state with the
+deployment version that causes the problem! Thats a good reason to work with yaml files instead of
+commands.
+
+Listing history deployments:
+
+[mié 21/10/13 11:37 CEST][s004][x86_64/darwin20.0/20.6.0][5.8]
+<aironman@MacBook-Pro-de-Alonso:~/git/kubernetes-mastery/k8s>
+zsh 2175 [1] mastery% kubectl rollout history deployment
+deployment.apps/dashboard
+REVISION  CHANGE-CAUSE
+1         <none>
+
+deployment.apps/hasher
+REVISION  CHANGE-CAUSE
+1         <none>
+
+deployment.apps/redis
+REVISION  CHANGE-CAUSE
+1         <none>
+
+deployment.apps/rng
+REVISION  CHANGE-CAUSE
+1         <none>
+
+deployment.apps/webui
+REVISION  CHANGE-CAUSE
+1         <none>
+
+deployment.apps/worker
+REVISION  CHANGE-CAUSE
+2         <none>
+3         <none>
+
+If we have too much data, we can filter:
+
+[mié 21/10/13 12:05 CEST][s004][x86_64/darwin20.0/20.6.0][5.8]
+<aironman@MacBook-Pro-de-Alonso:~/git/kubernetes-mastery/k8s>
+zsh 2176 mastery% kubectl rollout history deployment worker
+deployment.apps/worker
+REVISION  CHANGE-CAUSE
+2         <none>
+3         <none>
+
+Check the annotations from our replicasets:
+
+[mié 21/10/13 12:11 CEST][s004][x86_64/darwin20.0/20.6.0][5.8]
+<aironman@MacBook-Pro-de-Alonso:~/git/kubernetes-mastery/k8s>
+zsh 2179 [1] mastery% kubectl describe replicasets -l app=worker | grep -A3 Annotations
+Annotations:    deployment.kubernetes.io/desired-replicas: 10
+                deployment.kubernetes.io/max-replicas: 13
+                deployment.kubernetes.io/revision: 3
+                deployment.kubernetes.io/revision-history: 1
+--
+Annotations:    deployment.kubernetes.io/desired-replicas: 10
+                deployment.kubernetes.io/max-replicas: 13
+                deployment.kubernetes.io/revision: 2
+Controlled By:  Deployment/worker
+
+Rollback to the known good deployment version, in my case, i know that version 2 is fine:
+
+[mié 21/10/13 12:17 CEST][s004][x86_64/darwin20.0/20.6.0][5.8]
+<aironman@MacBook-Pro-de-Alonso:~/git/kubernetes-mastery/k8s>
+zsh 2182 [1] mastery% kubectl rollout undo deployment worker --to-revision=2
+deployment.apps/worker rolled back
+
+Probably, in a real escenario, revision would be a hash, because it will be the same hash commit number.
+
+Health checks!
+
+livenessProbe example:
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: rng
+  name: rng
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: rng
+  template:
+    metadata:
+      labels:
+        app: rng
+    spec:
+      containers:
+      - image: dockercoins/rng:v0.1
+        name: rng
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 80
+          initialDelaySeconds: 30
+          periodSeconds: 5
+
+zsh 2199 master% kubectl get events -w
+          0s          Warning   Unhealthy           pod/rng-7695b69f79-swjdf      Liveness probe failed: Get "http://172.17.0.21:80/": context deadline exceeded (Client.Timeout exceeded while awaiting headers)
+          0s          Warning   Unhealthy           pod/rng-7695b69f79-swjdf      Liveness probe failed: Get "http://172.17.0.21:80/": context deadline exceeded (Client.Timeout exceeded while awaiting headers)
+          0s          Warning   Unhealthy           pod/rng-7695b69f79-swjdf      Liveness probe failed: Get "http://172.17.0.21:80/": context deadline exceeded (Client.Timeout exceeded while awaiting headers)
+          0s          Warning   Unhealthy           pod/rng-7695b69f79-swjdf      Liveness probe failed: Get "http://172.17.0.21:80/": context deadline exceeded (Client.Timeout exceeded while awaiting headers)
+          0s          Normal    Killing             pod/rng-7695b69f79-swjdf      Container rng failed liveness probe, will be restarted
+          0s          Normal    Pulled              pod/rng-7695b69f79-swjdf      Container image "dockercoins/rng:v0.1" already present on machine
+          0s          Normal    Created             pod/rng-7695b69f79-swjdf      Created container rng
+          0s          Normal    Started             pod/rng-7695b69f79-swjdf      Started container rng
+          0s          Warning   Unhealthy           pod/rng-7695b69f79-swjdf      Liveness probe failed: Get "http://172.17.0.21:80/": context deadline exceeded (Client.Timeout exceeded while awaiting headers)
+          0s          Warning   Unhealthy           pod/rng-7695b69f79-swjdf      Liveness probe failed: Get "http://172.17.0.21:80/": context deadline exceeded (Client.Timeout exceeded while awaiting headers)
+          0s          Warning   Unhealthy           pod/rng-7695b69f79-swjdf      Liveness probe failed: Get "http://172.17.0.21:80/": context deadline exceeded (Client.Timeout exceeded while awaiting headers)
+          0s          Normal    Killing             pod/rng-7695b69f79-swjdf      Container rng failed liveness probe, will be restarted
+          0s          Normal    Pulled              pod/rng-7695b69f79-swjdf      Container image "dockercoins/rng:v0.1" already present on machine
+          0s          Normal    Created             pod/rng-7695b69f79-swjdf      Created container rng
+          0s          Normal    Started             pod/rng-7695b69f79-swjdf      Started container rng
+
+[mié 21/10/13 18:26 CEST][s002][x86_64/darwin20.0/20.6.0][5.8]
+<aironman@MacBook-Pro-de-Alonso:~>
+zsh 2199 % kubectl get pods -w
+          NAME                         READY   STATUS    RESTARTS   AGE
+          dashboard-79c6957b6f-4zjfk   1/1     Running   0          7h19m
+          hasher-ccc9f44ff-z56pz       1/1     Running   0          8h
+          redis-6749d7bd65-c6fng       1/1     Running   0          8h
+          rng-7695b69f79-swjdf         1/1     Running   0          3m33s
+          webui-5f69bbf966-vhk6m       1/1     Running   0          8h
+          worker-699dc8c88-tq584       1/1     Running   0          8h
+          rng-7695b69f79-swjdf         1/1     Running   1 (0s ago)   6m32s
+          rng-7695b69f79-swjdf         1/1     Running   2 (1s ago)   7m48s
+
+shpod:~# ab -c 10 -n 1000 http://10.108.188.190/1
+          This is ApacheBench, Version 2.3 <$Revision: 1879490 $>
+          Copyright 1996 Adam Twiss, Zeus Technology Ltd, http://www.zeustech.net/
+          Licensed to The Apache Software Foundation, http://www.apache.org/
+
+          Benchmarking 10.108.188.190 (be patient)
+          Completed 100 requests
+          Completed 200 requests
+          Completed 300 requests
+          Completed 400 requests
+          ^C
+
+          Server Software:        Werkzeug/0.14.1
+          Server Hostname:        10.108.188.190
+          Server Port:            80
+
+          Document Path:          /1
+          Document Length:        1 bytes
+
+          Concurrency Level:      10
+          Time taken for tests:   47.607 seconds
+          Complete requests:      428
+          Failed requests:        0
+          Total transferred:      65912 bytes
+          HTML transferred:       428 bytes
+          Requests per second:    8.99 [#/sec] (mean)
+          Time per request:       1112.324 [ms] (mean)
+          Time per request:       111.232 [ms] (mean, across all concurrent requests)
+          Transfer rate:          1.35 [Kbytes/sec] received
+
+          Connection Times (ms)
+                        min  mean[+/-sd] median   max
+          Connect:        0    0   0.2      0       2
+          Processing:   103 1098 112.6   1128    1154
+          Waiting:      102 1098 112.7   1128    1154
+          Total:        105 1099 112.5   1128    1154
+
+          Percentage of the requests served within a certain time (ms)
+            50%   1128
+            66%   1130
+            75%   1132
+            80%   1133
+            90%   1137
+            95%   1142
+            98%   1149
+            99%   1151
+           100%   1154 (longest request)
+
+Again, 100 concurrent requests!
+
+shpod:~# ab -c 100 -n 1000 http://10.108.188.190/1
+          This is ApacheBench, Version 2.3 <$Revision: 1879490 $>
+          Copyright 1996 Adam Twiss, Zeus Technology Ltd, http://www.zeustech.net/
+          Licensed to The Apache Software Foundation, http://www.apache.org/
+
+          Benchmarking 10.108.188.190 (be patient)
+          apr_socket_recv: Connection reset by peer (104)
+          Total of 6 requests completed
+          shpod:~# ab -c 100 -n 1000 http://10.108.188.190/1
+          This is ApacheBench, Version 2.3 <$Revision: 1879490 $>
+          Copyright 1996 Adam Twiss, Zeus Technology Ltd, http://www.zeustech.net/
+          Licensed to The Apache Software Foundation, http://www.apache.org/
+
+          Benchmarking 10.108.188.190 (be patient)
+          Completed 100 requests
+          Completed 200 requests
+          Completed 300 requests
+          Completed 400 requests
+          Completed 500 requests
+          apr_socket_recv: Connection reset by peer (104)
+          Total of 535 requests completed
+          shpod:~#
