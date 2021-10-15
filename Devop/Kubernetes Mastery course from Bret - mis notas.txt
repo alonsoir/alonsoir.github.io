@@ -3400,3 +3400,28 @@ shpod:~# ab -c 100 -n 1000 http://10.108.188.190/1
           apr_socket_recv: Connection reset by peer (104)
           Total of 535 requests completed
           shpod:~#
+
+Managing configs!
+
+Traefik,
+
+downward-api: https://kubernetes.io/docs/tasks/inject-data-application/downward-api-volume-expose-pod-information/
+
+env variables...
+
+I think that i prefer config maps.
+
+# create a config map with a single key "app.conf"
+kubectl create configmap my-app-config --from-file=app.conf
+
+# create a config map with a single key "app.conf" but another value "app-prod.conf"
+kubectl create configmap my-app-config --from-file=app.conf=app-prod.conf
+
+# create a config key with multiple keys, one per file in "config.d" directory
+kubectl create configmap my-app-config --from-file=config.d/
+
+# create a configmap with two pair of key/value 
+kubectl create configmap my-app-config --from-literal=foreground=red --from-literal=backgroud=black
+
+# Create a configmap from a file containing key=val pairs
+kubectl create configmap my-app-config --from-env-file=app.conf
