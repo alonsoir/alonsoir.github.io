@@ -1,3 +1,4 @@
+
 Imagina que tus compañeros estan desarrollando algo que finalmente llega a ser un contenedor docker,
 le llamaremos docker101tutorial, alojada en tu docker registry privado y quieres tener siempre la última versión desplegada en tu anfitrion Docker, pues, podríamos hacer algo así:
 
@@ -26,7 +27,7 @@ Pon algo así:
 
 	0 0 8 1/1 * ? * sh $HOME/.docker/cron.sh
 
-Tengo ya memoria de pez para estas cosas, ya que nunca me acuerdo del orden de ese patrón, por lo que al final acabo usando cosas asi para calcular la expresion cron. 
+Tengo ya memoria de pez para estas cosas, ya que nunca me acuerdo del orden de ese patrón, por lo que al final acabo usando cosas asi para calcular la expresion cron.
 
 Esta significa, ejecuta el script cron.sh a las 08:00 cada día.
 

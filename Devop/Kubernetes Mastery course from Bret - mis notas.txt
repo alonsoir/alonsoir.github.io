@@ -3420,8 +3420,197 @@ kubectl create configmap my-app-config --from-file=app.conf=app-prod.conf
 # create a config key with multiple keys, one per file in "config.d" directory
 kubectl create configmap my-app-config --from-file=config.d/
 
-# create a configmap with two pair of key/value 
+# create a configmap with two pair of key/value
 kubectl create configmap my-app-config --from-literal=foreground=red --from-literal=backgroud=black
 
 # Create a configmap from a file containing key=val pairs
 kubectl create configmap my-app-config --from-env-file=app.conf
+
+I am going to create a configmap using this conf file:
+
+haproxy.cfg
+
+global
+  daemon
+  maxconn 256
+
+defaults
+  mode tcp
+  timeout connect 5000ms
+  timeout client 50000ms
+  timeout server 50000ms
+
+frontend the-frontend
+  bind *:80
+  default_backend the-backend
+
+backend the-backend
+  server google.com-80 google.com:80 maxconn 32 check
+  server ibm.fr-80 ibm.fr:80 maxconn 32 check
+
+kubectl create configmap haproxy --from-file=haproxy.cfg
+
+zsh 2268 mastery% kubectl get configmap haproxy -o yaml
+apiVersion: v1
+data:
+  haproxy.cfg: |+
+    global
+      daemon
+      maxconn 256
+
+    defaults
+      mode tcp
+      timeout connect 5000ms
+      timeout client 50000ms
+      timeout server 50000ms
+
+    frontend the-frontend
+      bind *:80
+      default_backend the-backend
+
+    backend the-backend
+      server google.com-80 google.com:80 maxconn 32 check
+      server ibm.fr-80 ibm.fr:80 maxconn 32 check
+
+kind: ConfigMap
+metadata:
+  creationTimestamp: "2021-10-15T08:47:14Z"
+  name: haproxy
+  namespace: default
+  resourceVersion: "329345"
+  uid: ea15785a-09de-44cc-839b-1478118334b6
+
+Now, i am going to run a pod, haproxy.yaml, which is going to use that configmap:
+
+haproxy.yaml
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: haproxy
+spec:
+  volumes:
+  - name: config
+    configMap:
+      name: haproxy
+  containers:
+  - name: haproxy
+    image: haproxy:1
+    volumeMounts:
+    - name: config
+      mountPath: /usr/local/etc/haproxy/
+
+<aironman@MacBook-Pro-de-Alonso:~/git/kubernetes-mastery/k8s>
+zsh 2273 mastery% kubectl apply -f haproxy.yaml
+pod/haproxy created
+
+shpod:~# kubectl get pod haproxy -o wide
+NAME      READY   STATUS    RESTARTS   AGE   IP           NODE       NOMINATED NODE   READINESS GATES
+haproxy   1/1     Running   0          44s   172.17.0.2   minikube   <none>           <none>
+shpod:~# IP=$(kubectl get pod haproxy -o json | jq -r .status.podIP)
+shpod:~# echo $IP
+172.17.0.2
+
+shpod:~# echo $IP
+172.17.0.2
+
+Now i am going to invoke the pod to get sure that it is using the configmap.
+
+shpod:~# curl $IP
+<HTML><HEAD><meta http-equiv="content-type" content="text/html;charset=utf-8">
+<TITLE>301 Moved</TITLE></HEAD><BODY>
+<H1>301 Moved</H1>
+The document has moved
+<A HREF="http://www.google.com/">here</A>.
+</BODY></HTML>
+
+shpod:~# curl $IP
+{"matched_rule":[{"source":"/(.*)","target":"//www.ibm.com/","target_rule":"//www.ibm.com/","status":301,"hostname":"default","extracted_host":"172.17.0.2"}]}
+shpod:~# curl $IP
+<HTML><HEAD><meta http-equiv="content-type" content="text/html;charset=utf-8">
+<TITLE>301 Moved</TITLE></HEAD><BODY>
+<H1>301 Moved</H1>
+The document has moved
+<A HREF="http://www.google.com/">here</A>.
+</BODY></HTML>
+
+shpod:~# curl $IP
+{"matched_rule":[{"source":"/(.*)","target":"//www.ibm.com/","target_rule":"//www.ibm.com/","status":301,"hostname":"default","extracted_host":"172.17.0.2"}]}
+shpod:~# curl $IP
+<HTML><HEAD><meta http-equiv="content-type" content="text/html;charset=utf-8">
+<TITLE>301 Moved</TITLE></HEAD><BODY>
+<H1>301 Moved</H1>
+The document has moved
+<A HREF="http://www.google.com/">here</A>.
+</BODY></HTML>
+
+shpod:~# curl $IP
+{"matched_rule":[{"source":"/(.*)","target":"//www.ibm.com/","target_rule":"//www.ibm.com/","status":301,"hostname":"default","extracted_host":"172.17.0.2"}]}
+shpod:~#
+
+As you can see, the proxy is jumping between google and ibm...
+
+Now, i am going to create a registry configmap, and a pod that is going to use
+the configmap:
+
+shpod:~# kubectl create configmap registry --from-literal=http.addr=0.0.0.0:80
+configmap/registry created
+
+shpod:~# kubectl get configmap registry -o wide
+NAME       DATA   AGE
+registry   1      19s
+
+shpod:~# kubectl get configmap registry -o yaml
+apiVersion: v1
+data:
+  http.addr: 0.0.0.0:80
+kind: ConfigMap
+metadata:
+  creationTimestamp: "2021-10-15T10:45:56Z"
+  name: registry
+  namespace: default
+  resourceVersion: "334340"
+  uid: 888426f2-3111-40c0-9e69-0dc1f842fdf1
+
+registry.YAML
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: registry
+spec:
+  containers:
+  - name: registry
+    image: registry
+    env:
+    - name: REGISTRY_HTTP_ADDR
+      valueFrom:
+        configMapKeyRef:
+          name: registry
+          key: http.addr
+
+[vie 21/10/15 12:50 CEST][s002][x86_64/darwin20.0/20.6.0][5.8]
+<aironman@MacBook-Pro-de-Alonso:~/git/kubernetes-mastery/k8s>
+zsh 2275 mastery% kubectl apply -f registry.yaml
+pod/registry created
+
+shpod:~# kubectl get pod registry -o wide
+NAME       READY   STATUS    RESTARTS   AGE   IP           NODE       NOMINATED NODE   READINESS GATES
+registry   1/1     Running   0          49s   172.17.0.4   minikube   <none>           <none>
+
+shpod:~# IP_REGISTRY=$(kubectl get pod registry -o json | jq -r .status.podIP)
+shpod:~# echo $IP_REGISTRY
+172.17.0.4
+
+Now, by default, a docker registry is listening in port 5000, but, i applied
+and enviroment variable with value 0.0.0.0:80. 0.0.0.0 is translated to internal
+pod ip address and the port is 80, son i can curl it.
+
+shpod:~# curl $IP_REGISTRY/v2/_catalog
+{"repositories":[]}
+
+Of course, this registry container is empty, but it is working.
+
+Secrets!
+
+https://kubernetes.io/docs/tasks/administer-cluster/encrypt-data/
