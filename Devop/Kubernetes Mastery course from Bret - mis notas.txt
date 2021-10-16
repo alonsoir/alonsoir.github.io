@@ -3613,4 +3613,44 @@ Of course, this registry container is empty, but it is working.
 
 Secrets!
 
+zsh 2276 mastery% kubectl get secrets -o yaml
+apiVersion: v1
+items:
+- apiVersion: v1
+  data:
+...
+
+Remember, secrets are in Base64, that is not encrypted, so you to encrypt them at rest.
+
 https://kubernetes.io/docs/tasks/administer-cluster/encrypt-data/
+
+https://kubernetes.io/docs/concepts/configuration/secret/
+
+After that, you can access secrets as you access a configmap.
+
+Ingress
+
+It is basically a proxy. Look, it was always there, listening in port 80...
+
+<aironman@MacBook-Pro-de-Alonso:~/git/kubernetes-mastery/k8s>
+zsh 2313 mastery% kubectl get ingress
+NAME              CLASS    HOSTS   ADDRESS   PORTS   AGE
+minimal-ingress   <none>   *                 80      31d
+
+[vie 21/10/15 17:20 CEST][s002][x86_64/darwin20.0/20.6.0][5.8]
+<aironman@MacBook-Pro-de-Alonso:~/git/kubernetes-mastery/k8s>
+zsh 2314 mastery% kubectl get ingresses
+NAME              CLASS    HOSTS   ADDRESS   PORTS   AGE
+minimal-ingress   <none>   *                 80      31d
+
+[vie 21/10/15 17:21 CEST][s002][x86_64/darwin20.0/20.6.0][5.8]
+<aironman@MacBook-Pro-de-Alonso:~/git/kubernetes-mastery/k8s>
+zsh 2315 mastery% kubectl get ing
+NAME              CLASS    HOSTS   ADDRESS   PORTS   AGE
+minimal-ingress   <none>   *                 80      31d
+
+designed to expose http services.
+
+load balancing, ssl termination, name-based virtual hosting.
+
+DNS https://nip.io/
