@@ -3653,4 +3653,164 @@ designed to expose http services.
 
 load balancing, ssl termination, name-based virtual hosting.
 
-DNS https://nip.io/
+easy DNS resolver https://nip.io/
+
+I am going to create the nginx controller
+
+[vie 21/10/15 17:58 CEST][s002][x86_64/darwin20.0/20.6.0][5.8]
+<aironman@MacBook-Pro-de-Alonso:~/git/kubernetes-mastery/k8s>
+zsh 2318 mastery% kubectl apply -f ic-nginx-hn.yaml
+namespace/ingress-nginx created
+serviceaccount/ingress-nginx created
+configmap/ingress-nginx-controller created
+clusterrole.rbac.authorization.k8s.io/ingress-nginx created
+clusterrolebinding.rbac.authorization.k8s.io/ingress-nginx created
+role.rbac.authorization.k8s.io/ingress-nginx created
+rolebinding.rbac.authorization.k8s.io/ingress-nginx created
+service/ingress-nginx-controller created
+deployment.apps/ingress-nginx-controller created
+
+Checking...
+
+[vie 21/10/15 18:05 CEST][s002][x86_64/darwin20.0/20.6.0][5.8]
+<aironman@MacBook-Pro-de-Alonso:~/git/kubernetes-mastery/k8s>
+zsh 2329 mastery% kubectl describe -n ingress-nginx deployments ingress-nginx-controller
+Name:                   ingress-nginx-controller
+Namespace:              ingress-nginx
+CreationTimestamp:      Fri, 15 Oct 2021 17:59:19 +0200
+Labels:                 app.kubernetes.io/component=controller
+                        app.kubernetes.io/instance=ingress-nginx
+                        app.kubernetes.io/managed-by=Helm
+                        app.kubernetes.io/name=ingress-nginx
+                        app.kubernetes.io/version=0.47.0
+                        helm.sh/chart=ingress-nginx-3.34.0
+Annotations:            deployment.kubernetes.io/revision: 1
+Selector:               app.kubernetes.io/component=controller,app.kubernetes.io/instance=ingress-nginx,app.kubernetes.io/name=ingress-nginx
+Replicas:               1 desired | 1 updated | 1 total | 0 available | 1 unavailable
+StrategyType:           RollingUpdate
+MinReadySeconds:        0
+RollingUpdateStrategy:  25% max unavailable, 25% max surge
+Pod Template:
+  Labels:           app.kubernetes.io/component=controller
+                    app.kubernetes.io/instance=ingress-nginx
+                    app.kubernetes.io/name=ingress-nginx
+  Service Account:  ingress-nginx
+  Containers:
+   controller:
+    Image:       k8s.gcr.io/ingress-nginx/controller:v0.47.0@sha256:a1e4efc107be0bb78f32eaec37bef17d7a0c81bec8066cdf2572508d21351d0b
+    Ports:       80/TCP, 443/TCP
+    Host Ports:  80/TCP, 443/TCP
+    Args:
+      /nginx-ingress-controller
+      --election-id=ingress-controller-leader
+      --ingress-class=nginx
+      --configmap=$(POD_NAMESPACE)/ingress-nginx-controller
+    Requests:
+      cpu:      100m
+      memory:   90Mi
+    Liveness:   http-get http://:10254/healthz delay=10s timeout=1s period=10s #success=1 #failure=5
+    Readiness:  http-get http://:10254/healthz delay=10s timeout=1s period=10s #success=1 #failure=3
+    Environment:
+      POD_NAME:        (v1:metadata.name)
+      POD_NAMESPACE:   (v1:metadata.namespace)
+      LD_PRELOAD:     /usr/local/lib/libmimalloc.so
+    Mounts:           <none>
+  Volumes:            <none>
+Conditions:
+  Type           Status  Reason
+  ----           ------  ------
+  Available      False   MinimumReplicasUnavailable
+  Progressing    True    ReplicaSetUpdated
+OldReplicaSets:  <none>
+NewReplicaSet:   ingress-nginx-controller-58c95c8df4 (1/1 replicas created)
+Events:
+  Type    Reason             Age    From                   Message
+  ----    ------             ----   ----                   -------
+  Normal  ScalingReplicaSet  6m42s  deployment-controller  Scaled up replica set ingress-nginx-controller-58c95c8df4 to 1
+[vie 21/10/15 18:06 CEST][s002][x86_64/darwin20.0/20.6.0][5.8]
+<aironman@MacBook-Pro-de-Alonso:~/git/kubernetes-mastery/k8s>
+zsh 2330 mastery%
+
+There are some problems with ingress in localhost using minikube.
+This is the stackoverflow answer:
+
+Hi Bret, i have tried to create the cheese nginx services, but they are not working.
+I suspect that nip.io is not working properly. Although, i have tried with hello-world sample from kubernetes,
+and it is not working either.
+
+These are the commands i tried:
+
+kubectl create deployment some-web --image=gcr.io/google-samples/hello-app:1.0
+
+kubectl expose deployment some-web --type=NodePort --port=8080
+
+kubectl get service some-web
+
+minikube service some-web --url
+
+The above commands works ok, but when i try to run example-ingress.yaml, it does not work.
+
+kubectl apply -f https://k8s.io/examples/service/networking/example-ingress.yaml
+
+ingress.networking.k8s.io/example-ingress unchanged
+
+kubectl get ingress
+
+NAME              CLASS    HOSTS                             ADDRESS   PORTS   AGE
+cheddar           <none>   cheddar.192.168.64.3.nip.io                 80      38m
+example-ingress   <none>   hello-world.info                            80      2d16h
+stilton           <none>   stilton.192.168.64.3.nip.io                 80      38m
+wensleydale       <none>   wensleydale.192.168.64.3.nip.io             80      38m
+
+
+minikube ip
+
+192.168.64.3
+
+I updated /etc/hosts file with this line:
+
+192.168.64.3 hello-world.info
+
+zsh 2443 mastery% curl hello-world.info
+
+<html>
+<head><title>404 Not Found</title></head>
+<body>
+<center><h1>404 Not Found</h1></center>
+<hr><center>nginx</center>
+</body>
+</html>
+
+zsh 2444 mastery% curl 192.168.64.3
+
+<html>
+<head><title>404 Not Found</title></head>
+<body>
+<center><h1>404 Not Found</h1></center>
+<hr><center>nginx</center>
+</body>
+</html>
+
+[lun 21/10/18 11:48 CEST][s004][x86_64/darwin20.0/20.6.0][5.8]
+
+<aironman@MacBook-Pro-de-Alonso:~/git/kubernetes-mastery/k8s>
+
+zsh 2445 mastery% ping 192.168.64.3
+
+PING 192.168.64.3 (192.168.64.3): 56 data bytes
+64 bytes from 192.168.64.3: icmp_seq=0 ttl=64 time=0.421 ms
+64 bytes from 192.168.64.3: icmp_seq=1 ttl=64 time=0.335 ms
+64 bytes from 192.168.64.3: icmp_seq=2 ttl=64 time=0.289 ms
+64 bytes from 192.168.64.3: icmp_seq=3 ttl=64 time=0.363 ms
+^C
+
+minikube tunnel is working too. If i deactive it , it is not working either.
+
+zsh 2446 mastery% minikube version
+minikube version: v1.23.2
+
+zsh 2447 mastery% kubectl version
+Client Version: version.Info{Major:"1", Minor:"22", GitVersion:"v1.22.2", GitCommit:"8b5a19147530eaac9476b0ab82980b4088bbc1b2", GitTreeState:"clean", BuildDate:"2021-09-15T21:31:32Z", GoVersion:"go1.16.8", Compiler:"gc", Platform:"darwin/amd64"}
+Server Version: version.Info{Major:"1", Minor:"22", GitVersion:"v1.22.1", GitCommit:"632ed300f2c34f6d6d15ca4cef3d3c7073412212", GitTreeState:"clean", BuildDate:"2021-08-19T15:39:34Z", GoVersion:"go1.16.7", Compiler:"gc", Platform:"linux/amd64"}
+
+Please, a little help?
