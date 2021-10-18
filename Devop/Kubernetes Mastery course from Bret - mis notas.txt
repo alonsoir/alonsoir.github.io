@@ -413,6 +413,8 @@ Allocated resources:
 Events:              <none>
 shpod:~#
 
+part 2
+
 Listing types of resources available in a cluster:
 
 shpod:~# kubectl api-resources
