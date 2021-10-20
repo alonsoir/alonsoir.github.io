@@ -1,0 +1,237 @@
+Hi Bret, i have tried to create the cheese nginx services, but they are not working.
+I suspect that nip.io is not working properly. Although, i have tried with hello-world sample from kubernetes,
+and it is not working either.
+
+These are the commands i tried:
+
+kubectl create deployment some-web --image=gcr.io/google-samples/hello-app:1.0
+
+kubectl expose deployment some-web --type=NodePort --port=8080
+
+kubectl get service some-web
+
+minikube service some-web --url
+
+The above commands works ok, but when i try to run example-ingress.yaml, it does not work.
+
+kubectl apply -f https://k8s.io/examples/service/networking/example-ingress.yaml
+
+ingress.networking.k8s.io/example-ingress unchanged
+
+kubectl get ingress
+
+NAME              CLASS    HOSTS                             ADDRESS   PORTS   AGE
+cheddar           <none>   cheddar.192.168.64.3.nip.io                 80      38m
+example-ingress   <none>   hello-world.info                            80      2d16h
+stilton           <none>   stilton.192.168.64.3.nip.io                 80      38m
+wensleydale       <none>   wensleydale.192.168.64.3.nip.io             80      38m
+
+
+minikube ip
+
+192.168.64.3
+
+I updated /etc/hosts file with this line:
+
+192.168.64.3 hello-world.info
+
+zsh 2443 mastery% curl hello-world.info
+
+<html>
+<head><title>404 Not Found</title></head>
+<body>
+<center><h1>404 Not Found</h1></center>
+<hr><center>nginx</center>
+</body>
+</html>
+
+zsh 2444 mastery% curl 192.168.64.3
+
+<html>
+<head><title>404 Not Found</title></head>
+<body>
+<center><h1>404 Not Found</h1></center>
+<hr><center>nginx</center>
+</body>
+</html>
+
+[lun 21/10/18 11:48 CEST][s004][x86_64/darwin20.0/20.6.0][5.8]
+
+<aironman@MacBook-Pro-de-Alonso:~/git/kubernetes-mastery/k8s>
+
+zsh 2445 mastery% ping 192.168.64.3
+
+PING 192.168.64.3 (192.168.64.3): 56 data bytes
+64 bytes from 192.168.64.3: icmp_seq=0 ttl=64 time=0.421 ms
+64 bytes from 192.168.64.3: icmp_seq=1 ttl=64 time=0.335 ms
+64 bytes from 192.168.64.3: icmp_seq=2 ttl=64 time=0.289 ms
+64 bytes from 192.168.64.3: icmp_seq=3 ttl=64 time=0.363 ms
+^C
+
+minikube tunnel is working too. If i deactive it , it is not working either.
+
+zsh 2446 mastery% minikube version
+minikube version: v1.23.2
+
+zsh 2447 mastery% kubectl version
+Client Version: version.Info{Major:"1", Minor:"22", GitVersion:"v1.22.2", GitCommit:"8b5a19147530eaac9476b0ab82980b4088bbc1b2", GitTreeState:"clean", BuildDate:"2021-09-15T21:31:32Z", GoVersion:"go1.16.8", Compiler:"gc", Platform:"darwin/amd64"}
+Server Version: version.Info{Major:"1", Minor:"22", GitVersion:"v1.22.1", GitCommit:"632ed300f2c34f6d6d15ca4cef3d3c7073412212", GitTreeState:"clean", BuildDate:"2021-08-19T15:39:34Z", GoVersion:"go1.16.7", Compiler:"gc", Platform:"linux/amd64"}
+
+
+Updates
+When i activate ingress in my local minikube, i got this:
+
+zsh 2500 mastery% minikube addons enable ingress
+    ▪ Using image k8s.gcr.io/ingress-nginx/kube-webhook-certgen:v1.0
+    ▪ Using image k8s.gcr.io/ingress-nginx/kube-webhook-certgen:v1.0
+    ▪ Using image k8s.gcr.io/ingress-nginx/controller:v1.0.0-beta.3
+🔎  Verifying ingress addon...
+
+❌  Exiting due to MK_ADDON_ENABLE: run callbacks: running callbacks: [sudo KUBECONFIG=/var/lib/minikube/kubeconfig /var/lib/minikube/binaries/v1.22.1/kubectl apply -f /etc/kubernetes/addons/ingress-deploy.yaml: Process exited with status 1
+stdout:
+namespace/ingress-nginx unchanged
+serviceaccount/ingress-nginx unchanged
+configmap/ingress-nginx-controller unchanged
+configmap/tcp-services unchanged
+configmap/udp-services unchanged
+clusterrole.rbac.authorization.k8s.io/ingress-nginx unchanged
+clusterrolebinding.rbac.authorization.k8s.io/ingress-nginx unchanged
+role.rbac.authorization.k8s.io/ingress-nginx unchanged
+rolebinding.rbac.authorization.k8s.io/ingress-nginx unchanged
+service/ingress-nginx-controller-admission unchanged
+service/ingress-nginx-controller unchanged
+deployment.apps/ingress-nginx-controller configured
+validatingwebhookconfiguration.admissionregistration.k8s.io/ingress-nginx-admission configured
+serviceaccount/ingress-nginx-admission unchanged
+clusterrole.rbac.authorization.k8s.io/ingress-nginx-admission unchanged
+clusterrolebinding.rbac.authorization.k8s.io/ingress-nginx-admission unchanged
+role.rbac.authorization.k8s.io/ingress-nginx-admission unchanged
+rolebinding.rbac.authorization.k8s.io/ingress-nginx-admission unchanged
+job.batch/ingress-nginx-admission-create unchanged
+job.batch/ingress-nginx-admission-patch unchanged
+
+stderr:
+Warning: resource ingressclasses/nginx is missing the kubectl.kubernetes.io/last-applied-configuration annotation which is required by kubectl apply. kubectl apply should only be used on resources created declaratively by either kubectl create --save-config or kubectl apply. The missing annotation will be patched automatically.
+The IngressClass "nginx" is invalid: spec.controller: Invalid value: "k8s.io/ingress-nginx": field is immutable
+]
+
+╭─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│                                                                                                                         │
+│    😿  If the above advice does not help, please let us know:                                                           │
+│    👉  https://github.com/kubernetes/minikube/issues/new/choose                                                         │
+│                                                                                                                         │
+│    Please run `minikube logs --file=logs.txt` and attach logs.txt to the GitHub issue.                                  │
+│    Please also attach the following file to the GitHub issue:                                                           │
+│    - /var/folders/0x/gmzly6vn2f7ggfk47bdcsbnc0000gn/T/minikube_addons_02bc8dd80d6b5b21539de5e37bd65446395f2e10_0.log    │
+│                                                                                                                         │
+╰─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+
+logs.txt looks like:
+
+https://pastebin.com/5AD4xpYL
+
+I think that ingress is not running properly in my local k8s node, although when i see the dashboard, everything is in green.
+
+zsh 2505 [1] mastery% kubectl get namespaces
+NAME                   STATUS   AGE
+default                Active   39d
+ingress-nginx          Active   10m
+kube-node-lease        Active   39d
+kube-public            Active   39d
+kube-system            Active   39d
+kubernetes-dashboard   Active   34d
+shpod                  Active   21d
+
+
+zsh 2506 mastery% kubectl describe ing example-ingress
+Name:             example-ingress
+Namespace:        default
+Address:
+Default backend:  default-http-backend:80 (<error: endpoints "default-http-backend" not found>)
+Rules:
+  Host              Path  Backends
+  ----              ----  --------
+  hello-world.info
+                    /   web:8080 (172.17.0.5:8080)
+Annotations:        nginx.ingress.kubernetes.io/rewrite-target: /$1
+Events:             <none>
+
+
+This is weird, example-ingress is inside default namespace, so what ingress-nginx namespace is storing?
+
+zsh 2507 mastery% kubectl describe ing example-ingress -n default
+
+Name:             example-ingress
+Namespace:        default
+Address:
+Default backend:  default-http-backend:80 (<error: endpoints "default-http-backend" not found>)
+Rules:
+  Host              Path  Backends
+  ----              ----  --------
+  hello-world.info
+                    /   web:8080 (172.17.0.5:8080)
+Annotations:        nginx.ingress.kubernetes.io/rewrite-target: /$1
+Events:             <none>
+
+zsh 2511 mastery% kubectl get pods -n default
+NAME                           READY   STATUS    RESTARTS       AGE
+cheddar-57cbdcdb75-vw77x       1/1     Running   2 (145m ago)   2d20h
+dashboard-79c6957b6f-fchdg     1/1     Running   3 (143m ago)   2d22h
+some-web-6bfdbf7fc7-54h4s      1/1     Running   1 (145m ago)   4h5m
+stilton-6846d478c5-pcsdv       1/1     Running   2 (145m ago)   2d20h
+web-79d88c97d6-fpkx8           1/1     Running   2 (145m ago)   2d21h
+wensleydale-78cd4c45c9-xt82n   1/1     Running   2 (145m ago)   2d20h
+
+zsh 2512 mastery% kubectl get pods -n ingress-nginx
+NAME                                        READY   STATUS      RESTARTS   AGE
+ingress-nginx-admission-create--1-89z69     0/1     Completed   0          125m
+ingress-nginx-admission-patch--1-rkv2j      0/1     Completed   1          125m
+ingress-nginx-controller-69bdbc4d57-jxmzf   1/1     Running     0          125m
+
+update
+
+It looks like that ingress-resource-backend is not created.
+
+zsh 2514 [1] mastery% kubectl apply -f https://raw.githubusercontent.com/kubernetes/website/main/content/en/examples/service/networking/ingress-resource-backend.yaml
+ingress.networking.k8s.io/ingress-resource-backend created
+
+zsh 2515 mastery% kubectl describe ingress ingress-resource-backend
+Name:             ingress-resource-backend
+Namespace:        default
+Address:
+Default backend:  APIGroup: k8s.example.com, Kind: StorageBucket, Name: static-assets
+Rules:
+  Host        Path  Backends
+  ----        ----  --------
+  *
+              /icons   APIGroup: k8s.example.com, Kind: StorageBucket, Name: icon-assets
+Annotations:  <none>
+Events:       <none>
+
+zsh 2526 mastery% kubectl get pods -A
+NAMESPACE              NAME                                         READY   STATUS      RESTARTS        AGE
+default                cheddar-57cbdcdb75-vw77x                     1/1     Running     2 (3h6m ago)    2d21h
+default                dashboard-79c6957b6f-fchdg                   1/1     Running     3 (3h4m ago)    2d23h
+default                some-web-6bfdbf7fc7-54h4s                    1/1     Running     1 (3h6m ago)    4h46m
+default                stilton-6846d478c5-pcsdv                     1/1     Running     2 (3h6m ago)    2d21h
+default                web-79d88c97d6-fpkx8                         1/1     Running     2 (3h6m ago)    2d21h
+default                wensleydale-78cd4c45c9-xt82n                 1/1     Running     2 (3h6m ago)    2d21h
+ingress-nginx          ingress-nginx-admission-create--1-89z69      0/1     Completed   0               137m
+ingress-nginx          ingress-nginx-admission-patch--1-rkv2j       0/1     Completed   1               137m
+ingress-nginx          ingress-nginx-controller-69bdbc4d57-jxmzf    1/1     Running     0               137m
+kube-system            coredns-78fcd69978-lq24r                     1/1     Running     9 (3h6m ago)    39d
+kube-system            etcd-minikube                                1/1     Running     9 (3h6m ago)    39d
+kube-system            kube-apiserver-minikube                      1/1     Running     9 (3h6m ago)    39d
+kube-system            kube-controller-manager-minikube             1/1     Running     9 (3h6m ago)    39d
+kube-system            kube-proxy-79r5q                             1/1     Running     9 (3h6m ago)    39d
+kube-system            kube-scheduler-minikube                      1/1     Running     9 (3h6m ago)    39d
+kube-system            storage-provisioner                          1/1     Running     16 (3h4m ago)   39d
+kubernetes-dashboard   dashboard-metrics-scraper-5594458c94-675dj   1/1     Running     1 (3h6m ago)    5h35m
+kubernetes-dashboard   kubernetes-dashboard-654cf69797-pl82n        1/1     Running     1 (3h6m ago)    5h35m
+shpod                  shpod                                        1/1     Running     14 (3h6m ago)   21d
+[lun 21/10/18 16:12 CEST][s004][x86_64/darwin20.0/20.6.0][5.8]
+<aironman@MacBook-Pro-de-Alonso:~/git/kubernetes-mastery/k8s>
+zsh 2527 mastery% kubectl logs -p POD/ingress-nginx-controller-69bdbc4d57-jxmzf -n ingress-nginx
+Error from server (BadRequest): previous terminated container "controller" in pod "ingress-nginx-controller-69bdbc4d57-jxmzf" not found
+
+Please, a little help?
