@@ -25,7 +25,7 @@ shpod also gives you shell completion and a fancy prompt
 
 Create it with:
 
-  kubectl apply -f https:k8smastery.com/shpod.yaml
+  kubectl apply -f https://k8smastery.com/shpod.yaml
   namespace/shpod created
   serviceaccount/shpod created
   clusterrolebinding.rbac.authorization.k8s.io/shpod created

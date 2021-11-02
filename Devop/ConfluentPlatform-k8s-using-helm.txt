@@ -1,0 +1,138 @@
+vagrant@buster:~/cp-helm-charts$ sudo minikube status
+host: Stopped
+kubelet: Stopped
+apiserver: Stopped
+kubeconfig: Stopped
+vagrant@buster:~/cp-helm-charts$ sudo minikube start --wait=false
+🎉  minikube 1.23.2 is available! Download it: https://github.com/kubernetes/minikube/releases/tag/v1.23.2
+💡  To disable this notice, run: 'minikube config set WantUpdateNotification false'
+
+🙄  minikube v1.8.2 on Debian 10.11 (vbox/amd64)
+✨  Using the none driver based on existing profile
+⌛  Reconfiguring existing host ...
+🔄  Starting existing none bare metal machine for "minikube" ...
+ℹ️   OS release is Debian GNU/Linux 10 (buster)
+🐳  Preparing Kubernetes v1.17.3 on Docker 20.10.10 ...
+🚀  Launching Kubernetes ...
+🌟  Enabling addons: dashboard, default-storageclass, storage-provisioner
+🤹  Configuring local host environment ...
+
+❗  The 'none' driver provides limited isolation and may reduce system security and reliability.
+❗  For more information, see:
+👉  https://minikube.sigs.k8s.io/docs/reference/drivers/none/
+
+❗  kubectl and minikube configuration will be stored in /root
+❗  To use kubectl or minikube commands as your own user, you may need to relocate them. For example, to overwrite your own settings, run:
+
+    ▪ sudo mv /root/.kube /root/.minikube $HOME
+    ▪ sudo chown -R $USER $HOME/.kube $HOME/.minikube
+
+💡  This can also be done automatically by setting the env var CHANGE_MINIKUBE_NONE_USER=true
+🏄  Done! kubectl is now configured to use "minikube"
+
+❗  /usr/bin/kubectl is v1.22.2, which may be incompatible with Kubernetes v1.17.3.
+💡  You can also use 'minikube kubectl -- get pods' to invoke a matching version
+vagrant@buster:~/cp-helm-charts$ sudo minikube kubectl -- get pods
+NAME                       READY   STATUS    RESTARTS   AGE
+httpenv-6bf64f7c4f-ddlh6   1/1     Running   1          5d1h
+vagrant@buster:~/cp-helm-charts$ helm repo add confluentinc https://confluentinc.github.io/cp-helm-charts
+Error: repository name (confluentinc) already exists, please specify a different name
+vagrant@buster:~/cp-helm-charts$ helm repo update
+Hang tight while we grab the latest from your chart repositories...
+...Successfully got an update from the "sysdig" chart repository
+...Successfully got an update from the "confluentinc" chart repository
+Update Complete. ⎈Happy Helming!⎈
+vagrant@buster:~/cp-helm-charts$ helm install confluentinc/cp-helm-charts --name my-confluent --version 0.6.0
+Error: unknown flag: --name
+vagrant@buster:~/cp-helm-charts$ helm install my-confluent confluentinc/cp-helm-charts --version 0.6.0
+NAME: my-confluent
+LAST DEPLOYED: Wed Oct 27 14:34:40 2021
+NAMESPACE: sysdig-agent
+STATUS: deployed
+REVISION: 1
+NOTES:
+## ------------------------------------------------------
+## Zookeeper
+## ------------------------------------------------------
+Connection string for Confluent Kafka:
+  my-confluent-cp-zookeeper-0.my-confluent-cp-zookeeper-headless:2181,my-confluent-cp-zookeeper-1.my-confluent-cp-zookeeper-headless:2181,...
+
+To connect from a client pod:
+
+1. Deploy a zookeeper client pod with configuration:
+
+    apiVersion: v1
+    kind: Pod
+    metadata:
+      name: zookeeper-client
+      namespace: sysdig-agent
+    spec:
+      containers:
+      - name: zookeeper-client
+        image: confluentinc/cp-zookeeper:6.0.1
+        command:
+          - sh
+          - -c
+          - "exec tail -f /dev/null"
+
+2. Log into the Pod
+
+  kubectl exec -it zookeeper-client -- /bin/bash
+
+3. Use zookeeper-shell to connect in the zookeeper-client Pod:
+
+  zookeeper-shell my-confluent-cp-zookeeper:2181
+
+4. Explore with zookeeper commands, for example:
+
+  # Gives the list of active brokers
+  ls /brokers/ids
+
+  # Gives the list of topics
+  ls /brokers/topics
+
+  # Gives more detailed information of the broker id '0'
+  get /brokers/ids/0## ------------------------------------------------------
+## Kafka
+## ------------------------------------------------------
+To connect from a client pod:
+
+1. Deploy a kafka client pod with configuration:
+
+    apiVersion: v1
+    kind: Pod
+    metadata:
+      name: kafka-client
+      namespace: sysdig-agent
+    spec:
+      containers:
+      - name: kafka-client
+        image: confluentinc/cp-enterprise-kafka:6.0.1
+        command:
+          - sh
+          - -c
+          - "exec tail -f /dev/null"
+
+2. Log into the Pod
+
+  kubectl exec -it kafka-client -- /bin/bash
+
+3. Explore with kafka commands:
+
+  # Create the topic
+  kafka-topics --zookeeper my-confluent-cp-zookeeper-headless:2181 --topic my-confluent-topic --create --partitions 1 --replication-factor 1 --if-not-exists
+
+  # Create a message
+  MESSAGE="`date -u`"
+
+  # Produce a test message to the topic
+  echo "$MESSAGE" | kafka-console-producer --broker-list my-confluent-cp-kafka-headless:9092 --topic my-confluent-topic
+
+  # Consume a test message from the topic
+  kafka-console-consumer --bootstrap-server my-confluent-cp-kafka-headless:9092 --topic my-confluent-topic --from-beginning --timeout-ms 2000 --max-messages 1 | grep "$MESSAGE"
+vagrant@buster:~/cp-helm-charts$ helm list
+NAME                  	NAMESPACE   	REVISION	UPDATED                                 	STATUS  	CHART               	APP VERSION
+my-confluent          	sysdig-agent	1       	2021-10-27 14:34:40.408045493 +0200 CEST	deployed	cp-helm-charts-0.6.0	1.0
+sysdig-agent          	sysdig-agent	1       	2021-10-22 09:17:37.978699644 +0000 UTC 	deployed	sysdig-1.12.28      	12.0.2
+sysdig-agent-activated	sysdig-agent	1       	2021-10-22 10:23:23.064788204 +0000 UTC 	deployed	sysdig-1.12.28      	12.0.2
+vagrant@buster:~/cp-helm-charts$
