@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+ name: hello-world
+spec:
+ replicas: 1
+ selector:
+  matchLables:
+   app: hello-world
+ template:
+  metadata:
+   labels:
+    app: hello-world
+  spec:
+   containers:
+    - name: hello-world
+     image: hello-world
+     resources:
+      limits:
+       cpu: 1
+       memory: 128Mi
+      requests:
+       cpu:1
+       memory: 128Mi
