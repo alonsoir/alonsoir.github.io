@@ -7,6 +7,6 @@ spec:
   - port: 8080
     protocol: TCP
     targetPort: 8080
-    type: NodePort
-    selector:
-     app: hello-world
+ type: NodePort
+ selector:
+    app: hello-world
