@@ -13,12 +13,12 @@ spec:
     app: hello-world
   spec:
    containers:
-    - name: hello-world
+   - name: hello-world
      image: hello-world
      resources:
       limits:
        cpu: 1
        memory: 128Mi
       requests:
-       cpu:1
+       cpu: 1
        memory: 128Mi
