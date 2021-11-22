@@ -1,0 +1,15 @@
+master:
+  adminUser: "admin"
+  adminPassword: "admin"
+  image: "jenkins/jenkins"
+  tag: "latest"
+  jenkinsAdminEmail: "admin@admin.com"
+  jenkinsUriPrefix: "/jenkins"
+  installPlugins: []
+  serviceType: "NodePort"
+namespaceOverride: "default"
+agent:
+  image: "jenkins/jnlp-slave"
+  tag: "latest"
+persistence:
+  storageClass: "nfs-client"
