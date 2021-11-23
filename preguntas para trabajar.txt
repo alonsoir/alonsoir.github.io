@@ -1,0 +1,36 @@
+Tengo varias preguntas:
+
+ 1) el proyecto consiste en crear desde cero un microservicio o mantener uno ya creado?
+
+ 2) la funcionalidad del microservicio está implementada en el monolito, y  por lo tanto hay que sacar
+ dicha funcionalidad del monolito? o está bien documentada, y los equipos de desarrollo simplemente tienen que saber interpretar las
+ necesidades para crear historias de usuario? ¿quien tiene el conocimiento funcional?
+
+ 3) leo que ya hay una guía con buenas prácticas a seguir por los desarrolladores creada por un equipo de arquitectura,
+ implica que ya existen cosas como arquetipos maven con las plantillas necesarias para el microservicio java,
+ con un número de dependencias aprobadas por dicho equipo de arquitectura, instrucciones precisas
+ para tener un CI/CD efectivo?, plantilla para el Dockerfile, Jenkinsfile, los ficheros yaml necesarios para desplegar en test, pre y prod en k8s?,
+ el pipeline está conectado a un sonarqube, a algo como trivi o snyk para escanear las imágenes docker creadas en busca de vulnerabilidades de seguridad?,
+ configurado el pipeline con Prometheus y Grafana?.
+
+ 4) Queréis que sea ante todo un Tech lead que programe de vez en cuando y gestione mucho o un backend que programe mucho?
+
+ el primero crea historias de usuario, se pone de acuerdo con el product owner con respecto a lo que se compromete el equipo a entregar en cada sprint,
+ resuelve dudas a los compañeros, les da soporte técnico, hace sesiones pair y mob programming,
+ promueve buenas prácticas de desarrollo como tdd, y ddd, trabaja con el equipo de arquitectura e infraestructura para seguir mejorando
+ la tecnología y pipelines de despliegue.
+ El segundo crea la tecnología con respecto a lo que le dice el líder técnico.
+
+ 5) Tengo habilidades como tech lead, backend engineer, big data engineer, Site reliability engineer y software architect.
+ Exactamente, qué necesitan de mí en el día a día?
+
+ 6) para mí, teletrabajar desde mi casa es algo innegociable. El día que tenga el AVE operativo en Badajoz y la pandemia sea algo menos peligroso,
+ no tendré problemas en viajar. Mientras tanto, teletrabajo los cinco días de la semana.
+
+ 7) No uso windows para desarrollar, osx u linux. Literalmente no uso microsoft más allá del Teams, el último so que usé extensivamente fue el XP,
+ en la universidad, para hacer alguna práctica en primero y sobretodo jugar. En cuanto usé linux para programar, no hubo vuelta atrás.
+
+ 8) Tengo presupuesto para la formación que yo estime para mí y para mi equipo? eso significa presupuesto en sitios como Udemy. Una cuenta business sería
+ ideal.
+
+ 9) con respecto al salario, el rango debería estar en 55k-60k, más para los 60k.
