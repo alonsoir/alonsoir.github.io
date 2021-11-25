@@ -19,5 +19,7 @@
         <module>user-event-enricher</module>
         <module>word-count</module>
     </modules>
-
+    <dependencies>
+        
+    </dependencies>
 </project>
