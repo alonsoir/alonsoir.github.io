@@ -46,7 +46,7 @@
 
     <build>
         <plugins>
-            <!--force java 8-->
+            <!--force java 11-->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
