@@ -9,10 +9,7 @@ import org.apache.kafka.streams.KafkaStreams;
 import org.apache.kafka.streams.StreamsBuilder;
 import org.apache.kafka.streams.StreamsConfig;
 import org.apache.kafka.streams.Topology;
-import org.apache.kafka.streams.kstream.KStream;
-import org.apache.kafka.streams.kstream.KTable;
-import org.apache.kafka.streams.kstream.Materialized;
-import org.apache.kafka.streams.kstream.Produced;
+import org.apache.kafka.streams.kstream.*;
 
 public class WordCountApp {
 
@@ -23,7 +20,7 @@ public class WordCountApp {
         KStream<String, String> textLines = builder.stream("word-count-input");
         KTable<String, Long> wordCounts = textLines
                 // 2 - map values to lowercase
-                .mapValues(textLine -> textLine.toLowerCase())
+                .mapValues((ValueMapper<String, String>) String::toLowerCase)
                 // can be alternatively written as:
                 // .mapValues(String::toLowerCase)
                 // 3 - flatmap values split by space
@@ -44,7 +41,7 @@ public class WordCountApp {
     public static void main(String[] args) {
         Properties config = new Properties();
         config.put(StreamsConfig.APPLICATION_ID_CONFIG, "wordcount-application");
-        config.put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, "127.0.0.1:9092");
+        config.put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, "0.0.0.0:9092");
         config.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
         config.put(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.String().getClass());
         config.put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, Serdes.String().getClass());
@@ -53,14 +50,15 @@ public class WordCountApp {
 
         KafkaStreams streams = new KafkaStreams(wordCountApp.createTopology(), config);
         streams.start();
-
+        System.out.println("Topology-->" + streams);
         // shutdown hook to correctly close the streams application
         Runtime.getRuntime().addShutdownHook(new Thread(streams::close));
 
         // Update:
         // print the topology every 10 seconds for learning purposes
+        /*
         while(true){
-            streams.localThreadsMetadata().forEach(data -> System.out.println(data));
+            streams.localThreadsMetadata().forEach(data -> System.out.println("----> "+data.toString()));
             try {
                 Thread.sleep(5000);
             } catch (InterruptedException e) {
@@ -68,6 +66,8 @@ public class WordCountApp {
             }
         }
 
+         */
+        System.out.println("Shutting down");
 
     }
 }
