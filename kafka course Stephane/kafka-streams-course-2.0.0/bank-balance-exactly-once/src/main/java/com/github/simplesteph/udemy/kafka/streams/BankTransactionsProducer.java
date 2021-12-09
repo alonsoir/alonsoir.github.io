@@ -9,6 +9,7 @@ import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.serialization.StringSerializer;
 
 import java.time.Instant;
+import java.util.Calendar;
 import java.util.Properties;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -17,7 +18,7 @@ public class BankTransactionsProducer {
         Properties properties = new Properties();
 
         // kafka bootstrap server
-        properties.setProperty(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "127.0.0.1:9092");
+        properties.setProperty(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "0.0.0.0:9092");
         properties.setProperty(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
         properties.setProperty(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
         // producer acks
@@ -30,22 +31,36 @@ public class BankTransactionsProducer {
         Producer<String, String> producer = new KafkaProducer<>(properties);
 
         int i = 0;
-        while (true) {
-            System.out.println("Producing batch: " + i);
+        Calendar ahora1 = Calendar.getInstance();
+        long tiempo1 = ahora1.getTimeInMillis();
+        // Aquí el código que queremos ejecutar.
+        while (i<10000000) {
+            //System.out.println("Producing batch: " + i);
             try {
                 producer.send(newRandomTransaction("john"));
-                Thread.sleep(100);
+                //Thread.sleep(100);
                 producer.send(newRandomTransaction("stephane"));
-                Thread.sleep(100);
+                //Thread.sleep(100);
                 producer.send(newRandomTransaction("alice"));
-                Thread.sleep(100);
+                //Thread.sleep(100);
                 i += 1;
+                if (Thread.interrupted())  // Clears interrupted status!
+                    throw new InterruptedException();
             } catch (InterruptedException e) {
+                System.out.println("Interrupted while producing");
                 break;
             }
         }
+        Calendar ahora2 = Calendar.getInstance();
+        long tiempo2 = ahora2.getTimeInMillis();
+        long diferencia = tiempo2 - tiempo1;
+        //Se muestra en pantalla la diferencia de tiempo obtenido
+        System.out.println("Has tardado: " + diferencia + " milisegundos");
+        System.out.printf("Equivale a: %.3f segundos", (double) diferencia /1000);
+        producer.flush();
         producer.close();
     }
+
 
     public static ProducerRecord<String, String> newRandomTransaction(String name) {
         // creates an empty json {}
@@ -63,4 +78,8 @@ public class BankTransactionsProducer {
         transaction.put("time", now.toString());
         return new ProducerRecord<>("bank-transactions", name, transaction.toString());
     }
+
+    // calculate tps (transactions per second) from kafka topic count
+
+
 }

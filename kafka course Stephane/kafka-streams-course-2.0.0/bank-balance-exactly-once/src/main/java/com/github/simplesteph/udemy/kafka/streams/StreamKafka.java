@@ -18,7 +18,7 @@ public class StreamKafka {
     private static void loadproperties() {
         props = new Properties();
         props.setProperty(StreamsConfig.APPLICATION_ID_CONFIG, "stream-kafka-application");
-        props.setProperty(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
+        props.setProperty(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, "0.0.0.0:9092");
         props.setProperty(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.String().getClass().getName()); 
         props.setProperty(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, Serdes.String().getClass().getName());
         props.setProperty(StreamsConfig.COMMIT_INTERVAL_MS_CONFIG, "1000");
