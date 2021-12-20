@@ -1,0 +1,100 @@
+how to set up a broker,
+
+Bueno, realmente depende de como tengas creado inicialmente el cluster kafka,
+este puede estar gestionado mediante diferentes formas, por ejemplo mediante k8s y contenedores,
+mesos, on premise, en la nube de manera autogestionada...
+
+Basicamente, la manera más simple de añadir un nuevo broker al cluster kafka es configurar ese nodo
+para que esté en la misma red que el resto de nodos, que puedan comunicarse, intercambiar paquetes,
+etc...
+
+Para ello, en el nuevo nodo físico, nueva máquina virtual, a ser posible linux, descargo los fuentes de kafka de su sitio oficial,
+https://kafka.apache.org/downloads
+compruebo la integridad gpg del fichero como me dicen en las intrucciones, Lo descomprimo en algún lugar conveniente,
+me aseguro que la máquina virtual java está instalada, a día de hoy la jvm 11 es la oficial y recomendada.
+Kafka funciona bajo la máquina virtual java.
+
+Una vez descomprimido, y sabiendo algunas cosas previamente, como cual es la ip y el puerto de zookeeper,
+editamos el fichero server.properties y modificamos las líneas siguientes:
+
+server-1.properties
+
+  broker.id=0
+  zookeeper.connect=zookeeper-ip:2181
+  listeners=PLAINTEXT://:9093
+  log.dir=/tmp/kafka-logs-1
+
+server-2.properties:
+
+  broker.id=2
+  zookeeper.connect=zookeeper-ip:2181
+  listeners=PLAINTEXT://:9094
+  log.dir=/tmp/kafka-logs-2
+
+broker.id debe ser único, igual que log.dir
+
+Luego en cada broker lanzariamos el comando siguiente:
+
+  bin/kafka-server-start.sh config/server-1.properties
+  ...
+  bin/kafka-server-start.sh config/server-2.properties
+
+Al lanzarse, zookeeper gestionará quien es el broker lider, etc...
+
+a topic,
+
+  Para crear un topic, una vez que nos hemos logueado en un broker, lanzamos un comando asi:
+
+  bin/kafka-topics.sh --create --bootstrap-server 0.0.0.0:9092 --replication-factor 1 --partitions 1 --topic test-topic-1
+
+  Para comprobar que el topic está creado, lanzamos un comando
+
+  bin/kafka-topics.sh --list --bootstrap-server 0.0.0.0:9092
+
+how to solve technical problems with Kafka
+
+Bueno, eso es todo un arte, pero basicamente depende de prestar atencion a los logs,
+tanto de zookeeper como de los brokers.
+También es buena idea tener un servidor Prometheus en alta disponibilidad junto con
+servicios grafana de manera que podamos consultar que está ocurriendo.
+Los mensajes pueden ser de todo tipo, como que no haya espacio en alguno de los brokers, que no haya espacio en
+zookeeper, que algún no nodo no pueda hablar con zookeeper pq éste no esté disponible, que haya problemas de rebalanceo...
+
+Luego, se trata de mantener una postura científica, leer los datos de logs, establecer
+hipotesis de trabajo, crear el experimento, comprobar los resultados, volver a
+leer los logs...
+
+Qué problemas podríamos afrontar? por ejemplo:
+
+1) que tengamos que reasignar las particiones porque estamos añadiendo un nuevo 
+nodo al cluster, o que querramos mover una particion a otro nodo. El objetivo con una medida así es asegurar el
+balanceo de carga adecuado entre los nodos. Para ello hay herramientas como el partition reassigment tool, kafka manager
+y herramientas propias de Linkedin que vendrán en la plataforma enterprise de Confluent.
+Yo aún no las manejado, en cambio, este script está presente en la version community:
+
+  kafka-reassign-partitions.sh
+
+2) Tenemos que averiguar qué puede aguantar el cluster, por ejemplo el número máximo de mensajes producidos y consumidos,
+el ritmo de consumo, cada cuanto tiempo hay que limpiar los logs...
+Para ello, podemos configurar las propiedades
+
+  log.retention.hours
+  log.retention.bytes
+
+3) a la hora de configurar el grupo de consumidores, por ejemplo, cuando un nodo abandona o se une el grupo de consumidores,
+cuando un consumidor se le considera muerto, o cuando se añaden particiones...
+Un escenario ideal es siempre tener el mismo número de consumidores que el número de particiones, es decir, un topic tiene por ejemplo
+3 particiones, pues debería haber 3 procesos consumidores, ni más, ni menos.
+
+4) un problema importante puede ocurrir si hay particiones muy descompensadas unas con respecto a las otras, de manera que
+se estén enviando muchos más mensajes a una particion que a otra. Problamente, añadir más consumidores al grupo de consumidores para
+procesar esas particiones sea buena idea.
+
+Probablemente sea debido a que estemos enviando muchos mensajes con la misma clave seteada, de manera que vaya siempre a la misma particion del topic.
+Habría que habilitar un esquema de partición round robin.
+
+https://stackoverflow.com/questions/53423986/redistribute-messages-from-a-stucked-kafka-partiton
+
+Podríamos usar herramientas como ZooNavigator para examinar el estado de zookeeper, control-center de la plataforma,
+habilitar el estado de salud  de la plataforma, linkedin cruise control, kafka monitor, kafka tool, kafkacat,
+kafdrop, kafka mirrormaker...
