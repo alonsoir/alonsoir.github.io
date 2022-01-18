@@ -21,9 +21,54 @@ The _Confluent CLI_ changed significantly in version 5.3 and 6.0.  The most impo
 
 For example, to start the ksql-server
 
-- Prior to 5.3 : `confluent start ksql-server` 
-- From 5.3 : `confluent local start ksql-server` 
-- From 6.0 : `confluent local services ksql-server start` 
+- Prior to 5.3 : `confluent start ksql-server`
+- From 5.3 : `confluent local start ksql-server`
+- From 6.0 : `confluent local services ksql-server start`
+
+Using docker-compose
+1) docker-compose up -d
+
+2)docker-compose exec ksqldb-cli ksql http://ksqldb-server:8088
+OpenJDK 64-Bit Server VM warning: Option UseConcMarkSweepGC was deprecated in version 9.0 and will likely be removed in a future release.
+
+                  ===========================================
+                  =       _              _ ____  ____       =
+                  =      | | _____  __ _| |  _ \| __ )      =
+                  =      | |/ / __|/ _` | | | | |  _ \      =
+                  =      |   <\__ \ (_| | | |_| | |_) |     =
+                  =      |_|\_\___/\__, |_|____/|____/      =
+                  =                   |_|                   =
+                  =  Event Streaming Database purpose-built =
+                  =        for stream processing apps       =
+                  ===========================================
+
+Copyright 2017-2020 Confluent Inc.
+
+CLI v6.1.0, Server v6.1.0 located at http://ksqldb-server:8088
+Server Status: RUNNING
+
+Having trouble? Type 'help' (case-insensitive) for a rundown of how things work!
+
+ksql> list topics;
+
+ Kafka Topic                 | Partitions | Partition Replicas
+---------------------------------------------------------------
+ USERS                       | 1          | 1                  
+ default_ksql_processing_log | 1          | 1                  
+ docker-connect-configs      | 1          | 1                  
+ docker-connect-offsets      | 25         | 1                  
+ docker-connect-status       | 5          | 1                  
+---------------------------------------------------------------
+ksql> show topics;
+
+ Kafka Topic                 | Partitions | Partition Replicas
+---------------------------------------------------------------
+ USERS                       | 1          | 1                  
+ default_ksql_processing_log | 1          | 1                  
+ docker-connect-configs      | 1          | 1                  
+ docker-connect-offsets      | 25         | 1                  
+ docker-connect-status       | 5          | 1                  
+---------------------------------------------------------------
 
 ## Lecture 7: KSQL Command Line
 
@@ -182,13 +227,13 @@ At KSQL prompt
 
 ```
 
-select firstname + ' ' 
-+ ucase( lastname) 
-+ ' from ' + countrycode 
-+ ' has a rating of ' + cast(rating as varchar) + ' stars. ' 
+select firstname + ' '
++ ucase( lastname)
++ ' from ' + countrycode
++ ' has a rating of ' + cast(rating as varchar) + ' stars. '
 + case when rating < 2.5 then 'Poor'
        when rating between 2.5 and 4.2 then 'Good'
-       else 'Excellent' 
+       else 'Excellent'
    end as description
 from userprofile emit changes;
 
@@ -295,17 +340,17 @@ Join user stream to country table
 At KSQL prompt
 
 ```
-select up.firstname, up.lastname, up.countrycode, ct.countryname 
-from USERPROFILE up 
+select up.firstname, up.lastname, up.countrycode, ct.countryname
+from USERPROFILE up
 left join COUNTRYTABLE ct on ct.countrycode=up.countrycode emit changes;
 
-create stream up_joined as 
-select up.firstname 
-+ ' ' + ucase(up.lastname) 
+create stream up_joined as
+select up.firstname
++ ' ' + ucase(up.lastname)
 + ' from ' + ct.countryname
-+ ' has a rating of ' + cast(rating as varchar) + ' stars.' as description 
++ ' has a rating of ' + cast(rating as varchar) + ' stars.' as description
 , up.countrycode
-from USERPROFILE up 
+from USERPROFILE up
 left join COUNTRYTABLE ct on ct.countrycode=up.countrycode;
 
 select description from up_joined emit changes;
@@ -564,7 +609,7 @@ curl -s -X GET http://localhost:8081/subjects/COMPLAINTS_AVRO-value/versions/2 |
 
 ```
 
-At KSQL prompt 
+At KSQL prompt
 ```
 ksql> describe complaints_avro;
 
@@ -603,7 +648,7 @@ Imagine we have data like this
   "city": {
     "name": "Sydney",
     "country": "AU",
-    "latitude": -33.8688, 
+    "latitude": -33.8688,
     "longitude": 151.2093
   },
   "description": "light rain",
@@ -628,14 +673,14 @@ Extract like this - At KSQL prompt
 SET 'auto.offset.reset'='earliest';
 
 
-CREATE STREAM weather 
-      (city STRUCT <name VARCHAR, country VARCHAR, latitude DOUBLE, longitude DOUBLE>, 
-       description VARCHAR, 
-       clouds BIGINT, 
-       deg BIGINT, 
-       humidity BIGINT, 
-       pressure DOUBLE, 
-       rain DOUBLE) 
+CREATE STREAM weather
+      (city STRUCT <name VARCHAR, country VARCHAR, latitude DOUBLE, longitude DOUBLE>,
+       description VARCHAR,
+       clouds BIGINT,
+       deg BIGINT,
+       humidity BIGINT,
+       pressure DOUBLE,
+       rain DOUBLE)
 WITH (KAFKA_TOPIC='WEATHERNESTED', VALUE_FORMAT='JSON');    
 
 SELECT city->name AS city_name, city->country AS city_country, city->latitude as latitude, city->longitude as longitude, description, rain from weather emit changes;   
@@ -732,13 +777,13 @@ EOF
 At KSQL prompt
 
 ```
-CREATE STREAM DRIVER_PROFILE (driver_name VARCHAR, countrycode VARCHAR, rating DOUBLE) 
+CREATE STREAM DRIVER_PROFILE (driver_name VARCHAR, countrycode VARCHAR, rating DOUBLE)
   WITH (VALUE_FORMAT = 'JSON', KAFKA_TOPIC = 'DRIVER_PROFILE');
 
 
 
-select dp.driver_name, ct.countryname, dp.rating 
-from DRIVER_PROFILE dp 
+select dp.driver_name, ct.countryname, dp.rating
+from DRIVER_PROFILE dp
 left join COUNTRYTABLE ct on ct.countrycode=dp.countrycode emit changes;    
 
 Can't join DRIVER_PROFILE with COUNTRYTABLE since the number of partitions don't match. DRIVER_PROFILE partitions = 2; COUNTRYTABLE partitions = 1. Please repartition either one so that the number of partitions match.
@@ -750,8 +795,8 @@ We can fix this by   co-partitioning, use the PARTITION BY clause. At KSQL promp
 ```
 create stream driverprofile_rekeyed with (partitions=1) as select * from DRIVER_PROFILE partition by driver_name;  
 
-select dp2.driver_name, ct.countryname, dp2.rating 
-from DRIVERPROFILE_REKEYED dp2 
+select dp2.driver_name, ct.countryname, dp2.rating
+from DRIVERPROFILE_REKEYED dp2
 left join COUNTRYTABLE ct on ct.countrycode=dp2.countrycode emit changes;    
 ```
 
@@ -777,7 +822,7 @@ create stream rr_america_raw with (kafka_topic='riderequest-america', value_form
 
 create stream rr_europe_raw with (kafka_topic='riderequest-europe', value_format='avro');   
 
-select * from rr_america_raw emit changes; 
+select * from rr_america_raw emit changes;
 
 select * from rr_europe_raw emit changes;
 
@@ -785,7 +830,7 @@ create stream rr_world as select 'Europe' as data_source, * from rr_europe_raw;
 
 insert into rr_world      select 'Americas' as data_source, * from rr_america_raw;  
 
-select * from rr_world emit changes; 
+select * from rr_world emit changes;
 
 
 ```
@@ -796,22 +841,22 @@ select * from rr_world emit changes;
 - how many requests are arriving each time period
 - At KSQL prompt
 ```
-select data_source, city_name, count(*) 
-from rr_world 
-window tumbling (size 60 seconds) 
+select data_source, city_name, count(*)
+from rr_world
+window tumbling (size 60 seconds)
 group by data_source, city_name emit changes;  
 ```
 
 ```
 select data_source, city_name, COLLECT_LIST(user)
-from rr_world 
-window tumbling (size 60 seconds) 
+from rr_world
+window tumbling (size 60 seconds)
 group by data_source, city_name emit changes;   
 ```
 
 ```
-select data_source, city_name, COLLECT_LIST(user) 
-from rr_world WINDOW SESSION (60 SECONDS) 
+select data_source, city_name, COLLECT_LIST(user)
+from rr_world WINDOW SESSION (60 SECONDS)
 group by data_source, city_name emit changes;
 
 select TIMESTAMPTOSTRING(WindowStart, 'HH:mm:ss')
@@ -845,17 +890,17 @@ select rr.latitude as from_latitude
 , w.latitude as to_latitude
 , w.longitude as to_longitude
 , w.description as weather_description
-, w.rain 
-from rr_world rr 
+, w.rain
+from rr_world rr
 left join weathernow w on rr.city_name = w.city_name;   
 
 
-create stream ridetodest as 
+create stream ridetodest as
 select user
 , city_name
 , city_country
 , weather_description
-, rain 
+, rain
 , GEO_DISTANCE(from_latitude, from_longitude, to_latitude, to_longitude, 'km') as dist
 from requested_journey;  
 
@@ -864,7 +909,7 @@ from requested_journey;
 
 
 ```
-select user + ' is travelling ' + cast(round(dist) as varchar) +' km to ' + city_name + ' where the weather is reported as ' + weather_description 
+select user + ' is travelling ' + cast(round(dist) as varchar) +' km to ' + city_name + ' where the weather is reported as ' + weather_description
 from ridetodest emit changes;  
 
 Alice is at (52,0) and is travelling 215 km to Manchester where it is SUNNY
@@ -887,7 +932,7 @@ UDF - Build and deploy KSQL User Defined Anomoly Functions - write a UDF to calc
 - Download Maven and follow the installation instructions (https://maven.apache.org/)
 ```
 cd java
-mvn clean package 
+mvn clean package
 ls target/ksql-udf-taxi-1.0.jar
 ```
 
@@ -897,7 +942,7 @@ Find the location of your extension directory.  From KSQL
 ```
 ksql> LIST PROPERTIES;
 
- Property               | Effective Value 
+ Property               | Effective Value
 --------------------------------------------
  . . .
  ksql.extension.dir     | ext                 <--  *** Look for this
@@ -913,10 +958,10 @@ confluent local services ksql-server stop
 mkdir /opt/confluent/ext
 
 # build ksql-udf-taxi.jar as above and copy into ext directory
-cp target/ksql-udf-taxi-1.0.jar /opt/confluent/ext 
+cp target/ksql-udf-taxi-1.0.jar /opt/confluent/ext
 
 # or to use the pre-compile one
-cp pre-compiled/ksql-udf-taxi-1.0.jar /opt/confluent/ext 
+cp pre-compiled/ksql-udf-taxi-1.0.jar /opt/confluent/ext
 
 # Restart KSQL server
 confluent local services ksql-server start
@@ -925,10 +970,10 @@ confluent local services ksql-server start
 
 ### Check KSQL User Defined Functions Available
 
-Start `ksql` client and verify 
+Start `ksql` client and verify
 
 ```
-ksql> list functions; 
+ksql> list functions;
 
  Function Name     | Type
 -------------------------------
@@ -938,7 +983,7 @@ ksql> list functions;
  TIMESTAMPTOSTRING | SCALAR
 
 
-ksql> DESCRIBE FUNCTION TAXI_WAIT; 
+ksql> DESCRIBE FUNCTION TAXI_WAIT;
 
 Name        : TAXI_WAIT
 Overview    : Return expected wait time in minutes
@@ -959,19 +1004,19 @@ Use the UDF
 ```
 describe ridetodest;
 
-select user 
+select user
 , round(dist) as dist
 , weather_description
-, round(TAXI_WAIT(weather_description, dist)) as taxi_wait_min 
-from ridetodest emit changes; 
+, round(TAXI_WAIT(weather_description, dist)) as taxi_wait_min
+from ridetodest emit changes;
 
 
-select user 
+select user
 + ' will be waiting ' + cast(round(TAXI_WAIT(weather_description, dist)) as varchar)  
-+ ' minutes for their trip of ' 
-+ cast(round(dist) as varchar) +' km to ' + city_name 
-+ ' where it is ' + weather_description 
-from ridetodest emit changes; 
++ ' minutes for their trip of '
++ cast(round(dist) as varchar) +' km to ' + city_name
++ ' where it is ' + weather_description
+from ridetodest emit changes;
 
 Heidi will be waiting 14 minutes for their trip of 358 km to Bristol where it is light rain
 Bob will be waiting 4 minutes for their trip of 218 km to Manchester where it is SUNNY
@@ -995,25 +1040,25 @@ ksql
 # check if BOB topic exists
 kafka-topics --zookeeper localhost:2181 --list --topic BOB
 
-kafka-avro-console-consumer --bootstrap-server localhost:9092 --topic BOB 
+kafka-avro-console-consumer --bootstrap-server localhost:9092 --topic BOB
 ```
 
 
 ## Lecture 31: Explain Plan
 Explain
 ```
-create stream my_stream 
-as select firstname 
-from userprofile; 
+create stream my_stream
+as select firstname
+from userprofile;
 
 show queries;
 
 explain CSAS_MY_STREAM_1;
 
 
-create table my_table 
-as select firstname, count(*) as cnt 
-from userprofile 
+create table my_table
+as select firstname, count(*) as cnt
+from userprofile
 group by firstname;
 
 show queries;
@@ -1030,22 +1075,22 @@ _Converts an ASCII Kafka Topology description into a hand drawn diagram._
 Multi Server with docker
 
 ```
-docker-compose  -f docker-compose-prod.yml up -d 
+docker-compose  -f docker-compose-prod.yml up -d
 ksql-datagen schema=./datagen/userprofile.avro format=json topic=USERPROFILE key=userid maxInterval=1000 iterations=100000
 ```
 
 In KSQL
 ```
 
-CREATE STREAM userprofile (userid INT, firstname VARCHAR, lastname VARCHAR, countrycode VARCHAR, rating DOUBLE) 
+CREATE STREAM userprofile (userid INT, firstname VARCHAR, lastname VARCHAR, countrycode VARCHAR, rating DOUBLE)
   WITH (VALUE_FORMAT = 'JSON', KAFKA_TOPIC = 'USERPROFILE');  
 
-create stream up_lastseen as 
+create stream up_lastseen as
 SELECT TIMESTAMPTOSTRING(rowtime, 'dd/MMM HH:mm:ss') as createtime, firstname
 from userprofile;  
 ```
 ```
-kafka-console-consumer --bootstrap-server localhost:9092  --topic UP_LASTSEEN 
+kafka-console-consumer --bootstrap-server localhost:9092  --topic UP_LASTSEEN
 
 
 docker-compose -f docker-compose-prod.yml ps
@@ -1087,7 +1132,7 @@ ksql.service.id=myservicename
 confluent start ksql-server
 ```
 
-Start KSQL 
+Start KSQL
 ```
 
 LIST PROPERTIES;
@@ -1119,7 +1164,7 @@ LIST PROPERTIES;
 
 ## State Stores
 
-Start KSQL 
+Start KSQL
 ```
 LIST PROPERTIES;
 
@@ -1144,7 +1189,7 @@ CREATE STREAM userprofile (userid INT, firstname VARCHAR, lastname VARCHAR, coun
 At UNIX
 ```
 # note: this will show nothing
-find /var/folders/1p/3whlrkzx4bs3fkd55_600x4c0000gp/T/confluent.V2kB1p2N/ksql-server/data/kafka-streams -type f 
+find /var/folders/1p/3whlrkzx4bs3fkd55_600x4c0000gp/T/confluent.V2kB1p2N/ksql-server/data/kafka-streams -type f
 ```
 
 Run a stateful operation, which should require RocksDB to persist to disk
@@ -1156,7 +1201,7 @@ select countrycode, count(*) from userprofile group by countrycode;
 At UNIX
 ```
 # note: this will now show files
-find /var/folders/1p/3whlrkzx4bs3fkd55_600x4c0000gp/T/confluent.V2kB1p2N/ksql-server/data/kafka-streams -type f 
+find /var/folders/1p/3whlrkzx4bs3fkd55_600x4c0000gp/T/confluent.V2kB1p2N/ksql-server/data/kafka-streams -type f
 ```
 
 
@@ -1207,4 +1252,3 @@ ksql-test-runner --sql-file ksql-statements.ksql --input-file input.json --outpu
 
 ksql-test-runner --sql-file ksql-statements-enhanced.ksql --input-file input.json --output-file output.json  | grep  ">>>"
 ```
-
