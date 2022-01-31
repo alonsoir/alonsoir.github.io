@@ -1,0 +1,277 @@
+Lunes 24 de Enero.
+
+Hello Alonso,
+
+Thank you for bringing this to our attention.
+
+We have put a hold on your account's ability to login for the time being until you are certain that your account is secure. No new outgoing transactions will be possible while the account is disabled, but pending transactions cannot be stopped due to the irrevocable nature of digital currency transactions. We have a few questions that will help us begin isolating the incident.
+
+Please note: that for security reasons, Coinbase phone support agents are not able to conduct security investigations. We must complete a security review by email before we will be able to unlock your account, so please answer these questions in writing to the best of your ability, even if you think you have resolved your concern:
+1) When was your last successful login and authorized action on your account?
+2) Please list any actions that were not authorized by you, including the amount and timing of any transactions.
+3) Was the device in your possession during the unauthorized activity?
+4) Have you been in touch with any customer service representative via phone or social media recently? If so, please provide us with the phone number or URL.
+5) Have you suffered any noticeable interruption in your phone service or been a victim of a phone port/sim swap?
+6) Have you received any unrequested email or SMS message from Coinbase that prompted you to click a link and enter your login credentials? If so, please send us a screenshot of that message so we can take a look.
+7) Do you use or have installed any remote desktop software recently?
+8) Have you recently installed any software or browser’s extension? If so, could you run a malware scan on your device and let us know the results?
+9) Can you provide any further information about how your credentials could have been compromised?
+10) Is there any additional information you can provide to help us understand the attack?
+
+As a security precaution, please immediately take steps to secure your email password and enable 2-step verification on your email if possible. Please also reset your Coinbase password, go to this link: https://www.coinbase.com/password_resets/new
+
+For additional information on setting a strong password go to this link: https://www.coinbase.com/password-faq
+We strive to investigate all security reports within 10 business days. Some cases may require additional time for investigation due to the sensitive nature of irrevocable digital currencies.
+
+Thank you for your patience as we work to resolve the issue.
+
+Regards,
+Coinbase Support
+
+
+Aironman DirtDiver <alonsoir@gmail.com>
+Adjuntos
+lun, 24 ene, 10:59 (hace 1 día)
+
+para Coinbase
+
+Activity has always been with Coinbase Wallet, money has been lost from Coinbase Wallet. I use Coinbase to see the current price of ETH and usdt and know if it is worth doing the trade.
+
+1) When was your last successful login and authorized action on your account?
+On January 20, in coinbase wallet, I made an exchange of eth to usdt worth 3417 usdt, about 3019.58 euros.
+
+2) Please list any actions that were not authorized by you, including the amount and timing of any transactions.
+A payment of 70492.66 euros, or 79790 usdt to an address unknown to me.
+
+3) Was the device in your possession during the unauthorized activity?
+Always, the device has always with me. I tested positive for covid on the 19th of this month, so I've been homebound ever since.
+
+4) Have you been in touch with any customer service representative via phone or social media recently? If so, please provide us with the phone number or URL.
+Through Twitter, several people, one of whom helped me create this account, but they never had access to said password file, nor to my physical phone.
+
+5) Have you suffered any noticeable interruption in your phone service or been a victim of a phone port/sim swap?
+No, that he was aware.
+
+6) Have you received any unrequested email or SMS message from Coinbase that prompted you to click a link and enter your login credentials? If so, please send us a screenshot of that message so we can take a look.
+when I wanted to enter the forum, once I had verified that my funds had disappeared, that the password to enter coinbase was no longer valid. I had to change it to be able to log in and request to start this investigation through the web browser. The Wallet and coinbase apps were still able to log in, but through the browser I couldn't.
+
+7) Do you use or have installed any remote desktop software recently?
+No, I do not use remote connection software. I use osx updated to the latest version MacOS Monterey 12.1, Udemy to watch training videos. Docker to run Apache Kafka containers, vendor is trusted
+
+8) Have you recently installed any software or browser’s extension? If so, could you run a malware scan on your device and let us know the results?
+I installed Grammarly in Safari.
+
+9) Can you provide any further information about how your credentials could have been compromised?
+The file with the keys is stored in my laptop, a MacBook pro and my iPhone, in a app named Notes. As far as I know, the app is only accessible through my devices, physical devices, so I don't know how the attacker compromised my devices.
+
+10) Is there any additional information you can provide to help us understand the attack?
+I don't know if it's relevant but there is a person who helped me to create the account, but he never had access to my credentials, but he could see the attached screenshots about Coinbase Wallet. I don't know if that can help.
+
+As soon as I know something more, I will communicate it
+
+Alonso
+
+
+lun, 24 ene, 12:03 (hace 1 día)
+
+para mí
+
+Detectar idioma
+español
+
+Traducir mensaje
+Desactivar para: inglés
+Hello Alonso,
+
+Thanks for contacting us about securing your account.
+
+We have temporarily locked your account to protect you while we confirm that your devices and email are secure.
+
+Please take the following security precautions so that we may restore access to your account:
+1. Scan your devices with anti-virus software.
+2. Check the operating system on each of your devices to make sure they are running the most current version.
+3. Reset your email password AND your Coinbase account password. Choose new passwords that are long, random, and unique to each account: https://www.coinbase.com/password_resets/new (Please note: that resetting your Coinbase account password will NOT automatically unlock your account.)
+4. If you have not already done so, please enable 2-step verification on your email account.
+5. Check your email for any unfamiliar rules, filters, forwarding addresses, or recovery emails.
+6. If you no longer have access to your mobile device or original phone number, let us know so that we can assist you with additional steps for account recovery.
+
+After you have completed all of the steps listed above and are ready to restore access to your account, please reply to this email.
+
+We look forward to helping you get back into your account quickly and safely.
+
+For additional safety measures you can take to protect your account,  please read this help article: https://help.coinbase.com/en/coinbase/privacy-and-security/data-privacy/how-can-i-make-my-account-more-secure?ref=es
+
+
+lun, 24 ene, 12:28 (hace 1 día)
+
+para Coinbase
+
+Please, do something, i already sent you all the info I got, and I have reset the password. Please, help me to have my money back,
+
+
+Hi Alonso,
+
+Thanks for contacting us.
+
+Our records indicate that the transaction you reported as unauthorized was initiated from the IP 83.55.231.61 matching your geolocation, with a verified device on your account used for other transactions not reported as unauthorized.
+
+Please note you are solely responsible for the security of your devices, passwords, e-mail and 2-factor phone codes.
+
+On the other hand, it looks like your ID uploads were successful and have already been submitted for review. You’ll receive an email confirmation after our review is complete. No more action is needed from you at this time.
+
+Please note: that this process usually takes 48 hours to complete but can sometimes take longer. After 24 hours, you should be able to sign in to your account and complete buys and sells. After 48 hours, you should have full trading capabilities restored.
+
+For the security of your account, sends will be disabled on your account until the full security period has passed. If you sign in before the security period is complete, you’ll receive a pop-up notification informing you that sends are temporarily disabled.
+
+Hi coinbase support, I created the account at the request of this lady, a lady with whom I had video calls and who now has me blocked on Twitter and does not answer any of my calls. She gave me this screenshot, maybe it's no use, but who knows. In Twitter, the user is @Liqiqi23355398
+
+
+lun, 24 ene, 15:44 (hace 1 día)
+
+para mí
+
+Detectar idioma
+español
+
+Traducir mensaje
+Desactivar para: inglés
+Hi Alonso,
+
+Thanks for contacting us. In order to review your account, we’ll need more information.
+
+Please answer the following questions to the best of your ability:
+
+- Why did you create your Coinbase account?
+- Did you create this Coinbase account yourself, or were you directed to create an account by a third party?
+- If you did not create the account yourself, did you provide your personal information to a third party so they could create the account for you?
+- Have you provided your login information to a third party, or has a third party ever had access to your account?
+
+Please reply to this email with your answers. After you provide this information, we’ll begin reviewing your case and contact you with updates.
+
+Aironman DirtDiver <alonsoir@gmail.com>
+lun, 24 ene, 16:04 (hace 1 día)
+
+para Coinbase
+
+I have created a coinbase account for my self. Nobody creates the account for me, I choose the username, I choose the password, nobody supervised me or suggest me to use a username or a password. I enabled two phactor authentication immediately I created the account.
+One person suggested me to create it, she talked to me about coinbase and coinbase wallet. She told me to use this node https://www.topethmine.com/#/index to mine ethereum.
+All transactions made on the coinbase wallet using coordinates other than Latitude: 38.872014486214255 Longitude: -6.977273305594661 elevation 186m should be considered fraudulent at source. I live in those coordinates, I have not moved from those coordinates in days because I tested positive for covid on the 19th. Yesterday, the 23rd, the transfer was made without my permission.
+
+No I have not provided any login information to a third party, the user and password I always stored in iPhone memory. The file with the keys provided by coinbase were stored in icloud.com. I am looking for the ips that accessed that file. I will try to geoposition them. Please use my coordinates to try to limit transactions. That transfer of 70k euros had to be made from a geopositioned IP other than the one at home, or at least it cannot be in Spain. Please help.
+I live in Spain, Badajoz
+
+
+Hi Alonso,
+
+It looks like your ID uploads were successful and have already been submitted for review. You’ll receive an email confirmation after our review is complete. No more action is needed from you at this time.
+
+Please note: that this process usually takes 48 hours to complete but can sometimes take longer. After 24 hours, you should be able to sign in to your account and complete buys and sells. After 48 hours, you should have full trading capabilities restored.
+
+For the security of your account, sends will be disabled on your account until the full security period has passed. If you sign in before the security period is complete, you’ll receive a pop-up notification informing you that sends are temporarily disabled.
+
+
+lun, 24 ene, 17:35 (hace 1 día)
+
+para Coinbase
+
+Please, can i talk with somebody in spanish?
+
+
+Coinbase Support
+lun, 24 ene, 17:50 (hace 1 día)
+
+para mí
+
+Detectar idioma
+español
+
+Traducir mensaje
+Desactivar para: inglés
+Hello Alonso,
+
+Thanks for contacting Coinbase Support.
+
+We are sorry but Spanish is an unsupported language. At this time, Coinbase Support only offers customer support in English, Japanese, and German.
+
+We look forward to helping you get back into your account quickly and safely.
+
+Aironman DirtDiver <alonsoir@gmail.com>
+lun, 24 ene, 18:16 (hace 23 horas)
+
+para Coinbase
+
+Hi again, coinbase wallet support.
+
+I have several questions regarding the unauthorized sending of money from my account in coinbase wallet.
+First of all, I have not been, I have not requested it, I have not shared with anyone the passwords, or the username, or the email.
+
+1) I need information on the IP of the account that has requested the sending of the money that occurred yesterday, Sunday, January 23.
+
+2) I need to know if there have been requests to move or send money from another coinbase wallet account,
+I need to know the geoposition of these requests. Ultimately, I need an audit of that transaction.
+
+3) I know there was a hack of your platform, in September/October. I created my account in December, has been a new attack
+that has compromised my secure data?
+
+4) Is there any insurance of some kind that I can hold onto to get my money back?
+
+5) What do you plan to do to return my money?
+
+6) Why did I never receive an email or notification warning me that the 70k euros were going to be moved to another address?
+I need you to send me the logs that indicate that said request was made in the coinbase wallet systems.
+
+I had to go into the coinbase wallet app to get scared to death because I couldn't see my funds!
+What is the use of having a double authentication system if the security of the system ultimately depends on a series of 10 passwords stored in a file?
+
+Please, help.get my money back in my coinbase wallet or coinbase account. Please. Stop that transaction, I've been robbed, and it's not my fault. I feel violated.
+
+iver <alonsoir@gmail.com>
+13:39 (hace 4 horas)
+
+para Coinbase
+
+Hi, i can see that the contract with my money is blocked. This transaction contains my life savings stolen by someone. I have not ordered that transaction, someone has done it for me and I need that money to return to my account.
+
+Please, help me, please!
+
+Aironman DirtDiver <alonsoir@gmail.com>
+17:06 (hace 54 minutos)
+
+para Coinbase
+
+Please, i need an update. I am calling to UK and Dublin numbers, offline both.
+
+osé María Isidoro Román
+17:19 (hace 41 minutos)
+
+para mí
+
+inglés
+español
+
+Traducir mensaje
+Desactivar para: inglés
+Has respondido a las preguntas que te han hecho en este mail?
+
+Escribe las respuestas lo mejor que puedas en español que es como nos expresamos y pensamos.
+Luego pasa el traductor de Google. Y después del traductor, si ves alguna cosa mal escrita , lo corriges.
+Esta tranquilo. Piensa tranquilamente. Y responde
+Gracias
+
+Hola Alonso,
+
+Gracias por traer esto a nuestra atención.
+
+Hemos suspendido la capacidad de su cuenta para iniciar sesión por el momento hasta que esté seguro de que su cuenta es segura. No se podrán realizar nuevas transacciones salientes mientras la cuenta esté deshabilitada, pero las transacciones pendientes no se pueden detener debido a la naturaleza irrevocable de las transacciones en moneda digital. Tenemos algunas preguntas que nos ayudarán a comenzar a aislar el incidente.
+
+Tenga en cuenta: que por razones de seguridad, los agentes de soporte telefónico de Coinbase no pueden realizar investigaciones de seguridad. Debemos completar una revisión de seguridad por correo electrónico antes de que podamos desbloquear su cuenta, así que responda estas preguntas por escrito lo mejor que pueda, incluso si cree que ha resuelto su inquietud:
+1) ¿Cuándo fue su último inicio de sesión exitoso y acción autorizada en su cuenta?
+2) Enumere las acciones que no autorizó, incluido el monto y el momento de las transacciones.
+3) ¿Estaba el dispositivo en su posesión durante la actividad no autorizada?
+4) ¿Ha estado en contacto con algún representante de servicio al cliente por teléfono o redes sociales recientemente? Si es así, indíquenos el número de teléfono o la URL.
+5) ¿Ha sufrido alguna interrupción notable en su servicio telefónico o ha sido víctima de un intercambio de puerto de teléfono/sim?
+6) ¿Ha recibido algún correo electrónico o mensaje SMS no solicitado de Coinbase que le solicitó que hiciera clic en un enlace e ingresara sus credenciales de inicio de sesión? Si es así, envíenos una captura de pantalla de ese mensaje para que podamos echarle un vistazo.
+7) ¿Utiliza o ha instalado algún software de escritorio remoto recientemente?
+8) ¿Has instalado recientemente algún software o extensión de navegador? Si es así, ¿podría ejecutar un análisis de malware en su dispositivo y hacernos saber los resultados?
+9) ¿Puede proporcionar más información sobre cómo podrían haberse visto comprometidas sus credenciales?
+10) ¿Hay alguna información adicional que pueda proporcionar para ayudarnos a comprender el ataque?

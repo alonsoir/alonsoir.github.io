@@ -1,0 +1,461 @@
+Conocí a una persona por Twitter, me pareció que por las fotos tenía ojos de buena persona. Me comentó acerca de ganar dinero con coinbase y coinbase wallet. Conecté el wallet, sin saberlo, con una app que creaba un contrato en el blockchain de ethereum para drenar mi dinero de poco a poco, de manera que un dia, todo el dinero de mi wallet se esfumó. En ningun momento se me notificó que se estaba moviendo dinero desde mi wallet a otra direccion de terceros, me di cuenta el dia que se movió la gran cantidad, al abrir la app Coinbase Wallet. En ese momento, la timadora desapareció. Más de 70k euros.
+Es como si esa app de terceros pudiera pasar por encima del proceso de autenticacion de coinbase wallet para mover cantidades de dinero de un lugar a otro, sin llegar a notificar en ningun momento que dicho proceso está ocurriendo. Parece que de alguna manera se está aprovechando de problemas en el diseño de autenticacion de la api de coinbase wallet como en el código de la app coinbase wallet.
+
+El caso está descrito con bastante precisión en https://www.globalantiscam.org/post/new-twist-targeting-coinbase-wallet-app
+
+Es como si me hubiera pasado a mí.
+
+I met a person on Twitter, it seemed to me that from the photos he had the eyes of a good person.
+He told me about making money with coinbase and coinbase wallet. I connected the wallet, without knowing it,
+with an app that created a contract in the ethereum blockchain to drain my money little by little, so that one day,
+all the money in my wallet disappeared.
+
+At no time was I notified that money was being moved from my wallet to another third-party address,
+
+I realized the day the large amount was moved, when I opened the Coinbase Wallet app.
+At that moment, the scammer disappeared. More than 70k euros.
+It is as if that third-party app could bypass the coinbase wallet authentication process to move amounts of money from
+one place to another, without ever notifying that said process is taking place. It seems that it is somehow taking advantage of issues in the coinbase wallet api authentication design as in the code of the coinbase wallet app.
+
+The case is quite accurately described at https://www.globalantiscam.org/post/new-twist-targeting-coinbase-wallet-app
+
+It's like it happened to me.
+
+I am now confined due to covid. I provide the evidence that I have been able to collect on it:
+
+address where my money was sent:
+
+0xaca6c427e543240a74f9438cd3e8769b144c4c55
+
+transaction hash
+
+0x8135f16fb351d1488512859d68de92ec3857f0a0a606466020298e91a69d76f2
+
+You can see the transaction here:
+
+https://etherscan.io/tx/0x8135f16fb351d1488512859d68de92ec3857f0a0a606466020298e91a69d76f2
+
+I used this website to mine ethereum.
+It is a third-party application, totally illegal, as it is designed to connect to coinbase wallet systems
+and create contracts on the blockchain using your credentials.
+It is taking advantage of a vulnerability in the coinbase wallet api so that when it is connected to my
+coinbase wallet it can skip the two-step verification provided by coinbase, as well as the verification
+and / or password request provided by coinbase wallet, the famous 10 words .
+
+https://www.topethmine.com/#/index
+
+That third party website connects with my wallet and somehow creates a contract in which it takes my money
+little by little, without the need to pass the coinbase wallet passwords, or go through the
+two-step authentication. Thus, no request has ever reached my email, nor my mobile.
+
+Several questions appear:
+1) why the hell does coinbase wallet allow third party apps to talk to it without authentication?
+2) why does it allow to add urls?
+3) Why don't you block unauthorized third party applications?
+
+should if anything accept only requests from third-party applications authorized by themselves,
+do not take advantage of the fact that the third-party app is operating in the
+app workspace authenticated against coinbase user, but coinbase authenticated user credentials
+They are not the same as the credentials to create contracts on the ethereum network, much less are they the famous ten words that you
+coinbase wallet to trade. It seems clear that the vulnerability comes from a bug in the coinbase wallet authentication api
+and in the code of the app itself. should not give the option to enter
+no url, because that is opening a vulnerability, and your authentication api needs a review.
+
+Esa web de terceros se conecta con mi wallet y de alguna manera crea un contrato en la que saca mi dinero
+poco a poco, sin necesidad de pasarle las contraseñas de coinbase wallet, ni de pasar por la
+autenticacion por dos pasos. Así nunca ha llegado a mi correo electronico, ni a mi movil ninguna petición.
+
+Aparecen varias preguntas:
+1) por qué cojones coinbase wallet permite que aplicaciones de terceros hablen con ella sin necesidad de autentificación?
+2) por qué permite añadir urls?
+3) por que no hace un bloqueo de aplicaciones de terceros no autorizadas?
+
+debería si acaso aceptar solo las peticiones de aplicaciones de terceros autorizadas por ellos mismos,
+no aprovechar que la app de terceros está operando en la
+zona de trabajo de la aplicacion autentificada contra el usuario de coinbase, pero las credenciales del usuario autentificado de coinbase
+no son las mimas que las credenciales para crear contratos en la red ethereum, ni mucho menos son las famosas diez palabras que te
+coinbase wallet para operar. Parece claro que la vulnerabilidad viene de un error en la api de autentificacion contra coinbase Wallet
+y en el codigo mismo de la app. no debe dar la opción de introducir
+ninguna url, pq eso es abrir una vulnerabilidad, y su api de autenticacion necesita un repaso.
+
+DATOS DE OTRAS VICTIMAS!!
+
+Este es un video de una víctima que se ha atrevido a hablar del asunto:
+
+https://www.youtube.com/watch?v=KSVKOaZL2to
+
+Contacté con otra víctima de un timo parecido, al parecer ha podido hablar con la usuario de Twitter @2ihoiGsa0tayhBf
+y afirma esto:
+
+I contacted another victim of a similar scam, apparently he was able to talk to the Twitter user @2ihoiGsa0tayhBf
+and states this:
+
+@ftheworldagain
+
+"Hi Alonso. Sorry to hear that you've lost money to romance scams, I've lost a lot too.
+But not to this lady. She says she works (or I think her family owns) a medical equipment
+manufacturer in Hong Kong, she travels around a lot and has a daughter.
+Only name I have is Linda and contact number is +852 6795 3141 , I''ve not spoken to her in a few months.
+She claims photo's on the net are her and have been stolen and used by scammers.
+Here is work phone number +852 9807 8174. I hope this helps? Let me know if you need anything else and let me know how you go."
+
+Desde luego, despues de introducirlos en wasap, parece que es ella. La conversacion que he mantenido con Travis, Australiano,
+me hace sospechar aún más. Dice que se llama Linda, que tiene una hija y un sobrino, a mi me dijo al reves, un hijo y una sobrina,
+enseguida le hablo de btc y movidas así, que la llamó ella a él. No la voy a llamar, me gustaría poder tenderle una trampa, hacer que alguien
+hable con ella para ver si le engatusa y trata de hacer lo mismo. Travis contactó con ella a través del usuario de twitter @2ihoiGsa0tayhBf
+
+Of course, after introducing them in wasap, it seems that it is her. The conversation I have had with Travis, Australian,
+makes me even more suspicious. He says that her name is Linda, that she has a daughter and a nephew, he told me the other way around, a son and a niece,
+Right away I talk to her about btc and things like that, so she called him. I'm not going to call her, I wish I could set her up, make someone
+talk to her to see if she cajoles you and tries to do the same. Travis contacted her through the twitter user @2ihoiGsa0tayhBf
+
++852 6795 3141
++852 9807 8174
+
+I have contacted another victim of Yang Lili through Linkedin, Dennis butts II, he provides me with photos and phone numbers.
+
+
+This is the scammer, I've made real-time video calls with her, I know it's her. I have photos and videos.
+Alyssa I think she calls herself:
+凯伦蒂娜
+
+https://www.facebook.com/kecik.angah6
+
+https://www.facebook.com/mixi.chen0520
+
+on linkedin
+
+https://www.linkedin.com/in/chen-mixi-76b09721a/
+
+https://www.linkedin.com/in/elva-lin-0b7a05201/
+
+https://www.linkedin.com/in/na-mi-a8a06b20a/
+
+On twitter
+
+@2ihoiGsa0tayhBf
+
+@Liqiqi23355398
+
+https://twitter.com/wakuwakulife668
+
+https://twitter.com/LILI16203822 ---> aquí interactua con alguien hablando de covid19. Interesante.here interact with someone talking about covid19. Interesting
+
+https://ワクワクらいふ.com/author/hiroyuki/
+
+https://www.instagram.com/wakuwakulife668/
+
+Creo que trabaja aqui/ I think she works here:
+
+https://www.qmxip.com/tm_xq/593525507264659456
+
+Creo que este es su marido, no estoy seguro. En Weibo aparece con otro hombre:
+
+https://www.instagram.com/ryukenmind/
+
+I think they did it like this:
+
+https://www.reddit.com/r/liquiditymining/comments/rj9k9b/wondering_if_anyone_has_used_this_platform/
+
+https://www.globalantiscam.org/post/new-twist-targeting-coinbase-wallet-app
+
+https://threatpost.com/investment-scammers-dating-app-interpol/163179/
+
+Carta para los seguidores de esta mujer en Twitter
+Buenas tardes, me llamo Alonso Isidoro y quiero por favor advertirle que es posible que la usuario con id @2ihoiGsa0tayhBf o
+la misma con id @Liqiqi23355398 estén tratando de engañarle para que haga una inversion en criptomonedas siguiendo sus instrucciones.
+Por favor, yo he sido victima suya hace pocos dias, me han robado más de 70k euros. Por favor, no caiga en la trampa.
+El procedimiento está descrito con precision aquí.
+
+ https://www.globalantiscam.org/post/new-twist-targeting-coinbase-wallet-app
+
+This is the scammer, I've made real-time video calls with her, I know it's her. I have photos and videos.
+Alyssa I think she calls herself:
+凯伦蒂娜
+
+https://www.facebook.com/kecik.angah6
+
+https://www.facebook.com/mixi.chen0520
+
+on linkedin
+
+https://www.linkedin.com/in/chen-mixi-76b09721a/
+
+https://www.linkedin.com/in/elva-lin-0b7a05201/
+
+https://www.linkedin.com/in/na-mi-a8a06b20a/
+
+https://www.linkedin.com/in/betty-wang-74b227227/
+
+https://www.linkedin.com/company/carendina·凯伦蒂娜/people/
+
+On twitter
+
+@2ihoiGsa0tayhBf
+
+@Liqiqi23355398
+
+https://twitter.com/wakuwakulife668
+
+http://www.xiaohongshu.com/user/profile/56a5d5665e87e7023504b907
+
+http://www.xiaohongshu.com/discovery/item/61efd5880000000021037002
+
+http://www.xiaohongshu.com/user/profile/56a5d5665e87e7023504b907
+
+https://weibo.com/u/1904263764
+
+https://graph.baidu.com/pcpage/similar?originSign=1268cbd4518143b31530b01643222794&srcp=crs_pc_similar&tn=pc&idctag=gz&sids=10005_10521_10968_10974_11032_17851_17070_18100_17200_17202_18312_19192_19162_19220_19210_19230_19268_19280_19550_19560_19660_19670_19807_20003_20020_20049_10000&logid=3273134523&gsid=&entrance=general&tpl_from=pc&pageFrom=graph_upload_pcshitu&image=http%3A%2F%2Fmms2.baidu.com%2Fit%2Fu%3D1571570073,1672025482%26fm%3D253%26app%3D138%26f%3DJPEG%26fmt%3Dauto%26q%3D75%3Fw%3D500%26h%3D667&carousel=503&index=0&wd=&tag=金民灿&page=1&shituToken=c2d500
+
+Usa esta web para hacer busqueda inversa
+
+https://who.is/
+
+Esta app de terceros creó un contrato a mis espaldas que se encarga de drenar poco a poco mis fondos, lo hace sin que me llegue dicho contrato, no se me notifique de ninguna de las maneras, ni por email, ni por notificacion push, ni por solicitud de introducir las famosas diez palabras que coinbase wallet te da, ni por introducir una contraseña generada por la app de autentificacion por dos pasos. Coinbase wallet permitió que una app de terceros se usara contra sus  sistemas y no controlaron quien accede a que, ni comprobaron credenciales, ni las solicitaron, nada de nada. El robo perfecto porque ellos lo han permitido. Los atacantes han aprovechado una vulnerabilidad en su api, dejandonos a los clientes totalmente expuestos ante este tipo de abuso.
+
+Por favor, hago esto para que no caigan ustedes en la misma trampa y espero que por favor me puedan ayudar en la medida de lo posible para que
+pueda identificar a esta persona y llevarla ante las autoridades judiciales.
+
+En ingles
+
+
+Good afternoon, my name is Alonso Isidoro and I would like to warn you that it is possible that the user with id @2ihoiGsa0tayhBf or the same with id @Liqiqi23355398 are trying to trick you into making an investment in cryptocurrencies following their instructions. Please, I have been their victim a few days ago, they have stolen more than 70k euros from me. Please don't fall into the trap. The procedure is precisely described here.
+
+ https://www.globalantiscam.org/post/new-twist-targeting-coinbase-wallet-app
+
+This is the scammer, I've made real-time video calls with her, I know it's her. I have photos and videos.
+Alyssa I think she calls herself:
+凯伦蒂娜
+
+https://www.facebook.com/kecik.angah6
+
+https://www.facebook.com/mixi.chen0520
+
+https://www.facebook.com/profile.php?id=100049404162863
+
+https://www.facebook.com/yangli1985
+
+https://www.facebook.com/profile.php?id=100071968313540
+
+Creo que este es otro alias suyo, Bruce Samaritan, interactua con ella en FB, luego, buscando donde trabaja, el sitio parece ser una estafa situada
+en San Vicente y las Granadinas
+
+https://www.facebook.com/bruce.samaritan/about
+
+https://www.reddit.com/r/Scams/comments/mg317o/novatechfx_scam/
+
+https://www.google.com/maps/place/Griffith+Corporate+Centre/@13.1568005,-61.2233837,17z/data=!3m1!4b1!4m5!3m4!1s0x8c475150d7889919:0xec14007759a547d6!8m2!3d13.1567968!4d-61.2211985
+
+on linkedin
+
+https://www.linkedin.com/in/chen-mixi-76b09721a/
+
+https://www.linkedin.com/in/elva-lin-0b7a05201/
+
+https://www.linkedin.com/in/na-mi-a8a06b20a/
+
+She uses the alias yang lili
+
+https://twitter.com/search?q=yang%20lili&src=typed_query&f=user
+
+
+on twitter
+
+@2ihoiGsa0tayhBf
+
+@Liqiqi23355398
+
+https://twitter.com/LandmanRicardo
+
+Creo que trabaja o está relacionado con ésto:
+
+http://lunsheng.5588.tv/companyzhuce.htm
+
+pérfiles en redes sociales asiaticas.
+
+https://weibo.com/yanglilibaby
+
+https://www.douyin.com/user/MS4wLjABAAAAZJ1_U20Ijf1w0M0wqzTE3Ei-UseR8cKF83xLEfgReYNoHoy3BPOS5Dt4vY3qbCIt
+
+https://m.kolstore.com/weiboDetails?userId=1904263764
+
+https://weibo.com/u/1904263764?tabtype=newVideo
+
+http://www.xiaohongshu.com/discovery/item/606e65890000000001029344
+
+https://graph.baidu.com/pcpage/similar?originSign=1268cbd4518143b31530b01643222794&srcp=crs_pc_similar&tn=pc&idctag=gz&sids=10005_10521_10968_10974_11032_17851_17070_18100_17200_17202_18312_19192_19162_19220_19210_19230_19268_19280_19550_19560_19660_19670_19807_20003_20020_20049_10000&logid=3273134523&gsid=&entrance=general&tpl_from=pc&pageFrom=graph_upload_pcshitu&image=http%3A%2F%2Fmms2.baidu.com%2Fit%2Fu%3D1571570073,1672025482%26fm%3D253%26app%3D138%26f%3DJPEG%26fmt%3Dauto%26q%3D75%3Fw%3D500%26h%3D667&carousel=503&index=0&wd=&tag=金民灿&page=1&shituToken=c2d500
+
+http://www.xiaohongshu.com/user/profile/56a5d5665e87e7023504b907
+
+
+
+Su alias Chen Mixi ha contactado conmigo a través de Linkedin! No me lo puedo creer.
+
+His alias Chen Mixi has contacted me through Linkedin! I can not believe it.
+
+Me ha dado esta url:
+
+It gave me this url:
+
+http://www.face100.net/vipweb/426761/index/
+
+Un whois devuelve ésto:
+
+https://whois.domaintools.com/face100.net
+
+creo que trabaja aqui (carendina)
+
+I think he works here (carendina)
+
+https://www.qmxip.com/tm_xq/593525507264659456
+
+creo que este es su marido...
+
+I think this is her husband...
+
+http://www.xiaohongshu.com/discovery/item/61f11950000000002103d5a5
+
+He contactado con policias Chinos en linkedin, tratado de conectar y enviado mensajes, implorando su ayuda, ojalá puedan ayudarme.
+
+Buscadores de imagen inversa:
+
+I have contacted Chinese policemen on linkedin, tried to connect and sent messages, imploring their help, hopefully they can help me.
+
+Reverse image search engines:
+
+https://www.so.com/?src=so.com
+
+https://pic.sogou.com/ris?flag=1&from=pic_result_list&query=http%3A%2F%2Fimg04.sogoucdn.com%2Fapp%2Fa%2F100520146%2F8a1c8b10be4416c29ae583662e4d8fb4
+
+https://pic.sogou.com/pics?query=微博%3A杨莉莉Baby&ie=utf8
+
+https://github.com/andrewhoulbrook/china-reverseimage-transforms
+
+https://www.reddit.com/r/Scams/
+
+https://yandex.com/images/search?rpt=imageview&url=https%3A%2F%2Favatars.mds.yandex.net%2Fget-images-cbir%2F2309063%2FBIMfHAXDYUZfxBKOGh4hag6511%2Forig&cbir_id=2309063%2FBIMfHAXDYUZfxBKOGh4hag6511
+
+https://www.labnol.org/reverse/
+
+https://www.huobi.be/support/en-us/detail/900003462106
+
+hilo en reddit de scammers. Tienes que escribir tu caso aquí...
+
+scammers reddit thread. You have to write your case here...
+
+https://www.reddit.com/r/Scams/comments/na8oax/asian_guygirl_from_online_dating_mentors_you_to/
+
+Usa esta herramienta para comprobar de donde vienen esas website
+
+Use this tool to check where those websites come from
+
+https://dnschecker.org/all-dns-records-of-domain.php?query=www.face100.net%2Fvipweb%2F426761%2Findex%2F&rtype=ALL&dns=google
+
+Yang yanglilibaby creo que es de China Distrito de Shanghái Xuhui
+
+Asi se escribe policia Sanghai Xuhui, busco a alguien en Linkedin
+
+yang yanglilibaby i think is from china shanghai xuhui district
+
+That's how you write police Sanghai Xuhui, I'm looking for someone on Linkedin
+
+警察 中国 上海 徐汇区
+
+This third-party app created a contract behind my back that is responsible for draining my funds little by little, it does so without me receiving said contract, I am not notified in any way, neither by email, nor by push notification, nor by request to enter the famous ten words that coinbase wallet gives you, or by entering a password generated by the two-step authentication app. Coinbase wallet allowed a third party app to be used against their systems and they didn't control who accesses what, didn't check credentials, didn't ask for them, nothing at all. The perfect robbery because they have allowed it. The attackers have exploited a vulnerability in their api, leaving us customers fully exposed to this type of abuse.
+Please, I am doing this so that you do not fall into the same trap and I hope that you can please help me as much as possible so that I can identify this person and bring him before the judicial authorities.
+
+usuarios a enviar esta carta, seguidores de Alyssa en Twitter.
+
+@alesure84
+@tim_jacobi
+@faikalaboudi
+@seshuteja
+@CATHELINEAUDAV1
+@ChuckHazlitt
+@oh_cmn_sense
+@camara_simon
+@SimonLooLyrid
+@Anthonyccatt
+@dallasrich
+@Hippieben
+@JuanSam92672840
+@Anna03633737
+@godsgreat_87
+@Francoi72742446
+@itsasecret2015x
+@Hari_venu_G
+@cmortegaverges
+@AlLin0810
+@Arekku001
+@ForrestKirito@WarrenWhitlock
+@Arekku001
+@ForrestKirito
+@herfxz
+@Sunny9989kumar
+@minneapolisbob1
+@100111pounding
+@ArtistaEscritor
+@golflhack228
+@stefanoscarani
+@kemalQ55
+@Terry33588640
+@The_Big_Dodger
+@ArshSyedRealtor
+@firegod_mjb
+@ESteelernation
+@publishing_best
+@buddyl14
+@TalakeshArmen
+@PaulKlerckx
+@StevenT86838210
+@Koutro
+@fishingdude305
+@tch6269
+@RibeiroCadima
+@JarlyMoya
+@haseo2011
+@kaureenlamy
+@RAdamcewicz
+@Nate59810811
+@J_Salvadore
+@islandsnr
+@jimutter
+@AmadeusCho6
+@martinjcs
+@imran_ihossain
+@BilalyAhmad
+@MOLAVEENTERTAI1
+@GrubisicNebojsa
+@Antonio97806216
+@Choc_Pineapple
+@ming0971
+@unisclub
+@ikMl7YCFM9vFQFm
+@yfushimi0415
+@amylto1
+@lawsonde19
+@qIk8vZ7EZCEPpb1
+@CanadaDentist
+@paddyfolkes
+@anderso11837466
+@NobuNishiki
+@L77183567
+@rafneto
+@yourwebedge
+@Captain5911
+@Ivan49886768
+@KaneHarrison
+@z9858z9858
+@ohohohoh112
+@AnttonioRuiz
+@patrick_yesse
+@jasonalanonline
+@DaveJoh06876855
+@Crypto_Matt_
+@RudyBouwman
+@republicatrisk
+@Nicholis345
+
+Pagar al perito en
+
+ES05-0078-0010-33-4000020487 (BANCA PUEYO) cuyo titular es Ilkbensonian, S.L. (Ilke Benson)
