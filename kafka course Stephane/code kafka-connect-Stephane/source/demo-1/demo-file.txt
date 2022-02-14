@@ -1,0 +1,3 @@
+hi
+alonso
+es bastante chulo que pueda usar kafka de esta manera
