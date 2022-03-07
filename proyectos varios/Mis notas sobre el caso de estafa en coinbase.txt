@@ -35,9 +35,10 @@ You can see the transaction here:
 
 https://etherscan.io/tx/0x8135f16fb351d1488512859d68de92ec3857f0a0a606466020298e91a69d76f2
 
-I used this website to mine ethereum.
-It is a third-party application, totally illegal, as it is designed to connect to coinbase wallet systems
+The scammer lured me into using this third party app to to mine ethereum.
+It is a third-party application, totally illegal, obviously i didn't know, as it is designed to connect to coinbase wallet systems
 and create contracts on the blockchain using your credentials.
+
 It is taking advantage of a vulnerability in the coinbase wallet api so that when it is connected to my
 coinbase wallet it can skip the two-step verification provided by coinbase, as well as the verification
 and / or password request provided by coinbase wallet, the famous 10 words .
@@ -122,6 +123,8 @@ Alyssa I think she calls herself:
 https://www.facebook.com/kecik.angah6
 
 https://www.facebook.com/mixi.chen0520
+
+https://www.facebook.com/xi.lu.750546
 
 on linkedin
 
@@ -461,3 +464,19 @@ usuarios a enviar esta carta, seguidores de Alyssa en Twitter.
 Pagar al perito en
 
 ES05-0078-0010-33-4000020487 (BANCA PUEYO) cuyo titular es Ilkbensonian, S.L. (Ilke Benson)
+
+herramientas osint
+
+https://www.exploit-db.com
+
+https://medium.com/@turkishhoodie010/16-osint-tools-d84a52496efb
+
+https://derechodelared.com
+
+problemas en Ethereum
+
+https://tij.me/blog/scamming-people-via-ethereum-smart-contracts/
+
+https://medium.com/@muneeb/solar-storm-a-serious-security-exploit-with-ethereum-not-just-the-dao-a03d797d98fa
+
+https://pdaian.com/blog/chasing-the-dao-attackers-wake/?unapproved=148425&moderation-hash=ae6a2abac4d6c792c01425fc71228c64#comment-148425
