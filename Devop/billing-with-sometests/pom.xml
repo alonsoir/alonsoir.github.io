@@ -22,7 +22,7 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target> 
-        <spring-boot.version>2.3.4.RELEASE</spring-boot.version>
+        <spring-boot.version>2.6.6</spring-boot.version>
         <endorsed.dir>${project.build.directory}/endorsed</endorsed.dir>
     </properties> 
     
@@ -85,8 +85,7 @@
                 
         <dependency>
             <groupId>io.springfox</groupId>
-            <artifactId>springfox-boot-starter</artifactId>
-            <version>3.0.0</version>
+	    <artifactId>springfox-boot-starter</artifactId>
         </dependency>
         
         <dependency>
@@ -98,7 +97,7 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-webflux</artifactId>
-            <version>5.2.9.RELEASE</version>
+            <version>5.3.19.RELEASE</version>
             <scope>test</scope>
             <type>jar</type>
         </dependency>
