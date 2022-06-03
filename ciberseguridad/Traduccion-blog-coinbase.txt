@@ -1,0 +1,74 @@
+Traduccion https://blog.coinbase.com/security-psa-mining-pool-scams-targeting-self-custody-wallets-543ffe698724
+
+Como parte de nuestra misión para construir un sistema financiero más justo, accesible, eficiente y transparente habilitado por
+la criptografía, supervisamos activamente las amenazas a la seguridad no solo para Coinbase, sino también para el ecosistema
+criptográfico en su conjunto.
+
+Como hemos discutido en nuestras publicaciones anteriores del blog sobre amenazas de seguridad criptográfica en toda la industria y
+campañas de phishing de lanzamiento aéreo, la actividad maliciosa contra cualquier usuario o negocio de criptomonedas es mala para
+la industria. Por eso es importante tener una mentalidad comunitaria cuando vemos amenazas a la seguridad en la naturaleza.
+
+Como dicen, las mareas crecientes hacen zozobrar a todos los barcos.
+
+Recientemente, nuestros equipos de seguridad han descubierto estafas de grupos mineros en curso dirigidas a usuarios de carteras de autocustodia.
+Estas estafas han aprovechado principalmente los contratos inteligentes maliciosos en la red Ethereum. Basándose en la investigación de blockchain
+sobre carteras de estafadores conocidas, Coinbase estima que han resultado en el robo de más de 50 millones de dólares en activos criptográficos
+desde una variedad de programas que gestionan billeteras sin custodia.
+
+Estas estafas se dirigen a aquellos que utilizan cualquier navegador de cartera descentralizado (p. ej. Coinbase Wallet, Metamask, Trust, etc.).
+
+Nota del traductor: quiere decir que está afectando a las aplicaciones como Coinbase Wallet que tienen en su interior un navegador web que
+permite conectar una aplicación descentralizada financiera maliciosa a la dirección de la cartera de los clientes de Coinbase, es decir, el
+equivalente al número de cuenta bancario, donde se guarda el dinero. Coinbase Wallet no hace el más mínimo control sobre quien se conecta a
+la cartera. Coinbase gestiona esa información confidencial.
+
+La estafa suele seguir esta cadena de eventos:
+
+1) Los estafadores se ponen en contacto con las víctimas a través de las redes sociales y/u otros servicios de mensajería que afirman ofrecer
+una atractiva oportunidad de inversión criptográfica para apostar USDT (Tether) en su billetera para obtener un rendimiento garantizado.
+
+2) Se indica a las víctimas que visiten un sitio web fraudulento al que solo se puede acceder a través de un navegador o extensión de billetera criptográfica.
+Estos sitios web generalmente contienen reseñas falsas, mensajes positivos de apoyo a la aplicación, pagos actualizados en tiempo real
+y listas de socios para añadir una apariencia de autenticidad.
+
+Los sitios de estafa a menudo afirmarán fraudulentamente estar patrocinados o asociarse con marcas criptográficas reconocibles como Coinbase, Binance y MetaMask
+
+Ejemplos de página de destino del grupo de minería:
+
+https://eth-coinpool.com/#/
+
+https://www.topethmine.com/#/index
+
+Al hacer clic en el botón "Recibir" se muestra una ventana emergente similar a esta
+
+Fuente: Sitio de estafa
+Al hacer clic en este botón "Recibir", se mostrará una ventana emergente falsa diseñada para hacerse pasar por la interfaz de Coinbase Wallet.
+Los permisos que se muestran no son los verdaderos permisos que realmente se solicitan y se muestran intencionalmente de una manera que intente
+engañar a los usuarios para que hagan clic en "Conectar"
+
+Fuente: Sitio de estafa
+Ver el contrato inteligente a través de un verificador de aprobación de tokens de confianza muestra los verdaderos permisos que se solicitan. El estafador obtiene el estado de aprobación de transacciones delegadas con una asignación de transacción ilimitada dentro de la billetera de la víctima, lo que significa que el estafador puede aprobar envíos de USDT de cualquier cantidad en nombre de esta billetera.
+
+Fuente: etherscan.io
+
+Los atacantes sacarán los fondos USDT de la cartera de la víctima y el sitio de la estafa mostrará que su saldo está aumentando.
+Con frecuencia, los estafadores asegurarán a las víctimas que si añaden más fondos, obtendrán más USDT en rendimientos de la minería.
+
+Al final del período, los fondos no se devuelven a la víctima y no se recibirán beneficios.
+
+Si la víctima se pone en contacto con el servicio de atención al cliente a través del sitio web fraudulento, el atacante puede indicar que
+detectó actividad irregular en la cuenta y que para solucionar ese problema, la víctima tendría que pagar USDT adicional para "liberar" los fondos.
+Sin embargo, nunca se devuelven fondos independientemente de si la víctima realiza o no el pago.
+
+Se pueden tomar las siguientes medidas de seguridad para defender sus activos:
+
+1) Tener cuidado con las inversiones que reclaman un rendimiento garantizado
+2) Tener cuidado con el asesoramiento de inversión y las oportunidades de fuentes desconocidas o no confiables
+3) No visite ni conecte carteras de autocustodia a ningún sitio desconocido
+4) No tenga activos de alto valor en la misma cartera utilizada para interactuar regularmente con dapps.
+5) Utilice soluciones de almacenamiento en frío o custodia como Coinbase Vault de libre acceso.
+6) Utilice un verificador de aprobación de tokens para validar los permisos reales en las carteras de autocustodia y
+revocar las aprobaciones que no autorizó a sabiendas.
+
+Coinbase está trabajando con socios de la industria para eliminar estos sitios y desarrollar formas de advertir
+a los usuarios cuando visiten sitios de estafa conocidos con el fin de ayudar a limitar el daño causado por este tipo de estafa.
