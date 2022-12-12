@@ -1,0 +1,58 @@
+spark performance tips
+
+	https://sparkbyexamples.com/spark/spark-performance-tuning/
+
+	https://spark.apache.org/docs/2.4.5/sql-performance-tuning.html
+
+éste es un poco antiguo, pero es un hilo bastante bueno que lleva a otros más:
+
+	https://medium.com/teads-engineering/spark-performance-tuning-from-the-trenches-7cbde521cf60
+
+	https://medium.com/inspiredbrilliance/spark-optimization-techniques-a192e8f7d1e4
+
+Cuales son los mejores consejos para tener un codigo optimizado en apache spark 2.4.5?
+
+	1) Utilice el tipo de datos adecuado para cada variable. Spark tiene diferentes tipos de datos (por ejemplo, enteros, flotantes, cadenas, etc.), y utilizar el tipo de datos adecuado puede mejorar significativamente el rendimiento de su código.
+
+	2) Evite las conversiones de tipos innecesarias. Las conversiones de tipos pueden ser costosas en términos de rendimiento, así que trate de evitar las conversiones innecesarias.
+
+	3) Utilice columnas y expresiones en lugar de funciones de alto nivel. Las columnas y expresiones de Spark pueden aprovechar mejor la paralelización y la distribución de datos que las funciones de alto nivel.
+
+	4) Configure adecuadamente el nivel de paralelismo. El nivel de paralelismo determina cuántos subprocesos se utilizan para ejecutar una tarea en Spark. Un nivel de paralelismo adecuado puede mejorar significativamente el rendimiento de su código.
+
+	5) Utilice el modo de ejecución correcto. Spark ofrece diferentes modos de ejecución (por ejemplo, local, en cluster, etc.), y elegir el modo adecuado puede mejorar el rendimiento de su código.
+
+	6) Realice un seguimiento del rendimiento de su código y utilice herramientas de depuración y optimización. Spark ofrece herramientas como Spark UI y Spark profiler que le ayudarán a identificar cuellos de botella y a optimizar su código.
+
+Es mejor trabajar con Dataframes y DataSets o con RDD en Spark?
+
+	En general, se recomienda trabajar con DataFrames y Datasets en lugar de RDD en Spark. Los DataFrames y los Datasets son abstracciones más avanzadas que los RDD y ofrecen varias ventajas en términos de rendimiento y facilidad de uso.
+
+	En comparación con los RDD, los DataFrames y los Datasets son más eficientes en términos de memoria y CPU y permiten una mejor optimización de consultas gracias a su integración con la optimización de Catalyst de Spark. También son más fáciles de usar ya que proporcionan una interfaz de programación más amigable y una mejor integración con otros lenguajes de programación.
+
+	Sin embargo, en algunos casos específicos, puede ser necesario utilizar RDD en lugar de DataFrames o Datasets. Por ejemplo, si necesita un control más fino sobre cómo se procesan sus datos o si desea utilizar alguna de las operaciones de bajo nivel que solo están disponibles en los RDD. En general, se recomienda evaluar las ventajas y desventajas de cada opción en función de las necesidades específicas de su aplicación.
+
+
+	Otro caso en el que puede ser mejor utilizar RDD en lugar de DataFrames o Datasets es cuando desea utilizar alguna de las operaciones de bajo nivel que solo están disponibles en los RDD. Algunos ejemplos de operaciones de bajo nivel que solo están disponibles en los RDD son:
+
+	1) persist: permite almacenar en caché un RDD en memoria o en disco para mejorar el rendimiento de las operaciones que se aplican repetidamente sobre él.
+
+	2) coalesce: permite combinar varios partes de un RDD en un número menor de partes más grandes. Esta operación puede ser útil para reducir el nivel de paralelismo en un RDD y mejorar el rendimiento de las operaciones que se aplican sobre él.
+	
+	3) repartition: permite redistribuir los datos de un RDD en un número diferente de partes. Esta operación puede ser útil para ajustar el nivel de paralelismo en un RDD y mejorar el rendimiento de las operaciones que se aplican sobre él.
+
+Cual es la forma de indicar a Spark que quiero que se autooptimice el número de particiones?
+
+	Para indicar a Spark que se autooptimice el número de particiones, puede utilizar la opción spark.sql.shuffle.partitions en el archivo de configuración de Spark. Esta opción especifica el número de particiones que se deben utilizar para las operaciones de mezcla (shuffle) en Spark SQL.
+
+	Para utilizar esta opción, primero debe editar el archivo de configuración de Spark (generalmente llamado spark-defaults.conf) y agregar la siguiente línea:
+
+	spark.sql.shuffle.partitions=<número_de_particiones>
+
+	En lugar de un número específico, también puede utilizar la palabra clave auto para indicar que Spark debe determinar el número de particiones de manera automática en función de las características de su aplicación y del entorno de ejecución. Por ejemplo:
+
+	spark.sql.shuffle.partitions=auto
+	Una vez que haya agregado esta línea al archivo de configuración, Spark utilizará el número de particiones especificado o determinado de manera automática para las operaciones de mezcla (shuffle) en Spark SQL.
+
+Cuales son los mejores consejos proporcionados por Databricks y la comunidad acerca de como configurar adecuadamente el nivel de paralelismo en una aplicación spark?
+
