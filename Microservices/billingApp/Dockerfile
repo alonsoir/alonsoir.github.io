@@ -1,4 +1,4 @@
-FROM nginx:alpine
+FROM nginx:1.21.6-alpine
 #Install java 8
 RUN apk -U add openjdk8 \
     && rm -rf /var/cache/apk/*;
