@@ -1,5 +1,16 @@
 	Probablemente los libros de Jacek son la mejor ayuda.
-	https://jaceklaskowski.gitbooks.io/mastering-spark-sql/content/spark-sql.html
+	Actualización 20 Oct 2022. Jacek está escribiendo nuevos libros, por lo que mejor es revisar de vez en cuando su perfil de github.
+	https://github.com/jaceklaskowski
+	
+	https://books.japila.pl/apache-spark-internals/
+	
+	https://books.japila.pl/delta-lake-internals/
+	
+	https://books.japila.pl/spark-sql-internals/
+	
+	https://github.com/japila-books/kafka-internals
+	
+	https://jaceklaskowski.github.io/spark-kubernetes-book/
 
 ##  Conceptos básicos sobre Kafka.
 
