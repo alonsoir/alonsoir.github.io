@@ -1,0 +1,16 @@
+Buenas tardes Javier,
+
+te escribo para proponer que investiguemos la posibilidad de usar docker swarm en vez de docker compose para poder desplegar el software a nuestros clientes, y la razón es para garantizar la resiliencia de los procesos almacenados en los contenedores, es decir, si un contenedor se queda en estado unhealthy, docker-compose no tiene todas las características para tratar de remontar el contenedor. Dicho estado puede ser por múltiples razones, como hemos encontrado en nuestro equipo hoy por las malas, en DEV3 teníamos la gran cantidad de servicios unhealthy y docker compose no era capaz de levantarlos. Tuvimos que pararlos todos y levantarlos uno a uno. Docker Swarm y k8s proporcionan un control más fino sobre la capacidad de supervivencia, dando a los clientes mayor capacidad. Sugiero que nos des permiso para explorar docker swarm, ya sé que otros compañeros están con k8s.
+
+PD
+
+Aprovecho para comentar que a mí me encantaría participar en ese proyecto con k8s y machine learning. 
+
+
+Good afternoon Xavier,
+
+I am writing to propose that we investigate the possibility of using docker swarm instead of docker compose to be able to deploy the software to our clients, and the reason is to guarantee the resilience of the stored processes in the containers, that is, if a container is left In an unhealthy state, docker-compose doesn't have all the features to try to remount the container. This state can be for multiple reasons, as we have found in our team today the hard way, in DEV3 we had a lot of unhealthy services and docker compose was not able to raise them. We had to stop them all and pick them up one by one. Docker Swarm and k8s provide finer control over survivability, giving customers greater capability. I suggest that you give us permission to explore docker swarm, I already know that other colleagues are with k8s.
+
+P.S.
+
+I take this opportunity to comment that I would love to participate in this project with k8s and machine learning.
