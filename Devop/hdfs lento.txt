@@ -1,0 +1,13 @@
+hdfs lento
+
+Hay varias posibles razones por las que la lectura/escritura de archivos HDFS en un cluster Hadoop/Spark que se ejecuta en modo YARN client puede ser lenta. Algunas posibles causas son las siguientes:
+
+Problemas de red: Si el tráfico de red es muy alto o si hay problemas de conectividad entre los nodos del cluster, esto puede afectar la velocidad de la lectura/escritura de archivos HDFS. Es importante asegurarse de que la red esté configurada correctamente y que no haya cuellos de botella en el tráfico de red.
+
+Recursos insuficientes: Si los nodos del cluster no tienen suficientes recursos (por ejemplo, CPU, memoria, disco), esto puede afectar la velocidad de la lectura/escritura de archivos HDFS. Es importante asegurarse de que cada nodo tenga suficientes recursos asignados.
+
+Tamaño de bloque de HDFS: Si el tamaño de bloque de HDFS es demasiado pequeño, puede aumentar el número de operaciones de E/S necesarias para leer/escribir un archivo, lo que puede disminuir la velocidad. Es importante ajustar el tamaño de bloque de HDFS para que sea óptimo para su caso de uso.
+
+Cantidad de réplicas de HDFS: Si la cantidad de réplicas de HDFS es demasiado alta, puede aumentar el tiempo necesario para escribir un archivo completo. Es importante ajustar la cantidad de réplicas de HDFS para que sea óptimo para su caso de uso.
+
+Almacenamiento de datos estructurados en HDFS: Si está almacenando datos estructurados en HDFS (por ejemplo, archivos CSV), es posible que la velocidad se vea afectada por el tamaño de los archivos

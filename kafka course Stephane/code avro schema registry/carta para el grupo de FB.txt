@@ -1,0 +1,222 @@
+Hello, I am affected by using Coinbase and Coinbase Wallet and their faulty systems.
+I am sharing the data of my case and my research, along with data acquired through expert opinion, in the hope that other people can use it for their particular cases. Sorry if it's too long, the idea is to help.
+This website describes many fraudulent third-party apps that you should not have connected to your coinbase wallet under any circumstances. Ideally, those affected should join in a joint legal action against Coinbase because I maintain that they do not do the minimum and necessary to protect the interests of their clients. At the end of the publication I provide evidence that supports my thesis. At first I am going to talk about the scheme of the scam as well as details of the person who has scammed me. I talked to her, I made video calls with her, I know she's real, and I don't think she's a poor person forced by the circumstances of a life of hardship. He is a rich person, who believes he is invulnerable because he lives in a country like China or some country in Southeast Asia where the laws do not apply to rich people. I insist, I spoke with her, I saw her face and I can recognize her.
+
+I met a person on Twitter, it seemed to me that from the photos he had the eyes of a good person.
+He told me about making money with coinbase and coinbase wallet. I connected the wallet, without knowing it,
+with an app that created a contract in the ethereum blockchain to drain my money little by little, so that one day,
+all the money in my wallet disappeared.
+
+At no time was I notified that money was being moved from my wallet to another third-party address,
+
+I realized the day the large amount was moved, when I opened the Coinbase Wallet app.
+At that moment, the scammer disappeared. More than 70k euros.
+It is as if that third-party app could bypass the coinbase wallet authentication process to move amounts of money from
+one place to another, without ever notifying that said process is taking place. It seems that it is somehow taking advantage of issues in the coinbase wallet api authentication design as in the code of the coinbase wallet app.
+
+The case is quite accurately described at https://www.globalantiscam.org/post/new-twist-targeting-coinbase-wallet-app
+
+It's like it happened to me.
+
+The scammer lured me into using this third party app to to mine ethereum.
+It is a third-party application, totally illegal, obviously i didn't know, as it is designed to connect to coinbase wallet systems
+and create contracts on the blockchain using your credentials.
+
+It is taking advantage of a vulnerability in the coinbase wallet api so that when it is connected to my
+coinbase wallet it can skip the two-step verification provided by coinbase, as well as the verification
+and / or password request provided by coinbase wallet, the famous 10 words .
+
+https://www.topethmine.com/#/index
+
+That third party website connects with my wallet and somehow creates a contract in which it takes my money
+little by little, without the need to pass the coinbase wallet passwords, or go through the
+two-step authentication. Thus, no request has ever reached my email, nor my mobile.
+
+Several questions appear:
+1) why the hell does coinbase wallet allow third party apps to talk to it without authentication?
+2) why does it allow to add urls?
+3) Why don't you block unauthorized third party applications?
+
+should if anything accept only requests from third-party applications authorized by themselves,
+do not take advantage of the fact that the third-party app is operating in the
+app workspace authenticated against coinbase user, but coinbase authenticated user credentials
+They are not the same as the credentials to create contracts on the ethereum network, much less are they the famous ten words that you
+coinbase wallet to trade. It seems clear that the vulnerability comes from a bug in the coinbase wallet authentication api
+and in the code of the app itself. should not give the option to enter
+no url, because that is opening a vulnerability, and your authentication api needs a review.
+
+DATA OF OTHER VICTIMS!!
+
+This is a video of a victim who has dared to speak about the matter:
+
+https://www.youtube.com/watch?v=KSVKOaZL2to
+
+I contacted another victim of a similar scam, apparently he was able to talk to the Twitter user @2ihoiGsa0tayhBf
+and states this:
+
+@ftheworldagain
+
+"Hi Alonso. Sorry to hear that you've lost money to romance scams, I've lost a lot too.
+But not to this lady. She says she works (or I think her family owns) a medical equipment
+manufacturer in Hong Kong, she travels around a lot and has a daughter.
+Only name I have is Linda and contact number is +852 6795 3141 , I''ve not spoken to her in a few months.
+She claims photo's on the net are her and have been stolen and used by scammers.
+Here is work phone number +852 9807 8174. I hope this helps? Let me know if you need anything else and let me know how you go."
+
+Of course, after introducing them in wasap, it seems that it is her. The conversation I have had with Travis, Australian,
+makes me even more suspicious. He says that her name is Linda, that she has a daughter and a nephew, he told me the other way around, a son and a niece,
+Right away I talk to her about btc and things like that, so she called him. I'm not going to call her, I wish I could set her up, make someone
+talk to her to see if she cajoles you and tries to do the same. Travis contacted her through the twitter user @2ihoiGsa0tayhBf
+
+I have contacted another victim of Yang Lili through Linkedin, Dennis Butts II, he provides me with photos and phone numbers.
+
+This is the scammer, I've made real-time video calls with her, I know it's her. I have photos and videos.
+
+Alyssa I think she calls herself:
+凯伦蒂娜
+
+https://www.facebook.com/kecik.angah6
+
+https://www.facebook.com/mixi.chen0520
+
+on linkedin
+
+https://www.linkedin.com/in/chen-mixi-76b09721a/ -> this profile is interacting with me on Linkedin. It may be the real one.
+
+https://www.linkedin.com/in/elva-lin-0b7a05201/
+
+https://www.linkedin.com/in/na-mi-a8a06b20a/
+
+on twitter
+
+@2ihoiGsa0tayhBf -> this is the profile he dealt with Dennis.
+
+@Liqiqi23355398 -> this is the profile he discussed with me.
+
+https://twitter.com/YangliliDebbie
+
+https://twitter.com/wakuwakulife668
+
+https://twitter.com/LILI16203822 ---> here interact with someone talking about covid19. Interesting. here interact with someone talking about covid19. interesting
+
+https://ワクワクらいふ.com/author/hiroyuki/
+
+https://www.instagram.com/wakuwakulife668/
+
+I think she works here
+https://www.qmxip.com/tm_xq/593525507264659456
+
+I think this is her husband, I'm not sure. On Weibo she appears with another man:
+
+https://www.instagram.com/ryukenmind/
+
+I think they did it like this:
+
+https://www.reddit.com/r/liquiditymining/comments/rj9k9b/wondering_if_anyone_has_used_this_platform/
+
+https://www.globalantiscam.org/post/new-twist-targeting-coinbase-wallet-app
+
+https://threatpost.com/investment-scammers-dating-app-interpol/163179/
+
+I think it works or is related to this:
+
+http://lunsheng.5588.tv/companyzhuce.htm
+
+Asian social media profiles.
+
+https://weibo.com/yanglilibaby
+
+https://www.douyin.com/user/MS4wLjABAAAAZJ1_U20Ijf1w0M0wqzTE3Ei-UseR8cKF83xLEfgReYNoHoy3BPOS5Dt4vY3qbCIt
+
+https://m.kolstore.com/weiboDetails?userId=1904263764
+
+https://weibo.com/u/1904263764?tabtype=newVideo
+
+http://www.xiaohongshu.com/discovery/item/606e65890000000001029344
+
+https://graph.baidu.com/pcpage/similar?originSign=1268cbd4518143b31530b01643222794&srcp=crs_pc_similar&tn=pc&idctag=gz&sids=10005_10521_10968_10974_11032_17851_17070_18100_17200_17202_18312_19192_19162_19220_19210_19230_19268_19280_19550_19560_19660_19670_19807_20003_20020_20049_10000&logid=3273134523&gsid=&entrance=general&tpl_from=pc&pageFrom=graph_upload_pcshitu&image=http%3A%2F%2Fmms2.baidu.com%2Fit% 2Fu%3D1571570073,1672025482%26fm%3D253%26app%3D138%26f%3DJPEG%26fmt%3Dauto%26q%3D75%3Fw%3D500%26h%3D667&carousel=503&index=0&wd=&tag=金民灿Topage=0
+
+http://www.xiaohongshu.com/user/profile/56a5d5665e87e7023504b907
+
+
+His alias Chen Mixi has contacted me through Linkedin! I can not believe it.
+
+He has given me this url:
+
+It gave me this url:
+
+http://www.face100.net/vipweb/426761/index/
+
+A whois returns this:
+
+https://whois.domaintools.com/face100.net
+
+I think he works here (carendina)
+
+I think he works here (carendina)
+
+https://www.qmxip.com/tm_xq/593525507264659456
+
+I think this is her husband of her...
+
+http://www.xiaohongshu.com/discovery/item/61f11950000000002103d5a5
+
+I have contacted Chinese policemen on linkedin, tried to connect and sent messages, imploring his help, hopefully they can help me.
+
+Reverse image search engines:
+
+I have contacted Chinese policemen on linkedin, tried to connect and sent messages, imploring their help, hopefully they can help me.
+
+Reverse image search engines:
+
+https://www.so.com/?src=so.com
+
+https://pic.sogou.com/ris?flag=1&from=pic_result_list&query=http%3A%2F%2Fimg04.sogoucdn.com%2Fapp%2Fa%2F100520146%2F8a1c8b10be4416c29ae583662e4d8fb4
+
+https://pic.sogou.com/pics?query=微博%3A杨莉莉Baby&ie=utf8
+
+https://github.com/andrewhoulbrook/china-reverseimage-transforms
+
+https://www.reddit.com/r/Scams/
+
+https://yandex.com/images/search?rpt=imageview&url=https%3A%2F%2Favatars.mds.yandex.net%2Fget-images-cbir%2F2309063%2FBIMfHAXDYUZfxBKOGh4hag6511%2Forig&cbir_id=2309063%2FBIMfHAXDYUZfxBKOGh1hag651
+
+https://www.labnol.org/reverse/
+
+scammers reddit thread. You have to write your case here...
+
+https://www.reddit.com/r/Scams/comments/na8oax/asian_guygirl_from_online_dating_mentors_you_to/
+
+Use this tool to check where those websites come from
+
+https://dnschecker.org/all-dns-records-of-domain.php?query=www.face100.net%2Fvipweb%2F426761%2Findex%2F&rtype=ALL&dns=google
+
+yang yanglibaby i think she is from china shanghai xuhui district
+
+That's how you write police Sanghai Xuhui, I'm looking for someone on Linkedin
+
+yang yanglibaby i think is from china shanghai xuhui district
+
+That's how you write police Sanghai Xuhui, I'm looking for someone on Linkedin
+
+警察中国上海徐汇区
+
+This third-party app created a contract behind my back that is responsible for draining my funds little by little, it does so without me receiving said contract, I am not notified in any way, neither by email, nor by push notification, nor by request to enter the famous ten words that coinbase wallet gives you, or by entering a password generated by the two-step authentication app. Coinbase wallet allowed a third party app to be used against their systems and they didn't control who accesses what, didn't check credentials, didn't ask for them, nothing at all. The perfect robbery because they have allowed it. The attackers have exploited a vulnerability in their api, leaving us customers fully exposed to this type of abuse.
+Please, I am doing this so that you do not fall into the same trap and I hope that you can please help me as much as possible so that I can identify this person and bring him before the judicial authorities.
+
+Question, did someone connect their coinbase wallet to a third party app using the middle button that appears in the coinbase wallet app? adding that app to mine transactions getting in theory ethereum and then change it to usdt?
+Once you connect that app to your coinbase wallet account, it creates a contract in the blockchain that states, unknown to the account holder, that the funds will disappear at the will of the person who induced you to add the third-party app. . Coinbase will not notify you at any time that said contract has been made, nor will it ask you for a password of any kind at any time. Scammers take advantage of a known security flaw in the solidity language and known bugs in the coinbase wallet app. Coinbase has literally put into production software that is so far from secure that it should never be in production. Coinbase may know, may not. I think they do know because there are OSCP engineers who are repeatedly warning of such security flaws, but do not remove or acknowledge such security flaws inherent in solidity or its current code base.
+
+The problem has been described in better words on this website.
+https://gist.github.com/tijme/358067287ec94fd354fafd52b5da85fa?fbclid=IwAR1B5iYtjxs_5OHn2Mk6GQy4jScJ5LMD0rfj8rPPg8vMBZszGkSefYr2Ujw
+
+Look, this is an example about how contract writen in solidity can detrieve all the funds from an account. It show how the language is poorly written and permits scam like we all have suffered. https://gist.github.com/.../358067287ec94fd354fafd52b5da85fa
+
+This is the github repository of code used by coinbase wallet. Literallly, scammers uses this api, to exploit vulnerabilities in this code base.
+https://github.com/coinbase/coinbase-wallet-sdk
+Look at the list of problems that they have, as of today more than 30, and it does not imply that the security problem is even listed there to be fixed, in fact, I think it is not. Indicates that this software intended to be run on coinbase servers, is not ready to be used in production. It also indicates that both Apple and Google are probably endangering the users of their products by allowing this dangerous and flawed software to be made available to anyone who downloads it.
+I haven't found the code that runs on iphones and android yet, but I'm sure it also has vulnerabilities ready to be exploited by scammers. It is not normal for it to ask you for any authentication password at any time, nor does it notify you that any type of contract has been created, but the most scandalous thing is that Coinbase allows any type of third-party software to be connected, nor does it do no checking of any kind for security to know which external systems are connecting to your systems.
+
+It is scandalous that they say that they do not even have logs of any kind. Even more so that they do not even think that if they are going to offer this type of external connections, they have to audit them, since it is a connection that can harm the interests of Coinbase clients. I'd say it's criminal on Coinbase's part, but I'm not a lawyer, I'm a systems engineer.
+Yes, a systems engineer who was fooled. 🙁
+Now, the hard part is proving that Coinbase, Apple, and Google are committing crimes or neglect in allowing this software to be in production. Ideally, among all those affected, we could unite in a joint legal action, at a national and international level, since there are many of us affected by this type of software. I have hired a lawyer and a computer expert who has done an initial investigation. If anyone wants help, contact me.
