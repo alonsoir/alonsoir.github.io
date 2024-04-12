@@ -1,0 +1,136 @@
+curso AWS arch
+
+Manpower Academy – CONVOCATORIA FORMACION
+
+ 
+
+A/A: Alonso Isidoro Roman
+
+ 
+
+Me dirijo a usted para facilitarle los datos de acceso y dirección URL para que pueda acceder y participar en la FORMACIÓN prevista:
+
+ 
+
+AWS Architecting
+
+ 
+
+Agradecerle su voluntad de participación en las mismas, y aprovecho la ocasión para saludarle y desear que disfrute.
+
+ 
+
+Convocatoria y calendario:
+
+Del 14 al 23 de noviembre de 2022
+
+De lunes a jueves
+
+Horario: 17:00 a 20:30
+
+Lunes 14 nov de 17:00 a 21:00h
+
+ 
+
+En modalidad de Aula Virtual.
+
+ 
+
+( el aula virtual estará disponible 10 min antes )
+
+ 
+
+Podrá acceder al curso a través de la siguiente URL
+
+ 
+
+https://campus.manpoweracademy.online/
+
+ 
+
+DATOS DE ACCESO
+
+ 
+
+Usuario:  DNI(sin letra)
+
+en caso de NIE sin letra final- letra inicial minúscula (ej: y2355742)
+
+ 
+
+Contraseña: DNI(con letra MAYUSCULA)
+
+en caso de NIE AMBAS LETRAS MAYUSCULAS (ej: Y2355742X)
+
+ 
+
+UNA VEZ DENTRO DE LA PLATAFORMA PUEDE ACCEDER AL AULA VIRTUAL
+
+Y resto de recursos del curso.
+
+FORMACION BONIFCADA POR FUNDAE
+
+IMPORTANTE: REQUISITOS DE ACCESO
+
+ 
+
+1.    Introduzca USUARIO y CONTRASEÑA tal y como se indica.
+
+2.    NAVEGADORES RECOMENDADOS: CHROME / FIREFOX
+
+3.    CONEXIÓN A INTERNET (se recomienda no entrar a través de VPN´s)
+
+ 
+
+Sin otro particular, reciba un cordial saludo
+
+NOTAS
+
+Jonathan Ortega jortega@grupoloyal.com
+
+Para las prácticas:
+
+Práctica3
+
+https://eteamproject.internal.ericsson.com/browse/DOPPROD-4328
+
+Usuario: Alumno1
+pass: Abcd.1234
+
+Region: Irlanda
+
+0.1 Ambas deben tener un grupo de seguridad
+asignado que permita el trafico RDP. 
+
+0.2. Antes de comenzar será necesario disponer de dos máquinas Windows
+server en las Az’s A y C. T2 micro free tier.
+
+
+1. Crear un volumen EBS de 1GB tipo GP2 en la AzA. Ok
+
+2. Asignar dicho volumen a una máquina Windows Server de la AzA
+
+3. Realizar las acciones necesarias para la utilización de dicho nuevo
+volumen
+
+4. Una vez disponible procederemos a crear una pequeña estructura
+de carpetas y txt dentro del volumen.
+
+5. Realizar una snapshot del volumen.
+
+6. Por razones operativas nos comunican que es necesario migrar el
+volumen a la AzC y asignarlo a una máquina Windows server creada
+allí. Deberemos aplicar nuestros conocimientos para lograr la
+migración.
+
+7. Una vez realizada comprobaremos si la información creada
+anteriormente sigue disponible dentro del volumen.
+
+https://www.whizlabs.com/aws-solutions-architect-associate/
+
+https://www.itexams.com/vendor/Amazon
+
+
+
+
+ 

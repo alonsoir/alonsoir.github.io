@@ -1,0 +1,178 @@
+Cuales son los mejores consejos para tener un codigo optimizado en apache spark 2.4.5?
+
+	1) Utilice el tipo de datos adecuado para cada variable. Spark tiene diferentes tipos de datos (por ejemplo, enteros, flotantes, cadenas, etc.), y utilizar el tipo de datos adecuado puede mejorar significativamente el rendimiento de su código.
+
+	2) Evite las conversiones de tipos innecesarias. Las conversiones de tipos pueden ser costosas en términos de rendimiento, así que trate de evitar las conversiones innecesarias.
+
+	3) Utilice columnas y expresiones en lugar de funciones de alto nivel. Las columnas y expresiones de Spark pueden aprovechar mejor la paralelización y la distribución de datos que las funciones de alto nivel.
+
+	4) Configure adecuadamente el nivel de paralelismo. El nivel de paralelismo determina cuántos subprocesos se utilizan para ejecutar una tarea en Spark. Un nivel de paralelismo adecuado puede mejorar significativamente el rendimiento de su código.
+
+	5) Utilice el modo de ejecución correcto. Spark ofrece diferentes modos de ejecución (por ejemplo, local, en cluster, etc.), y elegir el modo adecuado puede mejorar el rendimiento de su código.
+
+	6) Realice un seguimiento del rendimiento de su código y utilice herramientas de depuración y optimización. Spark ofrece herramientas como Spark UI y Spark profiler que le ayudarán a identificar cuellos de botella y a optimizar su código.
+
+	7) Minimizar el trabajo que hace el driver para que así los workers trabajen durante más tiempo.
+
+Es mejor trabajar con Dataframes y DataSets o con RDD en Spark?
+
+	En general, se recomienda trabajar con DataFrames y Datasets en lugar de RDD en Spark. Los DataFrames y los Datasets son abstracciones más avanzadas que los RDD y ofrecen varias ventajas en términos de rendimiento y facilidad de uso.
+
+	En comparación con los RDD, los DataFrames y los Datasets son más eficientes en términos de memoria y CPU y permiten una mejor optimización de consultas gracias a su integración con la optimización de Catalyst y Tungsten de Spark. También son más fáciles de usar ya que proporcionan una interfaz de programación más amigable y una mejor integración con otros lenguajes de programación.
+
+	Sin embargo, en algunos casos específicos, puede ser necesario utilizar RDD en lugar de DataFrames o Datasets. Por ejemplo, si necesita un control más fino sobre cómo se procesan sus datos o si desea utilizar alguna de las operaciones de bajo nivel que solo están disponibles en los RDD. En general, se recomienda evaluar las ventajas y desventajas de cada opción en función de las necesidades específicas de su aplicación.
+
+
+	Otro caso en el que puede ser mejor utilizar RDD en lugar de DataFrames o Datasets es cuando desea utilizar alguna de las operaciones de bajo nivel que solo están disponibles en los RDD. Algunos ejemplos de operaciones de bajo nivel que solo están disponibles en los RDD son:
+
+		1) persist: permite almacenar en caché un RDD en memoria o en disco para mejorar el rendimiento de las operaciones que se aplican repetidamente sobre él.
+
+		2) coalesce: permite combinar varios partes de un RDD en un número menor de partes más grandes. Esta operación puede ser útil para reducir el nivel de paralelismo en un RDD y mejorar el rendimiento de las operaciones que se aplican sobre él.
+		
+		3) repartition: permite redistribuir los datos de un RDD en un número diferente de partes. Esta operación puede ser útil para ajustar el nivel de paralelismo en un RDD y mejorar el rendimiento de las operaciones que se aplican sobre él.
+		A diferencia de coalesce, permite combinar partes de un RDD en un número mayor de partes más grandes.
+
+Cual es la forma de indicar a Spark que quiero que se autooptimice el número de particiones?
+
+	Para indicar a Spark que se autooptimice el número de particiones, puede utilizar la opción spark.sql.shuffle.partitions en el archivo de configuración de Spark. Esta opción especifica el número de particiones que se deben utilizar para las operaciones de mezcla (shuffle) en Spark SQL.
+
+	Para utilizar esta opción, primero debe editar el archivo de configuración de Spark (generalmente llamado spark-defaults.conf) y agregar la siguiente línea:
+
+		spark.sql.shuffle.partitions=<número_de_particiones>
+
+	En lugar de un número específico, también puede utilizar la palabra clave auto para indicar que Spark debe determinar el número de particiones de manera automática en función de las características de su aplicación y del entorno de ejecución. 
+	Por ejemplo:
+
+		spark.sql.shuffle.partitions=auto
+
+	Una vez que haya agregado esta línea al archivo de configuración, Spark utilizará el número de particiones especificado o determinado de manera automática para las operaciones de mezcla (shuffle) en Spark SQL.
+
+Cuales son los mejores consejos proporcionados por Databricks y la comunidad acerca de como configurar adecuadamente el nivel de paralelismo en una aplicación spark?
+
+	Asegúrate de tener una buena comprensión del tamaño y la estructura de tus datos y de la carga de trabajo que se está ejecutando.
+
+	Utiliza el método "repartition" para ajustar el nivel de paralelismo de acuerdo a tus necesidades.
+	
+	Utiliza el parámetro "spark.default.parallelism" para configurar el nivel de paralelismo predeterminado en tu cluster.
+	
+	Utiliza el parámetro "spark.sql.shuffle.partitions" para configurar el nivel de paralelismo en operaciones de mezcla (shuffle) en consultas SQL.
+	
+	Realiza pruebas y ajusta el nivel de paralelismo de acuerdo a los resultados obtenidos en términos de rendimiento y eficiencia.
+	
+	Utiliza herramientas de monitorización y análisis de rendimiento para identificar cuellos de botella y ajustar el nivel de paralelismo en consecuencia.
+
+Cuales son las mejores herramientas de monitorización y análisis de rendimiento para identificar cuellos de botella y ajustar el nivel de paralelismo?
+
+	1) Spark UI: proporciona una vista en tiempo real del rendimiento y el estado del cluster.
+	2) Databricks Analytics: permite realizar análisis detallados del rendimiento y la eficiencia del cluster.
+	3) Spark History Server: muestra información detallada sobre las aplicaciones que se han ejecutado en el cluster.
+	4) Spark Monitoring Extension for Datadog: permite monitorizar el rendimiento de Spark a través de Datadog.
+	5) Sparklens: una herramienta de análisis de rendimiento y depuración para Spark.
+
+		https://www.youtube.com/watch?v=SOFztF-3GGk&t=108s
+
+	6) Spark Metrics System: permite monitorizar y analizar el rendimiento de Spark a nivel de aplicación.
+
+Cómo controlar el número de tareas asignadas a cada worker?
+
+	1) Controlar el tamaño de bloque del HDFS.
+	
+	2) Min/max split size
+	
+	3) spark.default.parallelism. 
+	Básicamente recoge en tiempo de ejecución el número de núcleos disponibles para Spark.
+	
+	4) spark.sql.shuffle.partitions. 
+	Un valor adecuado para spark.sql.shuffle.partitions depende de varios factores, como el tamaño y la estructura de los datos, la carga de trabajo que se está ejecutando y el tamaño del cluster. En general, se recomienda establecer un valor entre 2 y 4 veces el número de núcleos de procesamiento disponibles en el cluster. También es importante realizar pruebas y ajustar el valor en función de los resultados obtenidos en términos de rendimiento y eficiencia.
+	
+	5) repartition
+
+Cual es parametro de configuracion introducido en Spark 3.x para controlar el numero de particiones de manera dinamica?
+
+	El parámetro de configuración introducido en Spark 3.x para controlar el número de particiones de manera dinámica es "spark.sql.adaptive.maxNumPartitions". Este parámetro permite ajustar el número de particiones en operaciones de shuffle en consultas SQL de manera dinámica en función del tamaño y la estructura de los datos y de la carga de trabajo en ejecución. El valor predeterminado es 10000, pero se recomienda ajustarlo en función de las necesidades de la aplicación.
+
+Se puede controlar el numero de particiones de manera dinamica en la rama 2.4.5?
+
+	En la rama 2.4.5 de Spark no se proporciona un parámetro de configuración específico para controlar el número de particiones de manera dinámica. Sin embargo, se puede utilizar el método "repartition" para ajustar el número de particiones en operaciones de mezcla (shuffle) de manera dinámica. También es posible utilizar el parámetro "spark.sql.shuffle.partitions" para establecer un valor fijo para el número de particiones en operaciones de mezcla en consultas SQL.
+
+Básicamente, en que consiste el proceso de shuffle?
+
+	Cuando tenemos muchos pares de claves/valor, y queremos procesarlas, la manera optima es traer todos esos conjuntos pares de claves/valor que tengan la misma clave a la misma máquina que gestione la tarea del reducer, de manera que así el procesamiento se puede hacer iterativo en esa misma máquina. 
+	Eso puede conllevar traer pares de claves/valor de unas máquinas a otras, a través de la red, serializando y deserializando, con el coste en cpu y memoria que conlleva. Eso es el shuffle o barajado, ocurre cuando queremos hacer operaciones como agrupar por id. Hay que tratar por todos los medios de evitar el shuffle y evitar crear cuellos de botella y para ello hay que conocer muy bien los datos con los que trabajamos, por ejemplo, puede que sea mejor agrupar por un identificador que por otro, el caso es que las particiones tienen que ser lo más pareja posibles y no haya particiones mucho más grandes que otras.
+	Otro ejemplo, mejor agrupar por código postal que por ciudad. Una ciudad será mucho más grande que otra, en cambio, una zona tendrá un número de código postal menos sesgado. Agrupar por código postal y luego hacer un join de todas esas agrupaciones en vez de tratar de agrupar todo por ciudad.
+	Además, también existe la posibilidad de crear nuevas particiones de tamaño muy sesgados entre sí, eso es algo que siempre hay que vigilar y evitar. No nos interesan tener particiones muy grandes y otras particiones muy pequeñas.
+
+Qué es el número de camino crítico de una aplicación Spark (critical path number?
+
+	Es básicamente el tiempo de ejecución de los cálculos en el driver, te indica como de rápido pueden ser los calculos si tu aplicacion pudiera ejecutarse únicamente en un único nodo.
+
+Cómo se puede calcular el camino crítico de una aplicación spark?
+
+	Existen varios métodos para calcular el camino crítico de una aplicación Spark. Uno de los métodos es utilizar el DAG (Directed Acyclic Graph) de la aplicación para identificar las tareas y dependencias entre ellas. Una vez identificadas, se puede utilizar un algoritmo de camino crítico como el de la cadena crítica (CCP) para determinar cuáles son las tareas que deben completarse en un orden específico para que la aplicación se complete en el plazo más breve posible.
+
+	Las aplicaciones Spark no pueden ejecutarse más rápido que su camino crítico (critical path), no importa cuantos executors tengas.
+
+	Para que sean más eficientes, necesitamos reducir las tareas que haga el driver, es decir, reducir las tareas de computación del driver de manera que se puedan distribuir adecuadamente entre los workers que a su vez tienen executors asignados a cada una de las particiones, de manera que así disminuimos el tamaño sesgado de dichas particiones (skew data partition).
+	Otra es tener el número adecuada de tareas para todos los núcleos a lo largo del ciclo de vida de la partición.
+	Otra es reducir el número de executors de manera que así las tareas se agrupan en menos executors y éstos están más ocupados.
+
+Cómo se puede activar el algoritmo de cadena crítica (ccp) en spark?
+
+	Para activar el algoritmo de cadena crítica (CCP) en Spark, primero debe configurar Spark para utilizar este algoritmo cuando planifique las tareas de su aplicación. Esto se puede hacer estableciendo la propiedad spark.scheduler.mode en FAIR en el archivo de configuración de Spark (spark-defaults.conf). Una vez configurado, Spark utilizará el algoritmo de CCP para determinar el orden en que se deben ejecutar las tareas en su aplicación.
+
+Cuales son las mejores prácticas para usar el algoritmo de cadena crítica en spark y asi mejorar el rendimiento?
+
+	1) Configure Spark para utilizar el algoritmo CCP estableciendo la propiedad spark.scheduler.mode en FAIR en el archivo de configuración de Spark (spark-defaults.conf).
+
+	2) Diseñe su aplicación de Spark de manera que los datos se dividan en pequeños conjuntos que puedan ser procesados de manera independiente. Esto permitirá a CCP planificar y ejecutar las tareas de manera más eficiente.
+
+	3) Utilice la función cache() de Spark para almacenar en caché los datos que se utilizan repetidamente en la aplicación. Esto permitirá a CCP evitar tener que volver a procesar los mismos datos y mejorar el rendimiento de la aplicación.
+
+	4) Ajuste el nivel de paralelismo de su aplicación de Spark utilizando la configuración spark.default.parallelism para asegurarse de que hay suficientes recursos disponibles para ejecutar las tareas de manera eficiente.
+
+	5) Monitorice el rendimiento de su aplicación de Spark utilizando herramientas como Spark Web UI y análisis de registros para identificar posibles cuellos de botella y ajustar la configuración de CCP en consecuencia.
+
+Cómo saber cuales son los datos que se utilizan repetidamente en una aplicación Spark?
+
+	Para saber cuáles son los datos que se utilizan repetidamente en una aplicación Spark, se pueden utilizar varias herramientas y técnicas. Una de ellas es utilizar la función cache() de Spark en los conjuntos de datos que se utilizan repetidamente, y luego utilizar la interfaz de usuario de Spark Web UI para ver cuántas veces se accede a cada conjunto de datos cacheado. También se pueden utilizar análisis de registros y herramientas de seguimiento de código para ver cuáles son los conjuntos de datos que se utilizan más frecuentemente en la aplicación.
+
+Cual es mejor lenguaje para crear aplicaciones spark?
+
+	Spark está diseñado para ser utilizado con una variedad de lenguajes de programación, por lo que no hay un lenguaje que sea "mejor" que los demás para crear aplicaciones Spark. Los lenguajes más populares para desarrollar aplicaciones Spark son Java, Scala y Python, y cada uno de ellos tiene sus propias ventajas y desventajas. Por ejemplo, Java es un lenguaje de programación muy popular y ampliamente utilizado, lo que significa que hay una gran cantidad de recursos y comunidades de soporte disponibles. Scala, por otro lado, es un lenguaje de programación orientado a objetos que es altamente escalable y permite una ejecución más rápida en Spark. Python es un lenguaje de programación de alto nivel que es fácil de aprender y utilizar, lo que lo convierte en una buena opción para principiantes. En general, la mejor opción de lenguaje dependerá de las necesidades y preferencias personales del desarrollador.
+
+Cómo configuro Spark?
+
+	Puedes usar esta calculadora:
+
+	http://spark-configuration.luminousmen.com/
+
+Spark no puede ejecutar más rápido que su camino crítico (critical path)
+Las aplicaciones Spark pueden ejecutar más rápido si:
+
+	1) minimizas la computación en el lado del driver. Mientras el driver ejecuta cálculos, los workers están parados.
+		Interesa paralelizar el cálculo entre los workers y que cada executor corriendo en cada uno de esos workers trabaje con una partición. Asignar los núcleos teniendo en cuenta que no solo se van a encargar de atender a los executors, también se necesitan núcleos para que los workers puedan atender al hdfs, por ejemplo.
+	2) Si el tiempo para completar el trabajo no es un problema, bajar el número de executors, así minimizamos la probabilidad de que los workers estén sin usar.
+
+Para usar qubole:
+
+	--packages qubole:sparklens:0.1.2-s_2.11
+	--conf spark.extraListeners=com.qubole.sparklens.QuboleJobListener
+
+enlaces interesantes:
+
+	https://topbigdata.es/mejorando-el-rendimiento-en-spark-usando-particiones-hadoop-en-el-mundo-real/
+
+	https://sparkbyexamples.com/spark/spark-performance-tuning/
+
+	https://spark.apache.org/docs/2.4.5/sql-performance-tuning.html
+
+	https://medium.com/teads-engineering/spark-performance-tuning-from-the-trenches-7cbde521cf60
+
+	https://medium.com/inspiredbrilliance/spark-optimization-techniques-a192e8f7d1e4
+
+	https://github.com/qubole/sparklens
+
+	https://stackshare.io/stackups/delta-lake-vs-impala
+
+
+

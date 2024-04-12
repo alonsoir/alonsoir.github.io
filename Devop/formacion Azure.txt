@@ -1,0 +1,46 @@
+formacion Azure
+
+https://campus.manpoweracademy.online/
+
+el usuario es alonsoir@gmail.com
+
+documentación:
+
+	https://learn.microsoft.com/es-es/training/courses/az-900t00?WT.mc_id=ilt_partner_webpage_wwl&ocid=515574#study-guide
+
+logros:
+
+	https://learn.microsoft.com/es-es/users/alonsoisidororoman-4175/achievements?WT.mc_id=ilt_partner_webpage_wwl&ocid=515574&redeem=RD45MQ
+
+
+https://learn.microsoft.com/es-es/training/courses/az-900t00?WT.mc_id=ilt_partner_webpage_wwl&ocid=515574#study-guide
+
+https://learn.microsoft.com/es-es/training/paths/microsoft-azure-fundamentals-describe-cloud-concepts/
+
+Acceso a la Plataforma de Laboratorios:
+https://lms.godeploy.it/
+1. Crear un cuenta de Usuario
+
+alonsoir@gmail.com/5Ugm5dxq
+
+2. Registrar el código del Laboratorio
+Código de Registro GoDeploy:
+4LYB58
+
+https://learn.microsoft.com/es-es/training/paths/azure-fundamentals-describe-azure-architecture-services/
+
+https://azure.microsoft.com/es-es/explore/global-infrastructure/geographies/#overview
+
+https://learn.microsoft.com/es-es/azure/reliability/cross-region-replication-azure
+
+https://azure.microsoft.com/es-es/explore/global-infrastructure/products-by-region/
+
+https://learn.microsoft.com/es-es/azure/networking/azure-network-latency
+
+https://www.azurespeed.com/Azure/Latency
+
+https://learn.microsoft.com/es-es/training/paths/azure-fundamentals-describe-azure-architecture-services/
+
+1. Registrar una de cuenta de Usuario
+2. Introducir el Código de Registro de los Laboratorios AZ-900:
+DWQRZ9
