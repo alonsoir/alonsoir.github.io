@@ -1,4 +1,4 @@
-FROM nginx:1.23.1-alpine
+FROM nginx:1.23.2-alpine
  # use a volume is mor efficient and speed that filesystem
 VOLUME /tmp
 RUN rm -rf /usr/share/nginx/html/*
